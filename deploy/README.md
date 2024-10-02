@@ -5,25 +5,14 @@ Note that you have to be connected to the `vpn.qo.is`
 and that you need to have SSH root access to the target machines.
 
 
-
-#### Deploy to all hosts
+## Deploy to selected target hosts
 
 ```bash
-nix run .#deploy-qois
+nix run .#deploy-qois .#<hostname>.system .#<hostname2>.system
 ```
 
-
-#### Deploy to selected target hosts
-
-```bash
-nix run .#deploy-qois .#<hostname> .#<hostname2>
-
-# e.g.
-nix run .#deploy-qois .#fulberg
-```
-
-#### Deploy with extended timeouts (sometimes required for slow APU devices)
+## Deploy with extended timeouts (sometimes required for slow APU devices)
 
 ```bash
-nix run .#deploy-qois  .#calanda -- --confirm-timeout 600 --activation-timeout 600
+nix run .#deploy-qois  .#calanda.system -- --confirm-timeout 600 --activation-timeout 600
 ```

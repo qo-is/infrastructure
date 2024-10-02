@@ -1,14 +1,15 @@
 # qo.is Infrastructure
 
-[This repository](https://gitlab.com/qo.is/infrastructure) contains the infrastructure configuration and documentation sources.
+[This repository](https://git.qo.is/qo.is/infrastructure) contains the infrastructure configuration and documentation sources.
 
-Check out the current [rendered documentation on the deployed gitlab page](https://docs-ops.qo.is).
+Check out the current [rendered documentation](https://docs-ops.qo.is).
 
 ## Structure
 
 `nixos-configurations`: Main nixos configuration for every host.  
 `defaults`: Configuration defaults  
-`modules`: Custom modules (e.g. for vpn and routers)
+`nixos-modules`: Custom modules (e.g. for vpn and routers)  
+`private`: Private configuration values (like users, sops-encrypted secrets and keys)
 
 ## Building
 
@@ -32,6 +33,12 @@ This repository requires [nix flakes](https://nixos.wiki/wiki/Flakes)
 
 ### Working with the private submodule
 
+To clone with submodules (if you have access):
+
+```bash
+git clone --recurse-submodules https://git.qo.is/qo.is/infrastructure.git
+```
+
 On changes:
 
 ```bash
@@ -41,9 +48,9 @@ nix flake lock --update-input private
 
 ## Deployment 
 
-`nix run .#deploy`
+`nix run .#deploy-qois`
 
-See [Deployment](deployment.md) for details.
+See [Deployment](deploy/README.md) for details.
 
 ## Secrets
 
@@ -56,6 +63,6 @@ Secrets are stored in `private/passwords.sops.yaml` (sysadmin passwords),
 Usage:
 
 ```bash
-sops
-sops-rekey
+sops $file # To edit a file
+sops-rekey # To rekey all secrets, e.g. after a key rollover or new host
 ```
