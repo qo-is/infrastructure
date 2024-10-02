@@ -1,0 +1,40 @@
+diff --unified --recursive --text archlinux-linux/drivers/net/wireless/ath/regd.c archlinux-linux-patched/drivers/net/wireless/ath/regd.c
+--- a/drivers/net/wireless/ath/regd.c	2019-08-29 18:31:52.749909030 +0200
++++ b/drivers/net/wireless/ath/regd.c	2019-08-29 18:33:33.318773763 +0200
+@@ -345,6 +345,8 @@
+ 	struct ieee80211_channel *ch;
+ 	unsigned int i;
+ 
++  return;
++
+ 	for (band = 0; band < NUM_NL80211_BANDS; band++) {
+ 		if (!wiphy->bands[band])
+ 			continue;
+@@ -378,6 +380,8 @@
+ {
+ 	struct ieee80211_supported_band *sband;
+ 
++  return;
++
+ 	sband = wiphy->bands[NL80211_BAND_2GHZ];
+ 	if (!sband)
+ 		return;
+@@ -407,6 +411,8 @@
+ 	struct ieee80211_channel *ch;
+ 	unsigned int i;
+ 
++  return;
++
+ 	if (!wiphy->bands[NL80211_BAND_5GHZ])
+ 		return;
+ 
+@@ -639,6 +645,9 @@
+ 	const struct ieee80211_regdomain *regd;
+ 
+ 	wiphy->reg_notifier = reg_notifier;
++
++  return 0;
++
+ 	wiphy->regulatory_flags |= REGULATORY_STRICT_REG |
+ 				   REGULATORY_CUSTOM_REG;
+ 

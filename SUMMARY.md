@@ -1,0 +1,33 @@
+# Summary
+
+- [Repository README](README.md)
+- [Deployment](deploy/README.md)
+
+---
+
+- [Network Topology](defaults/meta/network.md)
+- [Hardware (generic)](defaults/hardware/README.md)
+- [Backups](backups.md)
+- [Updates](updates.md)
+- [New Host Setup](nixos-configurations/setup.md)
+
+
+# Services
+
+- [E-mail](email.md)
+- [Git](nixos-modules/qois/git/README.md)
+- [Nextcloud](defaults/nextcloud/README.md)
+- [Nix Caches](nixos-configurations/lindberg-build/applications/README.md)
+- [Static Pages](nixos-modules/qois/static-page/README.md)
+- [VPN](defaults/vpn/README.md)
+- [Vaultwarden](nixos-modules/vault/README.md)
+
+# Nixos Configurations
+
+- [calanda](nixos-configurations/calanda/README.md)
+- [cyprianspitz](nixos-configurations/cyprianspitz/README.md)
+- [fulberg](nixos-configurations/fulberg/README.md)
+- [lindberg](nixos-configurations/lindberg/README.md)
+- [stompert](nixos-configurations/stompert/README.md)
+- [tierberg](nixos-configurations/tierberg/README.md)
+

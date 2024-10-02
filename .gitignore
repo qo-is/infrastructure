@@ -1,0 +1,7 @@
+/configuration.nix
+/result*
+/host/*/result*
+*.qcow2
+/.direnv
+/book
+/.sops.yaml

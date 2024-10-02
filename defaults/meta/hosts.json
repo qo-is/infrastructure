@@ -1,0 +1,44 @@
+{
+  "fulberg": {
+    "hostName": "fulberg",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDCG9qqpUOJ2RsohIqhMuw3YZZSrnPqhf5ayh5y0Cq/I"
+  },
+  "calanda": {
+    "hostName": "calanda",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdoOZcFFRXIqEWqUnwCk/kqP8DZw6/4omDefCT6aNN4"
+  },
+  "lindberg": {
+    "hostName": "lindberg",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDksfXKLgPJVuWHAl/pxWRhghun8U6asTZNHa34u+gJw"
+  },
+  "lindberg-nextcloud": {
+    "hostName": "lindberg-nextcloud",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFR5U4yhZ2x/WN9dO+hVVSTCPMyv/1TB8mbuCXxexZOo"
+  },
+  "lindberg-build": {
+    "hostName": "lindberg-build",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMnDwwGiucyTI2U8o2rC53weJwp6dO8zcF7BZjkvVq7e"
+  },
+  "lindberg-webapps": {
+    "hostName": "lindberg-webapps",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJT99lj5OI+V1PlZl/T2ikBORwMiXjDfWpHYfq/GvUM5"
+  },
+  "batzberg": {
+    "hostName": "batzberg"
+  },
+  "tierberg": {
+    "hostName": "tierberg",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS2v0mUDJsNr1DHdgjxEQRnoVaEmExFfvHqpvagYLi6"
+  },
+  "stompert": {
+    "hostName": "stompert",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEKuqMPLbREFIrYcmReaRoHdz1TatpvlrZN14L6cikia"
+  },
+  "router-coredump": {
+    "hostName": "router"
+  },
+  "cyprianspitz": {
+    "hostName": "cyprianspitz",
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE4udYgCfxHEAkM9r8yaerk7l+BgW7039imM0moKpTbB"
+  }
+}

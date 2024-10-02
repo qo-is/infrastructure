@@ -1,0 +1,4 @@
+[submodule "private"]
+	path = private
+	url = https://git.qo.is/qo.is/infrastructure-private.git
+	branch = main
