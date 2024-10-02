@@ -2,7 +2,6 @@ name: CI
 
 on:
   push:
-  pull_request:
 
 env:
   ATTIC_AUTH_TOKEN: ${{ secrets.ATTIC_AUTH_TOKEN }}
