@@ -15,7 +15,8 @@
 # Services
 
 - [E-mail](email.md)
-- [Git](nixos-modules/qois/git/README.md)
+- [Git CI Runner](nixos-modules/qois/git-ci-runner/README.md)
+- [Git Hosting](nixos-modules/qois/git/README.md)
 - [Nextcloud](defaults/nextcloud/README.md)
 - [Nix Caches](nixos-configurations/lindberg-build/applications/README.md)
 - [Static Pages](nixos-modules/qois/static-page/README.md)
