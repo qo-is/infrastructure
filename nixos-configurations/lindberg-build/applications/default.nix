@@ -2,7 +2,6 @@
 {
 
   imports = [
-    ./gitlab-runner.nix
     ./attic.nix
     ./nixpkgs-cache.nix
   ];
