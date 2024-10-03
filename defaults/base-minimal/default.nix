@@ -78,16 +78,6 @@
     '';
   };
 
-  system.autoUpgrade = {
-    enable = true;
-    randomizedDelaySec = "30m";
-    flags = [
-      "--update-input"
-      "nixpkgs-nixos-2211"
-      "--commit-lock-file"
-    ];
-  };
-
   # Network services
   networking.firewall = {
     allowPing = true;
