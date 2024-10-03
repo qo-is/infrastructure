@@ -8,8 +8,7 @@ env:
 
 jobs:
   build:
-    runs-on: docker
-    container: nixpkgs/nix-flakes:nixos-24.05
+    runs-on: nix
     steps:
       - name: Initialize CI
         uses: https://git.qo.is/qo.is/actions-nix-init@main
@@ -28,26 +27,19 @@ jobs:
 
       - name: Build
         run: |
-          nix run .#cache watch &
           nix build --max-jobs 12 --cores 12
-          kill %1
           nix run .#cache push
 
       - name: Run Checks
-        run: |
-          nix run .#cache watch &
-          nix flake check
-          kill %1
+        run: nix flake check
 
       - name: Deploy Docs
         if: success() && github.ref == 'refs/heads/main'
         run: |
-          nix run .#cache watch &
           mkdir ~/.ssh/
           echo -e "Host lindberg-webapps.backplane.net.qo.is\n    StrictHostKeyChecking no" >> ~/.ssh/config
           (umask 0077 && printf "%s\n" "${{ secrets.SSH_DEPLOY_KEY }}" > ~/.ssh/id_ed25519)
           # Remote build might be neccessary due to non-wheel nix users signing restrictions.
           # However, the build should come from the cache anyway.
           nix develop --command deploy --skip-checks --remote-build .#lindberg-webapps.\"docs-ops.qo.is\"
-          kill %1
 
