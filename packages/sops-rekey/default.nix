@@ -1,14 +1,15 @@
 {
-  pkgs,
+  findutils,
   self,
   system,
+  writeShellApplication,
   ...
 }:
-pkgs.writeShellApplication {
+writeShellApplication {
   name = "sops-rekey";
   meta.description = "Rekey all sops secrets with changed keys";
   runtimeInputs = [
-    pkgs.findutils
+    findutils
     self.packages.${system}.sops
   ];
   text = ''

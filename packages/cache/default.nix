@@ -1,11 +1,17 @@
-{ pkgs, ... }:
-pkgs.writeShellApplication {
+{
+  attic-client,
+  findutils,
+  gnugrep,
+  writeShellApplication,
+  ...
+}:
+writeShellApplication {
   name = "cache";
   meta.description = "Access the infrastructure's attic cache. Mostly used in CI.";
   runtimeInputs = [
-    pkgs.attic-client
-    pkgs.findutils
-    pkgs.gnugrep
+    attic-client
+    findutils
+    gnugrep
   ];
   text = ''
     SERVER="https://attic.qo.is/"

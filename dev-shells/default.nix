@@ -9,12 +9,12 @@
     name = "qois-infrastructure-shell";
     buildInputs =
       let
-        vscode-with-extensions = pkgs.vscode-with-extensions.override {
+        vscodium-with-extensions = pkgs.vscode-with-extensions.override {
           vscodeExtensions = with pkgs.vscode-extensions; [ jnoortheen.nix-ide ];
           vscode = pkgs.vscodium;
         };
       in
-      [ vscode-with-extensions ]
+      [ vscodium-with-extensions ]
       ++ (with self.packages.${system}; [
         cache
         deploy-qois

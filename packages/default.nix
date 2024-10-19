@@ -1,17 +1,37 @@
-{ system, ... }@inputs:
+{
+  self,
+  system,
+  pkgs,
+  ...
+}:
+with pkgs.lib;
 {
   ${system} =
     let
-      all = import ./all.nix inputs;
+      packages = pipe (self.lib.foldersWithNix ./.) [
+        (map (name: {
+          inherit name;
+          path = path.append ./. "./${name}/default.nix";
+        }))
+        (map (
+          { name, path }:
+          {
+            inherit name;
+            value = pkgs.callPackage path {
+              inherit self;
+              inherit system;
+            };
+          }
+        ))
+        listToAttrs
+      ];
     in
-    {
-      inherit all;
-      default = all;
-      cache = import ./cache.nix inputs;
-      deploy-qois = import ./deploy-qois.nix inputs;
-      docs = import ./docs.nix inputs;
-      sops = import ./sops.nix inputs;
-      sops-config = import ./sops-config.nix inputs;
-      sops-rekey = import ./sops-rekey.nix inputs;
+    packages
+    // {
+      default =
+        let
+          nixosConfigs = mapAttrsToList (n: v: v.config.system.build.toplevel) self.nixosConfigurations;
+        in
+        pkgs.linkFarmFromDrvs "all" (nixosConfigs ++ (attrValues packages));
     };
 }

@@ -1,13 +1,14 @@
 {
-  pkgs,
-  self,
-  system,
+  gitMinimal,
+  nix,
+  sops,
+  writeShellApplication,
   ...
 }:
-pkgs.writeShellApplication {
+writeShellApplication {
   name = "sops";
   meta.description = "Run SOPS with the generated configuration";
-  runtimeInputs = with pkgs; [
+  runtimeInputs = [
     sops
     gitMinimal
     nix

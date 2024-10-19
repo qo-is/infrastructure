@@ -1,13 +1,13 @@
 {
-  pkgs,
+  deploy-rs,
   self,
-  system,
+  writeShellApplication,
   ...
 }:
-pkgs.writeShellApplication {
+writeShellApplication {
   name = "deploy-qois";
   meta.description = "Deploy configuration to specificed targets.";
-  runtimeInputs = [ pkgs.deploy-rs ];
+  runtimeInputs = [ deploy-rs ];
   text = ''
     deploy --interactive --targets "''${@:-${self}}"
   '';
