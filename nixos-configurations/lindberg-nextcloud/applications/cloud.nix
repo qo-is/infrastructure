@@ -10,7 +10,7 @@ in
 
   services.nextcloud = {
     hostName = host;
-    package = pkgs.nextcloud29;
+    package = pkgs.nextcloud30;
     settings.default_phone_region = "CH";
   };
   services.nginx.virtualHosts."${host}" = {
