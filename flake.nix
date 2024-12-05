@@ -12,12 +12,11 @@
       inputs.nixpkgs.follows = "nixpkgs-nixos-stable";
     };
     nixpkgs-nixos-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-nixos-stable.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs-nixos-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs = {
         nixpkgs.follows = "nixpkgs-nixos-unstable";
-        nixpkgs-stable.follows = "nixpkgs-nixos-stable";
       };
     };
     private.url = "git+file:./private";

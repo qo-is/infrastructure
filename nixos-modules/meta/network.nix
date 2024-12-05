@@ -146,7 +146,7 @@ in
                         });
                       };
 
-                      # Taken from https://github.com/NixOS/nixpkgs/blob/nixos-21.11/nixos/modules/services/networking/wireguard.nix: 
+                      # Taken from https://github.com/NixOS/nixpkgs/blob/nixos-21.11/nixos/modules/services/networking/wireguard.nix:
                       publicKey = mkOption {
                         example = "xTIBA5rboUvnH4htodjb6e697QjLERt1NAB4mZqp8Dg=";
                         type = str;

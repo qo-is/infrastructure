@@ -72,7 +72,7 @@
       dates = "weekly";
       options = "--delete-older-than 90d";
     };
-    package = pkgs.nixFlakes;
+    package = pkgs.nixVersions.stable;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
@@ -105,7 +105,10 @@
   };
 
   programs.autojump.enable = true;
-  programs.vim.defaultEditor = true;
+  programs.vim = {
+    enable = true;
+    defaultEditor = true;
+  };
 
   sops.defaultSopsFile =
     let
