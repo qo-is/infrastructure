@@ -30,6 +30,24 @@
       dbtype = "pgsql";
     };
 
+    appstoreEnable = false;
+    extraApps = {
+      inherit (config.services.nextcloud.package.passthru.packages.apps)
+        calendar
+        contacts
+        deck
+        groupfolders
+        maps
+        memories
+        music
+        news
+        notes
+        notify_push
+        tasks
+        twofactor_webauthn
+        ;
+    };
+
     phpOptions = {
       "opcache.interned_strings_buffer" = "23";
     };
