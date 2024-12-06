@@ -16,6 +16,11 @@ in
 
   options.qois.vpn-server = {
     enable = mkEnableOption "Enable vpn server services";
+    domain = mkOption {
+      description = "Domain for the VPN admin server";
+      type = types.str;
+      default = "vpn.qo.is";
+    };
     dnsRecords = mkOption {
       description = "DNS records to add to Hosts";
       type = with types; attrsOf str;
@@ -32,12 +37,14 @@ in
 
     environment.systemPackages = [ pkgs.headscale ];
 
+    systemd.services.headscale.after = [ "wireguard-wg-backplane.service" ];
+
     qois.backup-client.includePaths =
       with config.services.headscale.settings;
       (
         [
-          db_path
-          private_key_path
+          database.sqlite.path
+          derp.server.private_key_path
           noise.private_key_path
         ]
         ++ derp.paths
@@ -56,22 +63,22 @@ in
       in
       {
         enable = true;
-        address = vnet.backplane.hosts.cyprianspitz.v4.ip;
+        address = vnet.backplane.hosts.cyprianspitz.v4.ip; # TODO: This entails that the backplane interface is up.
         port = 46084;
         settings = {
-          server_url = "https://${vpnNet.domain}:443";
+          server_url = "https://${cfg.domain}:443";
 
           tls_letsencrypt_challenge_type = "TLS-ALPN-01";
           tls_letsencrypt_hostname = vpnNet.domain;
 
-          dns_config = {
-            nameservers = [ vnet.backplane.hosts.calanda.v4.ip ];
-            domains = [
-              vpnNet.domain
+          dns = {
+            base_domain = vpnNet.domain;
+            magic_dns = true;
+            nameservers.global = [ vnet.backplane.hosts.calanda.v4.ip ];
+            search_domains = [
+              # vpnNet.domain # First by default with magic_dns
               vnet.backplane.domain
             ];
-            magic_dns = true;
-            base_domain = vpnNet.domain;
             extra_records = pipe cfg.dnsRecords [
               attrsToList
               (map (val: val // { type = "A"; }))
@@ -80,56 +87,64 @@ in
 
           ip_prefixes = [ vpnNetPrefix ];
 
-          acl_policy_path = pkgs.writeTextFile {
-            name = "acls";
-            text = builtins.toJSON {
-              hosts = {
-                "clients" = vpnNetPrefix;
-              };
-              groups = {
-                "group:wheel" = cfg.wheelUsers;
-              };
-              tagOwners = {
-                "tag:srv" = [ "srv" ]; # srv tag ist owned by srv user
-              };
-              autoApprovers = {
-                exitNode = [
-                  "tag:srv"
-                  "group:wheel"
-                ];
-                routes = {
-                  ${backplaneNetPrefix} = [ "tag:srv" ];
+          policy =
+            let
+              # Note: headscale has limited acl support currently. This might change in the future.
+              aclPolicy = {
+                hosts = {
+                  "clients" = vpnNetPrefix;
                 };
-              };
-
-              acls = [
-                # Allow all communication from and to srv tagged hosts
-                {
-                  action = "accept";
-                  src = [
+                groups = {
+                  "group:wheel" = cfg.wheelUsers;
+                };
+                tagOwners = {
+                  "tag:srv" = [ "srv" ]; # srv tag ist owned by srv user
+                };
+                autoApprovers = {
+                  exitNode = [
                     "tag:srv"
-                    "srv"
+                    "group:wheel"
                   ];
-                  dst = [ "*:*" ];
-                }
-                {
-                  action = "accept";
-                  src = [ "*" ];
-                  dst = [
-                    "tag:srv:*"
-                    "srv:*"
-                  ];
-                }
+                  routes = {
+                    ${backplaneNetPrefix} = [ "tag:srv" ];
+                  };
+                };
 
-                # Allow access to all connected hosts for wheels
-                {
-                  action = "accept";
-                  src = [ "group:wheel" ];
-                  dst = [ "*:*" ];
-                }
-              ];
+                acls = [
+                  # Allow all communication from and to srv tagged hosts
+                  {
+                    action = "accept";
+                    src = [
+                      "tag:srv"
+                      "srv"
+                    ];
+                    dst = [ "*:*" ];
+                  }
+                  {
+                    action = "accept";
+                    src = [ "*" ];
+                    dst = [
+                      "tag:srv:*"
+                      "srv:*"
+                    ];
+                  }
+
+                  # Allow access to all connected hosts for wheels
+                  {
+                    action = "accept";
+                    src = [ "group:wheel" ];
+                    dst = [ "*:*" ];
+                  }
+                ];
+              };
+            in
+            {
+              mode = "file";
+              path = pkgs.writeTextFile {
+                name = "acls";
+                text = builtins.toJSON aclPolicy;
+              };
             };
-          };
         };
       };
   });

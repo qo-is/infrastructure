@@ -15,7 +15,7 @@
           id = "100.64.0.0";
           prefixLength = 10;
         };
-        domain = "vpn.qo.is";
+        domain = "vpn.net.qo.is";
         hosts = { };
       };
 
