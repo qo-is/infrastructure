@@ -63,6 +63,7 @@ in
         enable = wle24GhzEnabled;
 
         radios.${cfg.wleInterface24Ghz} = {
+          channel = 6;
           wifi4.enable = true;
           wifi4.capabilities = [
             "HT40-"
