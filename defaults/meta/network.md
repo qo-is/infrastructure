@@ -18,7 +18,7 @@ package "plessur.net.qo.is" {
   ]
 
   node calanda 
-  node fulberg
+  node cyprianspitz
   
   cloud plessurnet [
     <i>LAN Plessur
@@ -26,7 +26,7 @@ package "plessur.net.qo.is" {
   
   mediaconvchur - "enp4" calanda
   calanda "br0 (enp2, wlp1, wlp5)" --- plessurnet
-  calanda "enp4" -- "eno1" fulberg
+  plessurnet -- cyprianspitz
 } 
 
 package "riedbach.net.qo.is" {

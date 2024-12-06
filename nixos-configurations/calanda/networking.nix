@@ -66,14 +66,6 @@ in
   # DMZ Portforwarding
   networking.nat.forwardPorts =
     let
-      fulbergPort = (
-        proto: port: {
-          destination = "10.1.2.2:${toString port}";
-          proto = proto;
-          sourcePort = port;
-          loopbackIPs = [ "85.195.200.253" ];
-        }
-      );
       cyprianspitzPort = (
         proto: port: {
           destination = "10.1.1.11:${toString port}";
@@ -85,24 +77,10 @@ in
     in
     [
       {
-        destination = "10.1.2.2:22";
-        proto = "tcp";
-        sourcePort = 8022;
-      }
-      {
-        destination = "10.1.2.2:2222";
-        proto = "tcp";
-        sourcePort = 8222;
-      }
-      {
         destination = "10.1.1.11:2222";
         proto = "tcp";
         sourcePort = 8223;
       }
-    ]
-    ++ map (fulbergPort "udp") [
-      51820
-      51821
     ]
     ++ map (cyprianspitzPort "tcp") [
       80

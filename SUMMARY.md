@@ -27,7 +27,6 @@
 
 - [calanda](nixos-configurations/calanda/README.md)
 - [cyprianspitz](nixos-configurations/cyprianspitz/README.md)
-- [fulberg](nixos-configurations/fulberg/README.md)
 - [lindberg](nixos-configurations/lindberg/README.md)
 - [stompert](nixos-configurations/stompert/README.md)
 - [tierberg](nixos-configurations/tierberg/README.md)

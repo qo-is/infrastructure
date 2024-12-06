@@ -3,7 +3,6 @@
 let
   vnet = config.qois.meta.network.virtual.backplane.hosts;
   systemTargets = [
-    "fulberg"
     "tierberg"
   ];
   systemJobs = builtins.listToAttrs (

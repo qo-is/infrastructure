@@ -1,8 +1,4 @@
 {
-  "fulberg": {
-    "hostName": "fulberg",
-    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDCG9qqpUOJ2RsohIqhMuw3YZZSrnPqhf5ayh5y0Cq/I"
-  },
   "calanda": {
     "hostName": "calanda",
     "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKdoOZcFFRXIqEWqUnwCk/kqP8DZw6/4omDefCT6aNN4"

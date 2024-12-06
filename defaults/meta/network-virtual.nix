@@ -27,15 +27,6 @@
         domain = "backplane.net.qo.is";
 
         hosts = {
-          fulberg = {
-            v4.ip = "10.250.0.1";
-            endpoint = {
-              fqdn = physical-network.plessur-ext.hosts.calanda.fqdn;
-              port = 51821;
-            };
-            publicKey = "xcQOu+pp4ckNygcsLmJL1NmUzbbC+k3I7y+hJ9Ul4nk=";
-            persistentKeepalive = 25;
-          };
           lindberg = {
             v4.ip = "10.250.0.2";
             #endpoint = { # TODO: Port forwarding
