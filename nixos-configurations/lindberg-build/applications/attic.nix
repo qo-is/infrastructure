@@ -52,11 +52,10 @@ in
 
   imports = [ ../../../defaults/webserver ];
 
-  qois.postgresql.enable = true;
-
   # Note: Attic cache availability is "best effort", so no artifacts are backed up.
 
   services.postgresql = {
+    enable = true;
     ensureDatabases = [ "atticd" ];
     ensureUsers = [
       {

@@ -48,8 +48,6 @@ with lib;
       };
     };
 
-    qois.postgresql.enable = true;
-
     qois.backup-client.includePaths = [ config.services.vaultwarden.config.DATA_FOLDER ];
 
     services.postgresql =
@@ -57,6 +55,7 @@ with lib;
         name = config.users.users.vaultwarden.name;
       in
       {
+        enable = true;
         ensureUsers = [
           {
             inherit name;

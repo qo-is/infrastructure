@@ -21,7 +21,7 @@ with lib;
   };
 
   config = mkIf cfg.enable {
-    qois.postgresql.enable = true;
+    services.postgresql.enable = true;
 
     services.forgejo = {
       enable = true;

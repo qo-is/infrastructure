@@ -7,4 +7,5 @@
   ];
 
   qois.git-ci-runner.enable = true;
+  qois.postgresql.package = pkgs.postgresql_15;
 }

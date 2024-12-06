@@ -13,7 +13,7 @@
     owner = name;
   };
 
-  qois.postgresql.enable = true;
+  services.postgresql.enable = true;
   qois.backup-client.includePaths = [ config.services.nextcloud.home ];
 
   services.nextcloud = {

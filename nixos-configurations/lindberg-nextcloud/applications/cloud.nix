@@ -6,7 +6,7 @@ in
 
   imports = [ ../../../defaults/nextcloud ];
 
-  qois.postgresql.enable = true;
+  services.postgresql.enable = true;
 
   services.nextcloud = {
     hostName = host;

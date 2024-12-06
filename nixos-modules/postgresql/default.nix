@@ -11,11 +11,15 @@ in
 with lib;
 {
   options.qois.postgresql = {
-    enable = mkEnableOption ''Enable postgresql services with defaults'';
+    # Note: this module is auto-enabled if postgres is used.
+    package = mkPackageOption pkgs "postgresql" {
+      example = "postgresql_15";
+      default = null;
+    };
   };
 
-  config = mkIf cfg.enable {
-    services.postgresql.enable = true;
+  config = mkIf config.services.postgresql.enable {
+    services.postgresql.package = cfg.package;
     services.postgresqlBackup.enable = true;
     qois.backup-client.includePaths = [ config.services.postgresqlBackup.location ];
   };
