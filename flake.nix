@@ -5,7 +5,6 @@
     extra-trusted-public-keys = "qois-infrastructure:lh35ymN7Aoxm5Hz0S6JusxE+cYzMU+x9OMKjDVIpfuE=";
   };
   inputs = {
-    attic.url = "github:zhaofengli/attic";
     deploy-rs.url = "github:serokell/deploy-rs";
     disko = {
       url = "github:nix-community/disko";

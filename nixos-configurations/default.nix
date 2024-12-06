@@ -3,7 +3,6 @@
   pkgs,
   nixpkgs-nixos-stable,
   disko,
-  attic,
   sops-nix,
   ...
 }@inputs:
@@ -20,13 +19,6 @@ pkgs.lib.genAttrs configs (
     modules = [
       self.nixosModules.default
       ./${config}/default.nix
-      (
-        { ... }:
-        {
-          imports = [ "${attic}/nixos/atticd.nix" ];
-          services.atticd.useFlakeCompatOverlay = false;
-        }
-      )
       disko.nixosModules.disko
       sops-nix.nixosModules.sops
       (

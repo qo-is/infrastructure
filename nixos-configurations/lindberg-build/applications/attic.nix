@@ -14,7 +14,7 @@ in
     # generate secret with
     # nix run system#openssl rand 64 | base64 -w0
     # ATTIC_SERVER_TOKEN_HS256_SECRET_BASE64="output from openssl"
-    credentialsFile = config.sops.secrets."attic/server_token".path;
+    environmentFile = config.sops.secrets."attic/server_token".path;
 
     settings = {
       listen = "127.0.0.1:${builtins.toString atticPort}";
@@ -44,6 +44,8 @@ in
         max-size = 256 * 1024; # 256 KiB
       };
 
+      garbage-collection.default-retention-period = "6 months";
+
       database.url = "postgresql:///atticd?host=/run/postgresql";
     };
   };
@@ -51,6 +53,7 @@ in
   imports = [ ../../../defaults/webserver ];
 
   qois.postgresql.enable = true;
+
   # Note: Attic cache availability is "best effort", so no artifacts are backed up.
 
   services.postgresql = {
