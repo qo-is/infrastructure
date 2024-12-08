@@ -1,12 +1,9 @@
 {
-  config,
-  lib,
-  pkgs,
   ...
 }:
 
 {
-  services.nginx = {
+  config.services.nginx = {
     recommendedTlsSettings = true;
     recommendedOptimisation = true;
     recommendedProxySettings = true;

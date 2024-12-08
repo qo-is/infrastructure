@@ -5,7 +5,6 @@
     ../../defaults/backplane-net
     ../../defaults/base-vm
     ../../defaults/meta
-    ../../defaults/webserver
     ./applications
     ./backup.nix
     ./secrets.nix
