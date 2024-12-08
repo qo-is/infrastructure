@@ -54,5 +54,12 @@ in
         }) reachableHosts;
     };
   };
-  systemd.services.wgautomesh.requires = [ "wireguard-wg-backplane.service" ];
+  systemd.services.wgautomesh =
+    let
+      wgInterface = [ "wireguard-wg-backplane.service" ];
+    in
+    {
+      requires = wgInterface;
+      after = wgInterface;
+    };
 }
