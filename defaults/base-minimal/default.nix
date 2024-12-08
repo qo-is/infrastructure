@@ -52,21 +52,26 @@
 
   # Package management
   nix = {
-    settings = {
-      trusted-users = [
-        "root"
-        "@wheel"
-      ];
-      substituters = [
-        "https://${inputs.self.nixosConfigurations.lindberg-build.config.qois.nixpkgs-cache.hostname}?priority=39"
-        "https://cache.nixos.org?priority=40"
-        "https://attic.qo.is/qois-infrastructure"
-      ];
-      trusted-public-keys = [
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        "qois-infrastructure:lh35ymN7Aoxm5Hz0S6JusxE+cYzMU+x9OMKjDVIpfuE="
-      ];
-    };
+    settings =
+      let
+        substituters = [
+          "https://${inputs.self.nixosConfigurations.lindberg-build.config.qois.nixpkgs-cache.hostname}?priority=39"
+          "https://cache.nixos.org?priority=40"
+          "https://attic.qo.is/qois-infrastructure"
+        ];
+      in
+      {
+        trusted-users = [
+          "root"
+          "@wheel"
+        ];
+        trusted-public-keys = [
+          "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+          "qois-infrastructure:lh35ymN7Aoxm5Hz0S6JusxE+cYzMU+x9OMKjDVIpfuE="
+        ];
+        trusted-substituters = substituters; # For hosts that limit the subst list
+        inherit substituters;
+      };
     gc = {
       automatic = true;
       dates = "weekly";
