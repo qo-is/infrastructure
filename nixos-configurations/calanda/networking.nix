@@ -7,8 +7,6 @@ let
   getCalandaIp4 = net: net.hosts.calanda.v4.ip;
 in
 {
-  imports = [ ../../defaults/backplane-net ];
-
   networking.hostName = meta.hosts.calanda.hostName;
   networking.domain = "ilanz.fh2.ch";
   networking.enableIPv6 = false; # TODO
@@ -29,6 +27,8 @@ in
       }
     ];
   };
+
+  qois.backplane-net.enable = true;
 
   # TODO: Metaize ips
   services.qois.router = {

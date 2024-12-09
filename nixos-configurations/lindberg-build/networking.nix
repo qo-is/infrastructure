@@ -6,6 +6,8 @@
   networking.useDHCP = false;
   networking.interfaces.enp11s0.useDHCP = true;
 
+  qois.backplane-net.enable = true;
+
   networking.firewall.allowedTCPPorts = [
     80
     443

@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../../defaults/backplane-net
     ../../defaults/base-vm
     ../../defaults/meta
     ./applications
@@ -30,6 +29,8 @@
   networking.hostName = config.qois.meta.hosts.lindberg-nextcloud.hostName;
   networking.useDHCP = false;
   networking.interfaces.enp2s0.useDHCP = true;
+
+  qois.backplane-net.enable = true;
 
   networking.firewall.allowedTCPPorts = [
     80

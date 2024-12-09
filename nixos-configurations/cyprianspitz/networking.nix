@@ -6,8 +6,6 @@ in
 {
   networking.hostName = meta.hosts.cyprianspitz.hostName;
 
-  imports = [ ../../defaults/backplane-net ];
-
   networking.useDHCP = false;
   networking.interfaces.enp0s31f6.useDHCP = true;
   networking.interfaces.enp2s0.useDHCP = true;
@@ -76,6 +74,8 @@ in
     sshHostKey = "/secrets/system/initrd-ssh-key";
     # TODO Solve sops dependency porblem: config.sops.secrets."system/initrd-ssh-key".path;
   };
+
+  qois.backplane-net.enable = true;
 
   # Configure this node to be used as an vpn exit node
   qois.backup-client.includePaths = [ "/var/lib/tailscale" ];

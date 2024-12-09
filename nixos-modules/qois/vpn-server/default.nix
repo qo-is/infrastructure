@@ -58,7 +58,7 @@ in
       let
         vnet = config.qois.meta.network.virtual;
         vpnNet = vnet.vpn;
-        vpnNetPrefix = "${vpnNet.v4.id}/${builtins.toString vpnNet.v4.prefixLength}";
+        vpnNetPrefix = "${vpnNet.v4.id}/${toString vpnNet.v4.prefixLength}";
         backplaneNetPrefix = "${vnet.backplane.v4.id}/${builtins.toString vnet.backplane.v4.prefixLength}";
       in
       {

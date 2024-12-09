@@ -6,8 +6,6 @@ in
 {
   networking.hostName = meta.hosts.lindberg.hostName;
 
-  imports = [ ../../defaults/backplane-net ];
-
   networking.useDHCP = false;
   networking.interfaces.enp5s0.useDHCP = true;
 
@@ -73,6 +71,8 @@ in
     interface = "eth0";
     sshPort = 2222;
   };
+
+  qois.backplane-net.enable = true;
 
   # Use this node as vpn exit node
   qois.backup-client.includePaths = [ "/var/lib/tailscale" ];

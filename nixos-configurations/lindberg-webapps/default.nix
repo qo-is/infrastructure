@@ -4,7 +4,6 @@
   imports = [
     ../../defaults/base-vm
     ../../defaults/meta
-    ../../defaults/backplane-net
 
     ./applications
     ./disko-config.nix

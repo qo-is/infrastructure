@@ -6,13 +6,13 @@
 
 {
   imports = [
-    ../../defaults/backplane-net
     ../../defaults/hardware/apu.nix
     ../../defaults/base
     ../../defaults/meta
   ];
 
-  boot.initrd.luks.devices."systems".device = "/dev/disk/by-uuid/5718bd19-cb7a-4728-9ec4-6b2be48215fc";
+  boot.initrd.luks.devices."systems".device =
+    "/dev/disk/by-uuid/5718bd19-cb7a-4728-9ec4-6b2be48215fc";
 
   fileSystems."/" = {
     device = "/dev/mapper/vg_systems-hv_stompert";
@@ -51,6 +51,8 @@
   networking.interfaces.enp2s0.useDHCP = true;
   networking.interfaces.enp3s0.useDHCP = true;
   networking.tempAddresses = "disabled";
+
+  qois.backplane-net.enable = true;
 
   # Set your time zone.
   # time.timeZone = "Europe/Amsterdam";

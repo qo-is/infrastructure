@@ -7,8 +7,6 @@ in
 {
   networking.hostName = meta.hosts.tierberg.hostName;
 
-  imports = [ ../../defaults/backplane-net ];
-
   networking.enableIPv6 = false; # TODO
 
   networking.useDHCP = false;
@@ -20,6 +18,8 @@ in
     }
   ];
   networking.interfaces.enp3s0.useDHCP = true;
+
+  qois.backplane-net.enable = true;
 
   services.qois.luks-ssh = {
     enable = true;
