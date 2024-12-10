@@ -92,10 +92,6 @@
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = false;
-
-    # temporary mitigation agains CVE-2024-6387 «regreSSHion» RCE
-    # See https://github.com/NixOS/nixpkgs/pull/323753#issuecomment-2199762128
-    settings.LoginGraceTime = 0;
   };
 
   security.acme = {
