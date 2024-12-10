@@ -8,7 +8,7 @@ Reboot requires passphrase.
 # Get HDD Password:
 sops decrypt --extract '["system"]["hdd"]' private/nixos-configurations/cyprianspitz/secrets.sops.yaml
 
-ssh -p 8223 -J root@calanda.plessur-ext.net.qo.is
+ssh -p 8223 root@calanda.plessur-ext.net.qo.is
 ```
 
 ## Hardware
