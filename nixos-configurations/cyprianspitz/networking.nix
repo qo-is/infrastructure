@@ -39,7 +39,7 @@ in
     in
     {
       enable = true;
-      resolveLocalQueries = false;
+      resolveLocalQueries = true;
       settings = {
         interface = "vms-nat";
         bind-interfaces = true;
@@ -85,6 +85,8 @@ in
     useRoutingFeatures = "server";
     authKeyFile = config.sops.secrets."tailscale/key".path;
     extraUpFlags = [
+      "--timeout 60s"
+      "--accept-dns=false"
       "--login-server=https://vpn.qo.is"
       "--advertise-exit-node"
       (

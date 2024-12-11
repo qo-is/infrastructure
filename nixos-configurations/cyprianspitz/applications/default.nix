@@ -1,4 +1,9 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
 
   imports = [
@@ -7,4 +12,5 @@
   ];
 
   qois.loadbalancer.enable = true;
+  qois.backplane-net.hosts.loadbalancers = lib.mkForce [ "cyprianspitz" ];
 }

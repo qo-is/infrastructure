@@ -8,9 +8,13 @@ with lib;
 let
   cfg = config.qois.vpn-server;
   cfgLoadbalancer = config.qois.loadbalancer;
-  defaultDnsRecords = mapAttrs (
-    name: value: mkIf (cfgLoadbalancer.hostmap ? ${value}) cfgLoadbalancer.hostmap.${value}
-  ) cfgLoadbalancer.domains;
+  defaultDnsRecords =
+    (mapAttrs (
+      name: value: mkIf (cfgLoadbalancer.hostmap ? ${value}) cfgLoadbalancer.hostmap.${value}
+    ) cfgLoadbalancer.domains)
+    // {
+      "vpn.qo.is" = config.services.headscale.address;
+    };
 in
 {
 
@@ -37,6 +41,7 @@ in
 
     environment.systemPackages = [ pkgs.headscale ];
 
+    # We bind to the backplane vpn IP, so wait for the wireguard net to be available
     systemd.services.headscale.after = [ "wireguard-wg-backplane.service" ];
 
     qois.backup-client.includePaths =
@@ -63,7 +68,7 @@ in
       in
       {
         enable = true;
-        address = vnet.backplane.hosts.cyprianspitz.v4.ip; # TODO: This entails that the backplane interface is up.
+        address = vnet.backplane.hosts.cyprianspitz.v4.ip;
         port = 46084;
         settings = {
           server_url = "https://${cfg.domain}:443";
