@@ -93,7 +93,7 @@
 
       cyprianspitz-vms-nat = {
         v4 = {
-          id = "10.247.0.0";
+          id = "10.248.0.0";
           prefixLength = 24;
         };
         domain = "cyprianspitz-vms-nat.net.qo.is";

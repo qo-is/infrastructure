@@ -80,9 +80,9 @@ in
           dns = {
             base_domain = vpnNet.domain;
             magic_dns = true;
-            nameservers.global = [ vnet.backplane.hosts.calanda.v4.ip ];
+            nameservers.global = [ "127.0.0.1" ];
             search_domains = [
-              # vpnNet.domain # First by default with magic_dns
+              # First is base_domain by default with magic_dns
               vnet.backplane.domain
             ];
             extra_records = pipe cfg.dnsRecords [

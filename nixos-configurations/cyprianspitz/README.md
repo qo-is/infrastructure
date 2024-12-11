@@ -11,6 +11,13 @@ sops decrypt --extract '["system"]["hdd"]' private/nixos-configurations/cyprians
 ssh -p 8223 root@calanda.plessur-ext.net.qo.is
 ```
 
+
+Direct remote ssh access:
+
+```
+ssh -p 8222 root@calanda.plessur-ext.net.qo.is
+```
+
 ## Hardware
 
 TODO
@@ -29,4 +36,4 @@ TODO
 
 ### HDD Bay
 
-Note that slot 5 (the leftmost) SATA bay is not connected due to the mainboard only having 4 SATA plugs.
+Note that the slot in the middle of the SATA bay is not connected due to the mainboard only having 4 SATA plugs.

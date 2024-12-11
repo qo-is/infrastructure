@@ -54,7 +54,14 @@ in
         dhcp-authoritative = true;
       };
     };
-  systemd.services.dnsmasq.bindsTo = [ "network-addresses-vms-nat.service" ];
+  systemd.services.dnsmasq =
+    let
+      vmsNat = [ "network-addresses-vms-nat.service" ];
+    in
+    {
+      bindsTo = vmsNat;
+      after = vmsNat;
+    };
   networking.firewall.interfaces.vms-nat = {
     allowedUDPPorts = [
       53

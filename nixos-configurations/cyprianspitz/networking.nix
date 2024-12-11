@@ -2,27 +2,34 @@
 
 let
   meta = config.qois.meta;
+  getNetV4Ip = net: {
+    address = net.hosts.cyprianspitz.v4.ip;
+    prefixLength = net.v4.prefixLength;
+  };
+  calandaIp = meta.network.physical.plessur-lan.hosts.calanda.v4.ip;
 in
 {
+  networking.enableIPv6 = false;
   networking.hostName = meta.hosts.cyprianspitz.hostName;
 
+  networking.nameservers = [ calandaIp ];
   networking.useDHCP = false;
-  networking.interfaces.enp0s31f6.useDHCP = true;
-  networking.interfaces.enp2s0.useDHCP = true;
+  networking.interfaces.enp0s31f6.ipv4.addresses = [
+    (getNetV4Ip meta.network.physical.plessur-lan)
+  ];
+
+  networking.defaultGateway = {
+    address = calandaIp;
+    interface = "enp0s31f6";
+  };
 
   # Virtualization
-  networking.interfaces.vms-nat.useDHCP = false;
-  networking.interfaces.vms-nat.ipv4.addresses = [
-    (
-      let
-        netConfig = meta.network.virtual.cyprianspitz-vms-nat;
-      in
-      {
-        address = netConfig.hosts.cyprianspitz.v4.ip;
-        prefixLength = netConfig.v4.prefixLength;
-      }
-    )
-  ];
+  networking.interfaces.vms-nat = {
+    useDHCP = false;
+    ipv4.addresses = [
+      (getNetV4Ip meta.network.virtual.cyprianspitz-vms-nat)
+    ];
+  };
 
   networking.bridges.vms-nat.interfaces = [ ];
   networking.nat = {
@@ -41,6 +48,7 @@ in
       enable = true;
       resolveLocalQueries = true;
       settings = {
+        server = [ calandaIp ];
         interface = "vms-nat";
         bind-interfaces = true;
 
@@ -65,11 +73,10 @@ in
   };
 
   # Boot
-  boot.initrd.network.udhcpc.enable = true;
-
   services.qois.luks-ssh = {
     enable = true;
     interface = "eth0";
+
     sshPort = 2222;
     sshHostKey = "/secrets/system/initrd-ssh-key";
     # TODO Solve sops dependency porblem: config.sops.secrets."system/initrd-ssh-key".path;

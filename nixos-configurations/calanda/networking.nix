@@ -4,6 +4,7 @@ let
   meta = config.qois.meta;
   plessur-dmz-net = meta.network.physical.plessur-dmz;
   plessur-lan-net = meta.network.physical.plessur-lan;
+  plessur-ext-net = meta.network.physical.plessur-ext;
   getCalandaIp4 = net: net.hosts.calanda.v4.ip;
 in
 {
@@ -53,6 +54,14 @@ in
     };
   };
 
+  # Assign the static address to cyprianspitz (required for ssh luks unlock at this time)
+  services.dnsmasq.settings.dhcp-host =
+    let
+      cyprianspitzEnp0s31f6Mac = "9c:6b:00:58:6e:90";
+      inherit (plessur-lan-net.hosts.cyprianspitz.v4) ip;
+    in
+    "${cyprianspitzEnp0s31f6Mac},${ip}";
+
   # DMZ
   services.unbound.settings.server = {
     interface = [ plessur-dmz-net.hosts.calanda.v4.ip ];
@@ -66,21 +75,19 @@ in
   # DMZ Portforwarding
   networking.nat.forwardPorts =
     let
-      cyprianspitzPort = (
-        proto: port: {
-          destination = "10.1.1.11:${toString port}";
-          proto = proto;
-          sourcePort = port;
-          loopbackIPs = [ "85.195.200.253" ];
+      cyprianspitzPortDst = (
+        proto: sourcePort: dstPort: {
+          destination = "${plessur-lan-net.hosts.cyprianspitz.v4.ip}:${toString dstPort}";
+          inherit proto;
+          inherit sourcePort;
+          loopbackIPs = [ plessur-ext-net.hosts.calanda.v4.ip ];
         }
       );
+      cyprianspitzPort = proto: port: (cyprianspitzPortDst proto port port);
     in
     [
-      {
-        destination = "10.1.1.11:2222";
-        proto = "tcp";
-        sourcePort = 8223;
-      }
+      (cyprianspitzPortDst "tcp" 8222 22)
+      (cyprianspitzPortDst "tcp" 8223 2222)
     ]
     ++ map (cyprianspitzPort "tcp") [
       80
