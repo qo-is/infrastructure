@@ -43,6 +43,7 @@
       v4 = {
         id = "10.1.1.0";
         prefixLength = 24;
+        # Note: DHCP from .2 to .249, see calanda config
       };
       domain = "plessur-lan.net.qo.is";
 
@@ -50,6 +51,7 @@
         calanda = {
           v4.ip = "10.1.1.1";
         };
+        cyprianspitz.v4.ip = "10.1.1.250";
       };
     };
 

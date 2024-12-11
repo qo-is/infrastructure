@@ -38,7 +38,7 @@ in
     in
     {
       enable = true;
-      resolveLocalQueries = false;
+      resolveLocalQueries = true;
       settings = {
         interface = "vms-nat";
         bind-interfaces = true;
@@ -74,20 +74,5 @@ in
 
   qois.backplane-net.enable = true;
 
-  # Use this node as vpn exit node
-  qois.backup-client.includePaths = [ "/var/lib/tailscale" ];
-  services.tailscale = {
-    enable = true;
-    openFirewall = true;
-    useRoutingFeatures = "server";
-    authKeyFile = config.sops.secrets."tailscale/key".path;
-    extraUpFlags = [
-      "--login-server=https://vpn.qo.is"
-      "--advertise-exit-node"
-      (
-        with meta.network.virtual.backplane.v4; "--advertise-routes=${id}/${builtins.toString prefixLength}"
-      )
-      "--advertise-tags=tag:srv"
-    ];
-  };
+  qois.vpn-exit-node.enable = true;
 }

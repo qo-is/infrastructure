@@ -79,7 +79,7 @@ let
 in
 {
 
-  options.qois.loadbalancer = with lib; {
+  options.qois.loadbalancer = {
     enable = mkEnableOption "Enable services http+s loadbalancing";
 
     domains = mkOption {

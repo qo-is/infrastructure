@@ -78,22 +78,5 @@ in
   qois.backplane-net.enable = true;
 
   # Configure this node to be used as an vpn exit node
-  qois.backup-client.includePaths = [ "/var/lib/tailscale" ];
-  services.tailscale = {
-    enable = true;
-    openFirewall = true;
-    useRoutingFeatures = "server";
-    authKeyFile = config.sops.secrets."tailscale/key".path;
-    extraUpFlags = [
-      "--timeout 60s"
-      "--accept-dns=false"
-      "--login-server=https://vpn.qo.is"
-      "--advertise-exit-node"
-      (
-        with meta.network.virtual.backplane.v4; "--advertise-routes=${id}/${builtins.toString prefixLength}"
-      )
-      "--advertise-tags=tag:srv"
-    ];
-  };
-
+  qois.vpn-exit-node.enable = true;
 }

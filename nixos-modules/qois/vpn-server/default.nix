@@ -56,6 +56,7 @@ in
       );
 
     networking.firewall.checkReversePath = "loose";
+    networking.firewall.allowedTCPPorts = [ config.services.headscale.port ];
     networking.firewall.allowedUDPPorts = [
       41641
     ];
