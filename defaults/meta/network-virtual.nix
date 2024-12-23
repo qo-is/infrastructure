@@ -41,11 +41,6 @@
             publicKey = "6XGL4QKB8AMpm/VGcTgWqk9RiSws7DmY5TpIDkXbwlg=";
             persistentKeepalive = 25;
           };
-          tierberg = {
-            v4.ip = "10.250.0.4";
-            publicKey = "51j1l+pT9W61wx4y2KyUb1seLdCHs3FUKAjmrHBFz1w=";
-            persistentKeepalive = 25;
-          };
           stompert = {
             v4.ip = "10.250.0.5";
             publicKey = "CHTjQbmN9WhbRCxKgowxpMx4c5Zu0NDk0rRXEvuB3XA=";

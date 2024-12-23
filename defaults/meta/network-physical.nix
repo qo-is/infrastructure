@@ -91,9 +91,6 @@
       };
       domain = "lattenbach-lan.net.qo.is";
       hosts = {
-        tierberg = {
-          v4.ip = "10.0.0.60";
-        };
       };
     };
 

@@ -22,10 +22,6 @@
   "batzberg": {
     "hostName": "batzberg"
   },
-  "tierberg": {
-    "hostName": "tierberg",
-    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJS2v0mUDJsNr1DHdgjxEQRnoVaEmExFfvHqpvagYLi6"
-  },
   "stompert": {
     "hostName": "stompert",
     "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEKuqMPLbREFIrYcmReaRoHdz1TatpvlrZN14L6cikia"

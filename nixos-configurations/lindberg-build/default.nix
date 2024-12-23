@@ -6,7 +6,6 @@
     ../../defaults/meta
 
     ./applications
-    ./backup.nix
     ./disko-config.nix
     ./networking.nix
     ./secrets.nix

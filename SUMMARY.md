@@ -29,5 +29,4 @@
 - [cyprianspitz](nixos-configurations/cyprianspitz/README.md)
 - [lindberg](nixos-configurations/lindberg/README.md)
 - [stompert](nixos-configurations/stompert/README.md)
-- [tierberg](nixos-configurations/tierberg/README.md)
 

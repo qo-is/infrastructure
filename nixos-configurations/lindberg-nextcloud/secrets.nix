@@ -3,7 +3,6 @@ let
   backupConfiguration = {
     restartUnits = [
       "borgbackup-job-system-cyprianspitz.service"
-      "borgbackup-job-system-tierberg.service"
     ];
   };
 in

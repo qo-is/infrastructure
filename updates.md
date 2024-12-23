@@ -28,7 +28,7 @@ deploy-qois .#lindberg-nextcloud .#lindberg-build
 deploy-qois .#lindberg
 
 # Deploy slow physical hosts (maybe do individually)
-deploy-qois --confirm-timeout 600 --activation-timeout 600 --targets .#tierberg .#stompert .#stompert
+deploy-qois --confirm-timeout 600 --activation-timeout 600 --targets .#stompert .#stompert
 
 ```
 
