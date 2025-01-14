@@ -5,7 +5,7 @@
   ...
 }:
 {
-  ${system}.default = pkgs.mkShell {
+  ${system}.default = pkgs.mkShellNoCC {
     name = "qois-infrastructure-shell";
     buildInputs =
       let
