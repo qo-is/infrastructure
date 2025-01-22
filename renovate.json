@@ -6,9 +6,6 @@
     "extends": [ "schedule:weekly" ]
   },
   "cloneSubmodules": true,
-  "git-submodules": {
-    "enabled": true
-  },
   "nix": {
     "enabled": true
   }
