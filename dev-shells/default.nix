@@ -24,6 +24,7 @@
       ++ (with pkgs; [
         attic-client
         deploy-rs
+        nixVersions.git
         nixd
         nixfmt-rfc-style
         nixos-anywhere

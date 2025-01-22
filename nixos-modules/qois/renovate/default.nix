@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  inputs,
   ...
 }:
 with lib;
@@ -26,9 +27,14 @@ in
 
   config = mkIf cfg.enable {
     sops.secrets."renovate/token".restartUnits = [ "renovate.service" ];
+    sops.secrets."renovate/host_rules".restartUnits = [ "renovate.service" ];
+    systemd.services.renovate.environment.LOG_LEVEL = "debug";
     services.renovate = {
       enable = true;
-      credentials.RENOVATE_TOKEN = config.sops.secrets."renovate/token".path;
+      credentials = {
+        RENOVATE_TOKEN = config.sops.secrets."renovate/token".path;
+        RENOVATE_HOST_RULES = config.sops.secrets."renovate/host_rules".path;
+      };
       runtimePackages = with pkgs; [
         nix
       ];
@@ -40,6 +46,13 @@ in
         optimizeForDisabled = true;
       };
       schedule = "*:0/10";
+    };
+
+    systemd.services.renovate = {
+      path = mkBefore [ inputs.pkgs.nixVersions.git ]; # Circumvent submodule bug - remove after >=2.26 is the default.
+      script = mkBefore ''
+        echo -e "machine ${cfg.gitServer}\n    login $(systemd-creds cat 'SECRET-RENOVATE_TOKEN')\n    password x-oauth-basic" > ~/.netrc
+      '';
     };
   };
 }
