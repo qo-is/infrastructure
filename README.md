@@ -66,3 +66,6 @@ Usage:
 sops $file # To edit a file
 sops-rekey # To rekey all secrets, e.g. after a key rollover or new host
 ```
+
+After changing secrets, don't forget to push the sub-repository and run
+`nix flake update private` in the infrastructure repository to use the changes in builds.
