@@ -34,6 +34,8 @@ with lib;
         ROCKET_PORT = 8222;
 
         USE_SENDMAIL = true;
+        SENDMAIL_COMMAND = "${pkgs.msmtp}/bin/sendmail";
+
         SMTP_FROM = "vault@qo.is";
         SMTP_FROM_NAME = cfg.domain;
 
@@ -68,7 +70,6 @@ with lib;
     # See https://search.nixos.org/options?channel=unstable&show=services.vaultwarden.environmentFile
     sops.secrets."vaultwarden/environment-file".restartUnits = [ "vaultwarden.service" ];
 
-    systemd.services.vaultwarden.path = [ pkgs.msmtp ];
     users.users.vaultwarden.extraGroups = [ "postdrop" ];
 
     networking.hosts."127.0.0.1" = [ cfg.domain ];

@@ -40,7 +40,7 @@ with lib;
         host = "mail.cyon.ch";
         user = "system@qo.is";
         from = "no-reply@qo.is";
-        passwordeval = "${pkgs.busybox}/bin/cat ${config.sops.secrets."msmtp/password".path}";
+        passwordeval = "${pkgs.coreutils}/bin/cat ${config.sops.secrets."msmtp/password".path}";
       };
     };
   };
