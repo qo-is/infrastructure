@@ -148,7 +148,7 @@ in
             frontend http
               mode http
               bind *:80
-              use_backend %[req.hdr(host),lower,map_dom(${domainMappingFile})]-http
+              use_backend %[req.hdr(host),lower,map(${domainMappingFile})]-http
 
             frontend https
               bind *:443
@@ -156,7 +156,7 @@ in
               tcp-request inspect-delay 5s
               tcp-request content accept if { req_ssl_hello_type 1 }
 
-              use_backend %[req.ssl_sni,lower,map_dom(${domainMappingFile})]-https
+              use_backend %[req.ssl_sni,lower,map(${domainMappingFile})]-https
 
             ## Generated Backends:
             ${httpBackends}
