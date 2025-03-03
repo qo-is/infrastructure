@@ -16,12 +16,6 @@ jobs:
           token: ${{ secrets.CI_TOKEN }}
           lfs: false
 
-      - name: Add submodules to nix store to circumvent another nix bug
-        run: |
-          git clone https://git.qo.is/qo.is/infrastructure-private.git /tmp/private
-          cd /tmp/private
-          nix flake prefetch
-
       - name: Use attic cache
         run: nix run .#cache use
 
