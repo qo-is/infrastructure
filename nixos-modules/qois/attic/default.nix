@@ -85,7 +85,7 @@ in
 
     services.nginx = {
       enable = true;
-      clientMaxBodySize = "1g";
+      clientMaxBodySize = "5G";
       virtualHosts.${cfg.domain} = {
         kTLS = true;
         forceSSL = true;
