@@ -9,7 +9,7 @@ On [vpn.qo.is](https://vpn.qo.is) we run a [Tailscale](https://tailscale.com) co
 | `login-server` | `https://vpn.qo.is` | Use our own VPN service and not tailscale's upstream one |
 
 
-⚠️  Currently, if the client is in an IPv6 network, the transport is broken. See [#51](https://gitlab.com/qo.is/infrastructure/-/issues/51) for progress on this.
+⚠️  Currently, if the client is in an IPv6 network, the transport is broken. See [#4](https://git.qo.is/qo.is/infrastructure/issues/4) for progress on this.
 
 ## Exit nodes
 
