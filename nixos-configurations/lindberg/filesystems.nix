@@ -24,11 +24,11 @@
         path = "/boot-primary";
         efiBootloaderId = "NixOS primary";
       }
-      #{
-      #  devices = [ "nodev" ];
-      #  path = "/boot-secondary";
-      #  efiBootloaderId = "NixOS secondary";
-      #}
+      {
+        devices = [ "nodev" ];
+        path = "/boot-secondary";
+        efiBootloaderId = "NixOS secondary";
+      }
     ];
   };
 }
