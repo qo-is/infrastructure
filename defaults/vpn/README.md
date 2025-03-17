@@ -1,32 +1,20 @@
 # VPN
 
-On [vpn.qo.is](https://vpn.qo.is) we run a [Tailscale](https://tailscale.com) compatible VPN service. To use the service, you can use a normal Tailscale client with following additional configuration:
-
-| Option | Recommended value | Description |
-|--------|-------------------|-------------|
-| `accept-routes` | enabled (flag) | Accept direct routes to internal services |
-| `exit-node` | `100.64.0.5` (lindberg) or `100.64.0.6` (cypriaspitz) | Use host as [exit node](#exit-nodes) |
-| `login-server` | `https://vpn.qo.is` | Use our own VPN service and not tailscale's upstream one |
-
-
-⚠️  Currently, if the client is in an IPv6 network, the transport is broken. See [#4](https://git.qo.is/qo.is/infrastructure/issues/4) for progress on this.
-
-## Exit nodes
-
-- `100.64.0.5`: lindberg (riedbach-net)
-- `100.64.0.6`: cyprianspitz (plessur-net)
-
-Currently, name resolution for these do not work reliably on first starts, hence the IP must be used. This hould be fixed in the future.
+We run a [Tailscale](https://tailscale.com) compatible VPN service on [vpn.qo.is](https://vpn.qo.is).
 
 ## User and Client Management
 
-To register a new client, you can generate a pre-auth key and insert it in the client:
+To register a new client on the `vpn.qo.is` host:, generate a pre-auth key and insert it in the client:
 
 ```bash
+headscale users create marlene.mayer
 headscale preauthkeys create --user marlene.mayer
 ```
 
-Or alternatively use the register command shown when configuring the VPN client.
+> ⚠️ For now, the username must be added to `qois.vpn-server.wheelUsers`.
+> In the future, the VPN ACL might get more granular to allow for non-wheel users.
+
+Alternatively to using a pre-auth key, the register command shown when configuring the VPN client may be used.
 
 ## ACL
 
@@ -34,49 +22,43 @@ At this time, there are a few ACL rules to isolate a users host but do not expec
 
 ## Exit Nodes
 
-To add an exit node, create a preauth secret on the `vpn.qo.is` host:
+These nodes allow access to the internet for clients connected to the VPN:
 
-```bash
-headscale preauthkeys create --user srv --reusable
-```
+- `100.64.0.5`: lindberg (riedbach-net)
+- `100.64.0.6`: cyprianspitz (plessur-net)
 
-and configure the host as follows:
+> ⚠️ Currently, name resolution for these do not work reliably on first starts, hence the IP must be used. This hould be fixed in the future.
 
-```nix
-# TODO: This should not be a snipped but a module
 
-{config, ...}: {
-  # Use this node as vpn exit node
-  services.tailscale = let meta = config.qois.meta; in {
-    enable = true;
-    openFirewall = true;
-    useRoutingFeatures = "server";
-    authKeyFile = "/secrets/wireguard/tailscale-key"; # The preauth secret. TODO: Should be in sops.
-    extraUpFlags = [
-      "--login-server=https://vpn.qo.is"
-      "--advertise-exit-node"
-      (
-        with meta.network.virtual.backplane.v4; "--advertise-routes=${id}/${builtins.toString prefixLength}"
-      )
-      "--advertise-tags=tag:srv"
-    ];
-  };
-}
-```
+### Add exit nodes:
 
-and register it in Headscale with:
+1. Create a preauth secret on the `vpn.qo.is` host:
+   ```bash
+    headscale preauthkeys create --user srv --reusable
+    ```
+2. Configure the new exit-node host with the `qois.vpn-exit-node` module.
 
-```bash
-headscale nodes register -u srv -k nodekey:xyzxyzxyzxyzxyzxyzxyzxyz
-```
-
-With using the `srv` user, exit nodes and routes get automatically accepted as trusted.
+When using the `srv` user, exit nodes and routes are automatically accepted as trusted.
 
 ## Clients
 
+To use the service, you can use a normal Tailscale client with following additional configuration:
+
+| Option | Recommended value | Description |
+|--------|-------------------|-------------|
+| `accept-routes` | enabled (flag) | Accept direct routes to internal services |
+| `exit-node` | `100.64.0.5` (lindberg) or `100.64.0.6` (cypriaspitz) | Use host as [exit node](#exit-nodes) |
+| `login-server` | `https://vpn.qo.is` | Use our own VPN service. |
+
+
+> ⚠️ Currently, if the client is in an IPv6 network, the transport is broken.
+> Disable IPv6 connectivity to use the VPN.
+>  See [#4](https://git.qo.is/qo.is/infrastructure/issues/4) for details.
+
+
 ### NixOS
 
-Sample config:
+Sample config with automatic connectivity to VPN on boot:
 
 ```nix
 { config, pkgs, ... }: {
@@ -96,12 +78,12 @@ Sample config:
 }
 ```
 
-### Mobile App
+### Android
 
-> Android App: Tip 5 times on the tooltip dots to reveal server config option
+See [this Headscale documentation for more](https://headscale.net/stable/usage/connect/android/) on how to configure the mobile app.
 
-See [this Headscale documentation for more](https://headscale.net/android-client/#configuring-the-headscale-url) on how to configure the mobile app. Note that on restarts, sometimes you have to reopen/save the config dialog. If the Tailscale login site is shown, just close the browser with the ❌.
-
+> ⚠️ Note that on restarts, sometimes you have to reopen/save the config dialog.
+> If the Tailscale login site is shown, just close the browser with the ❌.
 
 ## Backup and Restore
 
