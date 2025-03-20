@@ -40,7 +40,11 @@ with lib;
         };
         "ssh.minimum_key_sizes".RSA = 2047;
         session.COOKIE_SECURE = true;
-        service.DISABLE_REGISTRATION = true;
+        service = {
+          DISABLE_REGISTRATION = true;
+          ENABLE_NOTIFY_MAIL = true;
+          DEFAULT_KEEP_EMAIL_PRIVATE = true;
+        };
         mailer = {
           ENABLED = true;
           PROTOCOL = "sendmail";
