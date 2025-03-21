@@ -9,7 +9,6 @@
 {
 
   imports = [
-    ../base-minimal
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 

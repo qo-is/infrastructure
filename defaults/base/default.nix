@@ -6,7 +6,6 @@
 }:
 {
   imports = [
-    ../base-minimal
     ./applications.nix
   ];
 
