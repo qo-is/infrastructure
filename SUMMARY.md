@@ -15,11 +15,11 @@
 # Services
 
 - [E-mail](email.md)
-- [Git CI Runner](nixos-modules/qois/git-ci-runner/README.md)
-- [Git Hosting](nixos-modules/qois/git/README.md)
+- [Git CI Runner](nixos-modules/git-ci-runner/README.md)
+- [Git Hosting](nixos-modules/git/README.md)
 - [Nextcloud](defaults/nextcloud/README.md)
 - [Nix Caches](nixos-configurations/lindberg-build/applications/README.md)
-- [Static Pages](nixos-modules/qois/static-page/README.md)
+- [Static Pages](nixos-modules/static-page/README.md)
 - [VPN](defaults/vpn/README.md)
 - [Vaultwarden](nixos-modules/vault/README.md)
 
@@ -29,4 +29,3 @@
 - [cyprianspitz](nixos-configurations/cyprianspitz/README.md)
 - [lindberg](nixos-configurations/lindberg/README.md)
 - [stompert](nixos-configurations/stompert/README.md)
-
