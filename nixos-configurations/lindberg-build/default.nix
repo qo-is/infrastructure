@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../../defaults/base-vm
     ../../defaults/meta
 
     ./applications
@@ -10,6 +9,7 @@
     ./networking.nix
     ./secrets.nix
   ];
+  qois.system.virtual-machine.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Amsterdam";

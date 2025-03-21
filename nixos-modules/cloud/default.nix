@@ -11,6 +11,7 @@ let
 in
 with lib;
 {
+
   options.qois.cloud = {
     enable = mkEnableOption "Enable qois cloud service";
 

@@ -7,10 +7,11 @@
 }:
 {
   imports = [
-    ./unfree.nix
     ./applications.nix
     ./overlays.nix
     ./security.nix
+    ./unfree.nix
+    ./virtual-machine.nix
   ];
 
   boot.loader.timeout = 2;

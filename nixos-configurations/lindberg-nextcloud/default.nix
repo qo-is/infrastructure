@@ -2,12 +2,13 @@
 
 {
   imports = [
-    ../../defaults/base-vm
     ../../defaults/meta
     ./applications
     ./backup.nix
     ./secrets.nix
   ];
+
+  qois.system.virtual-machine.enable = true;
 
   boot.loader.grub.device = "/dev/vda";
   fileSystems."/" = {
