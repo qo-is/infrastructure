@@ -11,9 +11,10 @@
 
     ../../defaults/hardware/asrock-z790m.nix
 
-    ../../defaults/base
     ../../defaults/meta
   ];
+
+  qois.system.physical.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Amsterdam";

@@ -7,9 +7,11 @@
 {
   imports = [
     ../../defaults/hardware/apu.nix
-    ../../defaults/base
+
     ../../defaults/meta
   ];
+
+  qois.system.physical.enable = true;
 
   boot.initrd.luks.devices."systems".device =
     "/dev/disk/by-uuid/5718bd19-cb7a-4728-9ec4-6b2be48215fc";

@@ -9,6 +9,7 @@
   imports = [
     ./applications.nix
     ./overlays.nix
+    ./physical.nix
     ./security.nix
     ./unfree.nix
     ./virtual-machine.nix
