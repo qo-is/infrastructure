@@ -8,11 +8,11 @@
 with lib;
 
 let
-  routerCfg = config.services.qois.router;
-  cfg = config.services.qois.router.wireless;
+  routerCfg = config.qois.router;
+  cfg = config.qois.router.wireless;
 in
 {
-  options.services.qois.router.wireless = {
+  options.qois.router.wireless = {
     enable = mkEnableOption "router wireless service";
 
     wleInterface24Ghz = mkOption {

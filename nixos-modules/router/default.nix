@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.services.qois.router;
+  cfg = config.qois.router;
 in
 {
-  options.services.qois.router = {
+  options.qois.router = {
     enable = mkEnableOption "router service";
 
     wanInterface = mkOption {
@@ -51,7 +51,7 @@ in
       type = types.str;
       example = "192.168.0.1";
       description = ''
-        Internal IP of router. 
+        Internal IP of router.
       '';
     };
 

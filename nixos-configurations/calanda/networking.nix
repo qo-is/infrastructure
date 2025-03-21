@@ -32,7 +32,7 @@ in
   qois.backplane-net.enable = true;
 
   # TODO: Metaize ips
-  services.qois.router = {
+  qois.router = {
     enable = true;
     wanInterface = "enp4s0";
     wirelessInterfaces = [ "wlp5s0" ];

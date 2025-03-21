@@ -8,12 +8,12 @@
 with lib;
 
 let
-  routerCfg = config.services.qois.router;
-  dhcpCfg = config.services.qois.router.dhcp;
-  cfg = config.services.qois.router.recursiveDns;
+  routerCfg = config.qois.router;
+  dhcpCfg = config.qois.router.dhcp;
+  cfg = config.qois.router.recursiveDns;
 in
 {
-  options.services.qois.router.recursiveDns = {
+  options.qois.router.recursiveDns = {
     enable = mkEnableOption "router recursive dns service";
 
     networkIdIp = mkOption {

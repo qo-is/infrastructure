@@ -8,10 +8,10 @@
 with lib;
 
 let
-  cfg = config.services.qois.luks-ssh;
+  cfg = config.qois.luks-ssh;
 in
 {
-  options.services.qois.luks-ssh = {
+  options.qois.luks-ssh = {
     enable = mkEnableOption "luks-ssh service";
 
     interface = mkOption {

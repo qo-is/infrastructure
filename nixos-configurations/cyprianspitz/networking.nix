@@ -73,7 +73,7 @@ in
   };
 
   # Boot
-  services.qois.luks-ssh = {
+  qois.luks-ssh = {
     enable = true;
     interface = "eth0";
 

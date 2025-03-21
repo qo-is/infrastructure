@@ -35,7 +35,7 @@
   # Define on which hard drive you want to install Grub.
   boot.loader.grub.device = "/dev/sda"; # or "nodev" for efi only
 
-  services.qois.luks-ssh = {
+  qois.luks-ssh = {
     enable = true;
     interface = "eth1";
     sshPort = 2222;

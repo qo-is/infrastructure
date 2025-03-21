@@ -10,7 +10,7 @@
 with lib;
 
 let
-  cfg = config.services.qois.wwan;
+  cfg = config.qois.wwan;
 
   mbim-ip-configured = pkgs.writeScriptBin "mbim-ip-configured" (
     ''
@@ -34,7 +34,7 @@ let
   '';
 in
 {
-  options.services.qois.wwan = {
+  options.qois.wwan = {
     enable = mkEnableOption "wwan client service";
 
     apn = mkOption {

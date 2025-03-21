@@ -73,7 +73,7 @@ in
   # Boot
   boot.initrd.network.udhcpc.enable = true;
 
-  services.qois.luks-ssh = {
+  qois.luks-ssh = {
     enable = true;
     interface = "eth0";
     sshPort = 2222;

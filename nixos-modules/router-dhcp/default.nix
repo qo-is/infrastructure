@@ -8,11 +8,11 @@
 with lib;
 
 let
-  routerCfg = config.services.qois.router;
-  cfg = config.services.qois.router.dhcp;
+  routerCfg = config.qois.router;
+  cfg = config.qois.router.dhcp;
 in
 {
-  options.services.qois.router.dhcp = {
+  options.qois.router.dhcp = {
     enable = mkEnableOption "router dhcp service";
 
     localDomain = mkOption {
