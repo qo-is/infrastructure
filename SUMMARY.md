@@ -1,6 +1,7 @@
 # Summary
 
 - [Repository README](README.md)
+- [Testing](checks/README.md)
 - [Deployment](deploy/README.md)
 
 ---

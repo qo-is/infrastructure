@@ -1,12 +1,10 @@
 {
-  config,
-  pkgs,
   lib,
   ...
 }:
 {
 
-  qois.static-page.pages = {
+  qois.static-page.pages = lib.mkDefault {
     "fabianhauser.ch" = {
       domainAliases = [
         "www.fabianhauser.ch"

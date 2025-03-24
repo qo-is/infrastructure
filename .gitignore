@@ -5,3 +5,4 @@ result*
 /.direnv
 /book
 /.sops.yaml
+/.nixos-test-history

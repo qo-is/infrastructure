@@ -4,7 +4,7 @@
   pkgs,
   deployPkgs,
   ...
-}@inputs:
+}:
 {
   ${system} = {
 
@@ -15,6 +15,10 @@
       ${self.formatter.${system}}/bin/formatter . --check
       mkdir $out
     '';
+
+    nixos-modules = pkgs.callPackage ./nixos-modules {
+      inherit (self.lib) getSubDirs isFolderWithFile;
+    };
 
     #TODO(#29): Integration/System tests
 
