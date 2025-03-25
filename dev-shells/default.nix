@@ -29,7 +29,6 @@ in
       pre-commit-check.enabledPackages
       ++ [ vscodium-with-extensions ]
       ++ (with self.packages.${system}; [
-        cache
         deploy-qois
         sops
         sops-rekey
@@ -37,14 +36,15 @@ in
       ++ (with pkgs; [
         attic-client
         deploy-rs
+        jq
+        nix-fast-build
         nixVersions.git
         nixd
         nixfmt-rfc-style
         nixos-anywhere
-        ssh-to-age
         pssh
+        ssh-to-age
         yq
-        jq
       ]);
     LANG = "C.UTF-8";
     LC_ALL = "C.UTF-8";

@@ -1,5 +1,13 @@
 # Tests
 
+`nix flake check` currently:
+
+- builds all nixos-configurations
+- builds all packages
+- runs all [nixos-module tests](#module-tests)
+- checks all deployment configurations
+- checks repository formatting.
+
 ## Module Tests
 
 We test our nixos modules with [NixOS tests](https://nixos.org/manual/nixos/stable/index.html#sec-nixos-tests).

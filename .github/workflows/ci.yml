@@ -1,8 +1,12 @@
 name: CI
 on:
   push:
+defaults:
+  run:
+    shell: nix develop --command bash -c "{0}"
 env:
-  ATTIC_AUTH_TOKEN: ${{ secrets.ATTIC_AUTH_TOKEN }}
+  CACHE_NAME: qois
+  CACHE_REPOSITORY: qois:qois-infrastructure
 jobs:
   build:
     runs-on: nix
@@ -12,20 +16,20 @@ jobs:
         with:
           token: ${{ secrets.CI_TOKEN }}
           lfs: false
-      - name: Use attic cache
-        run: nix run .#cache use
-      - name: Build
+      - name: Setup Attic Cache
+        env:
+          SERVER: https://attic.qo.is/
+          ATTIC_AUTH_TOKEN: ${{ secrets.ATTIC_AUTH_TOKEN }}
         run: |
-          nix build --max-jobs 12 --cores 12
-          nix run .#cache push
-      - name: Run Checks
-        run: nix flake check
+          attic login "$CACHE_NAME" "$SERVER" "$ATTIC_AUTH_TOKEN"
+          attic use "$CACHE_REPOSITORY"
+      - name: Run Builds and Checks
+        run: nix-fast-build --no-nom --max-jobs 6 --skip-cached --attic-cache "$CACHE_REPOSITORY"
       - name: Deploy Docs
         if: success() && github.ref == 'refs/heads/main'
         run: |
           mkdir ~/.ssh/
           echo -e "Host lindberg-webapps.backplane.net.qo.is\n    StrictHostKeyChecking no" >> ~/.ssh/config
           (umask 0077 && printf "%s\n" "${{ secrets.SSH_DEPLOY_KEY }}" > ~/.ssh/id_ed25519)
-          # Remote build might be neccessary due to non-wheel nix users signing restrictions.
-          # However, the build should come from the cache anyway.
-          nix develop --command deploy --skip-checks --remote-build .#lindberg-webapps.\"docs-ops.qo.is\"
+          deploy --skip-checks --remote-build .#lindberg-webapps.\"docs-ops.qo.is\"
+          # Remote build is neccessary due to non-wheel nix users signing restrictions. However, the build should come from the cache anyway.
