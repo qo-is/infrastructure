@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 {
@@ -111,12 +110,6 @@
     enable = true;
     defaultEditor = true;
   };
-
-  sops.defaultSopsFile =
-    let
-      defaultSopsPath = "${inputs.private}/nixos-configurations/${config.networking.hostName}/secrets.sops.yaml";
-    in
-    lib.mkIf (builtins.pathExists defaultSopsPath) defaultSopsPath;
 
   services.fstrim.enable = true;
 
