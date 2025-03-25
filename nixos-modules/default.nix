@@ -1,8 +1,9 @@
-inputs: {
+{ private, self, ... }:
+{
   default =
-    { config, pkgs, ... }:
+    { ... }:
     {
 
-      imports = (inputs.self.lib.loadSubmodulesFrom ./.) ++ [ inputs.private.nixosModules.default ];
+      imports = (self.lib.loadSubmodulesFrom ./.) ++ [ private.nixosModules.default ];
     };
 }

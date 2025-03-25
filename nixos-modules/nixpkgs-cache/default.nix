@@ -16,6 +16,7 @@ with lib;
     hostname = mkOption {
       type = types.str;
       example = "mycache.myhost.org";
+      default = "nixpkgs-cache.qo.is";
       description = "Hostname, under which the cache is served";
     };
 

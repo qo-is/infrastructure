@@ -7,27 +7,23 @@
   ...
 }@inputs:
 let
+  inherit (pkgs.lib) genAttrs;
+  inherit (nixpkgs-nixos-stable.lib) nixosSystem;
   configs = self.lib.foldersWithNix ./.;
 in
-pkgs.lib.genAttrs configs (
+genAttrs configs (
   config:
-  nixpkgs-nixos-stable.lib.nixosSystem {
+  nixosSystem {
     system = "x86_64-linux";
     specialArgs = {
       inherit inputs;
     };
     modules = [
-      self.nixosModules.default
-      ./${config}/default.nix
       disko.nixosModules.disko
       sops-nix.nixosModules.sops
-      (
-        { ... }:
-        {
-          system.extraSystemBuilderCmds = "ln -s ${self} $out/nixos-configuration";
-          imports = [ ./secrets.nix ];
-        }
-      )
+      self.nixosModules.default
+      ./${config}/default.nix
+      ./secrets.nix
     ];
   }
 )

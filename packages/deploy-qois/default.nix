@@ -1,6 +1,6 @@
 {
   deploy-rs,
-  self,
+  flakeSelf,
   writeShellApplication,
   ...
 }:
@@ -9,6 +9,6 @@ writeShellApplication {
   meta.description = "Deploy configuration to specificed targets.";
   runtimeInputs = [ deploy-rs ];
   text = ''
-    deploy --interactive --targets "''${@:-${self}}"
+    deploy --interactive --targets "''${@:-${flakeSelf}}"
   '';
 }

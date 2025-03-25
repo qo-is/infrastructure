@@ -1,6 +1,5 @@
 {
   deployPkgs,
-  pkgs,
   self,
   system,
   ...

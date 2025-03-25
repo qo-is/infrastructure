@@ -57,7 +57,7 @@
     settings =
       let
         substituters = [
-          "https://${inputs.self.nixosConfigurations.lindberg-build.config.qois.nixpkgs-cache.hostname}?priority=39"
+          "https://${config.qois.nixpkgs-cache.hostname}?priority=39"
           "https://cache.nixos.org?priority=40"
           "https://attic.qo.is/qois-infrastructure"
         ];

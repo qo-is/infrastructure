@@ -23,7 +23,12 @@
   };
 
   outputs =
-    { nixpkgs-nixos-unstable, deploy-rs, ... }@inputs:
+    {
+      self,
+      nixpkgs-nixos-unstable,
+      deploy-rs,
+      ...
+    }@inputs:
     let
       system = "x86_64-linux";
       # Packages for development and build process
@@ -40,22 +45,79 @@
           })
         ];
       };
-      importParams = inputs // {
-        inherit pkgs;
-        inherit deployPkgs;
-        inherit system;
+      importParams = {
+        inherit (inputs)
+          deploy-rs
+          disko
+          nixpkgs-nixos-stable
+          sops-nix
+          private
+          ;
+        inherit pkgs deployPkgs system;
+        flakeSelf = self;
       };
     in
     {
-      checks = import ./checks/default.nix importParams;
-      deploy = import ./deploy/default.nix importParams;
-      devShells = import ./dev-shells/default.nix importParams;
-      formatter.${system} = pkgs.writeShellScriptBin "formatter" ''
-        ${pkgs.findutils}/bin/find $1 -type f -name '*.nix' -exec ${pkgs.nixfmt-rfc-style}/bin/nixfmt ''${@:2} {} +
-      '';
-      nixosConfigurations = import ./nixos-configurations/default.nix importParams;
-      nixosModules = import ./nixos-modules/default.nix importParams;
-      packages = import ./packages/default.nix importParams;
-      lib = import ./lib/default.nix importParams;
+      checks = import ./checks/default.nix (
+        importParams
+        // {
+          self = {
+            inherit (self)
+              lib
+              packages
+              nixosModules
+              nixosConfigurations
+              deploy
+              ;
+          };
+        }
+      );
+      deploy = import ./deploy/default.nix (
+        importParams
+        // {
+          self = {
+            inherit (self)
+              lib
+              packages
+              nixosModules
+              nixosConfigurations
+              ;
+          };
+        }
+      );
+      devShells = import ./dev-shells/default.nix (
+        importParams
+        // {
+          self = {
+            inherit (self) lib packages;
+          };
+        }
+      );
+      formatter.${system} = pkgs.nixfmt-tree;
+      nixosConfigurations = import ./nixos-configurations/default.nix (
+        importParams
+        // {
+          self = {
+            inherit (self) lib packages nixosModules;
+          };
+        }
+      );
+      nixosModules = import ./nixos-modules/default.nix (
+        importParams
+        // {
+          self = {
+            inherit (self) lib packages;
+          };
+        }
+      );
+      packages = import ./packages/default.nix (
+        importParams
+        // {
+          self = {
+            inherit (self) lib packages;
+          };
+        }
+      );
+      lib = import ./lib/default.nix { inherit pkgs; };
     };
 }

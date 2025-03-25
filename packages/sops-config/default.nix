@@ -3,7 +3,7 @@
   gnupg,
   lib,
   runCommand,
-  self,
+  private,
   ssh-to-age,
   writeText,
   ...
@@ -13,7 +13,7 @@ let
   metaHostConfigs = import ../../defaults/meta/hosts.nix { };
   userPgpKeys =
     let
-      keysFolder = "${self.inputs.private}/sops_keys";
+      keysFolder = "${private}/sops_keys";
       gpgFingerprintsFile =
         runCommand "userPgpKeys"
           {
