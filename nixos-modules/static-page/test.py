@@ -3,11 +3,11 @@ def test(subtest, webserver):
     webserver.wait_for_open_port(80)
 
     # Preparations
-    webserverRoot = "/var/lib/nginx-localhost/root"
+    webserverRoot = "/var/lib/nginx-docs.example.com/root"
     indexContent = "It works!"
     webserver.succeed(f"mkdir {webserverRoot}")
     webserver.succeed(f"echo '{indexContent}' > {webserverRoot}/index.html")
-    webserver.succeed(f"chown -R nginx-localhost\: {webserverRoot}")
+    webserver.succeed(f"chown -R nginx-docs.example.com\: {webserverRoot}")
 
     # Helpers
     def curl_variable_test(node, variable, expected, url):
@@ -34,12 +34,15 @@ def test(subtest, webserver):
             """
 
     # Tests
-    with subtest("website is successfully served on localhost"):
-        expect_http_code(webserver, "200", "http://localhost/index.html")
-        expect_http_content(webserver, indexContent, "http://localhost/index.html")
+    with subtest("website is successfully served on docs.example.com"):
+        webserver.succeed("grep docs.example.com /etc/hosts")
+        expect_http_code(webserver, "200", "http://docs.example.com/index.html")
+        expect_http_content(
+            webserver, indexContent, "http://docs.example.com/index.html"
+        )
 
-    with subtest("example.com is in hosts file and a redirect to localhost"):
-        webserver.succeed("grep example.com /etc/hosts")
+    with subtest("example.com is a redirect to docs.example.com"):
+        webserver.succeed("grep -e '[^\.]example.com' /etc/hosts")
 
         url = "http://example.com/index.html"
         expect_http_code(webserver, "301", url)

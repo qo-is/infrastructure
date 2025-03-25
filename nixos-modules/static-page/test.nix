@@ -10,14 +10,14 @@
       inherit (lib) mkForce genAttrs const;
     in
     {
-      # Setup simple localhost page with an example.com redirect
+      # Setup simple docs.example.com page with an example.com redirect
       qois.static-page = {
         enable = true;
-        pages."localhost".domainAliases = [ "example.com" ];
+        pages."docs.example.com".domainAliases = [ "example.com" ];
       };
 
       # Disable TLS services
-      services.nginx.virtualHosts = genAttrs [ "localhost" "example.com" ] (const {
+      services.nginx.virtualHosts = genAttrs [ "docs.example.com" "example.com" ] (const {
         forceSSL = mkForce false;
         enableACME = mkForce false;
       });
