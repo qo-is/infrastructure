@@ -6,3 +6,4 @@ result*
 /book
 /.sops.yaml
 /.nixos-test-history
+/.pre-commit-config.yaml

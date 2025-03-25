@@ -1,9 +1,21 @@
 {
   pkgs,
+  git-hooks-nix,
+  treefmtEval,
   system,
   self,
   ...
 }:
+let
+  pre-commit-check = git-hooks-nix.lib.${system}.run {
+    src = ../.;
+    hooks.treefmt = {
+      enable = true;
+      package = treefmtEval.config.build.wrapper;
+      always_run = true;
+    };
+  };
+in
 {
   ${system}.default = pkgs.mkShellNoCC {
     name = "qois-infrastructure-shell";
@@ -14,7 +26,8 @@
           vscode = pkgs.vscodium;
         };
       in
-      [ vscodium-with-extensions ]
+      pre-commit-check.enabledPackages
+      ++ [ vscodium-with-extensions ]
       ++ (with self.packages.${system}; [
         cache
         deploy-qois
@@ -47,11 +60,7 @@
       done
       export XDG_DATA_DIRS
 
-      # Make sure we support the pure case as well as non nixos cases
-      # where dynamic bash completions were not sourced.
-      #if ! type _completion_loader > /dev/null; then
-      #  . ${pkgs.bash-completion}/etc/profile.d/bash_completion.sh
-      #fi
+      ${pre-commit-check.shellHook}
     '';
   };
 }

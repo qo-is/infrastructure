@@ -62,6 +62,7 @@
           nixpkgs-nixos-stable
           sops-nix
           private
+          git-hooks-nix
           ;
         inherit
           deployPkgs
