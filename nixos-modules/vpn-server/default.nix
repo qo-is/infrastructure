@@ -10,7 +10,7 @@ let
   cfgLoadbalancer = config.qois.loadbalancer;
   defaultDnsRecords =
     (mapAttrs (
-      name: value: mkIf (cfgLoadbalancer.hostmap ? ${value}) cfgLoadbalancer.hostmap.${value}
+      _name: value: mkIf (cfgLoadbalancer.hostmap ? ${value}) cfgLoadbalancer.hostmap.${value}
     ) cfgLoadbalancer.domains)
     // {
       "vpn.qo.is" = config.services.headscale.address;

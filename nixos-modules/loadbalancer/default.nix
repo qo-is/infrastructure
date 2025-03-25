@@ -9,7 +9,7 @@ with lib;
 let
   # We assume that all static pages are hosted on lindberg-webapps
   staticPages = pipe config.qois.static-page.pages [
-    (mapAttrsToList (name: { domain, domainAliases, ... }: [ domain ] ++ domainAliases))
+    (mapAttrsToList (_name: { domain, domainAliases, ... }: [ domain ] ++ domainAliases))
     flatten
     (map (name: {
       inherit name;

@@ -1,7 +1,7 @@
-# Operations {#_operations}
+# Operations {#\_operations}
 
 Reboot requires passphrase (see pass `host/stompert/hdd_luks`)
 
-``` bash
+```bash
 ssh -p 2222 root@stompert.eem-ext.net.qo.is
 ```

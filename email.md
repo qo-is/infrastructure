@@ -9,7 +9,6 @@ E-Mail accounts should be created in a `first.lastname@qo.is` fashion.
 Alias/forwarding Domains may be added on an best effort basis.
 Bills for these domains should go directly to the respective owner (i.e. should be registered with own accounts).
 
-
 ## System E-mails
 
 For groups, systems, services that require e-mail access, other accounts may be created.

@@ -1,4 +1,4 @@
-# Router Role {#_router_role}
+# Router Role {#\_router_role}
 
 The `router` role set is applied on hosts which serve the rule of a SOHO
 router.

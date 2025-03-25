@@ -8,7 +8,7 @@ let
     path
     ;
   # Get a list of all subdirectories of a directory.
-  getSubDirs = base: attrNames (filterAttrs (n: t: t == "directory") (builtins.readDir base));
+  getSubDirs = base: attrNames (filterAttrs (_n: t: t == "directory") (builtins.readDir base));
   # Check if a folder with a base path and folder name contains a file with a specific name
   isFolderWithFile =
     fileName: basePath: folderName:

@@ -46,7 +46,7 @@
         inherit system;
         overlays = [
           deploy-rs.overlay
-          (self: super: {
+          (_self: super: {
             deploy-rs = {
               inherit (pkgs) deploy-rs;
               lib = super.deploy-rs.lib;

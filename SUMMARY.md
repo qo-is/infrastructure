@@ -4,14 +4,13 @@
 - [Testing](checks/README.md)
 - [Deployment](deploy/README.md)
 
----
+______________________________________________________________________
 
 - [Network Topology](defaults/meta/network.md)
 - [Hardware (generic)](defaults/hardware/README.md)
 - [Backups](backups.md)
 - [Updates](updates.md)
 - [New Host Setup](nixos-configurations/setup.md)
-
 
 # Services
 

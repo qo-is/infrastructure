@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   lib,
   ...
 }:
@@ -35,7 +34,7 @@ in
 
     networking.hosts = pipe cfg.loadbalancers [
       (map (hostname: config.qois.meta.network.virtual.backplane.hosts.${hostname}.v4.ip))
-      (flip genAttrs (lb: cfg.domains))
+      (flip genAttrs (_lb: cfg.domains))
     ];
 
   };

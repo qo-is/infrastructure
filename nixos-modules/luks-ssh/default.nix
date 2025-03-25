@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -83,7 +82,7 @@ in
           with lib;
           concatLists (
             mapAttrsToList (
-              name: user: if elem "wheel" user.extraGroups then user.openssh.authorizedKeys.keys else [ ]
+              _name: user: if elem "wheel" user.extraGroups then user.openssh.authorizedKeys.keys else [ ]
             ) config.users.users
           );
         hostKeys = [ cfg.sshHostKey ];

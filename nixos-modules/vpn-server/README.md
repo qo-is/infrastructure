@@ -29,14 +29,13 @@ These nodes allow access to the internet for clients connected to the VPN:
 
 > ⚠️ Currently, name resolution for these do not work reliably on first starts, hence the IP must be used. This hould be fixed in the future.
 
-
 ### Add exit nodes:
 
 1. Create a preauth secret on the `vpn.qo.is` host:
    ```bash
     headscale preauthkeys create --user srv --reusable
-    ```
-2. Configure the new exit-node host with the `qois.vpn-exit-node` module.
+   ```
+1. Configure the new exit-node host with the `qois.vpn-exit-node` module.
 
 When using the `srv` user, exit nodes and routes are automatically accepted as trusted.
 
@@ -50,11 +49,9 @@ To use the service, you can use a normal Tailscale client with following additio
 | `exit-node` | `100.64.0.5` (lindberg) or `100.64.0.6` (cypriaspitz) | Use host as [exit node](#exit-nodes) |
 | `login-server` | `https://vpn.qo.is` | Use our own VPN service. |
 
-
 > ⚠️ Currently, if the client is in an IPv6 network, the transport is broken.
 > Disable IPv6 connectivity to use the VPN.
->  See [#4](https://git.qo.is/qo.is/infrastructure/issues/4) for details.
-
+> See [#4](https://git.qo.is/qo.is/infrastructure/issues/4) for details.
 
 ### NixOS
 
@@ -90,15 +87,15 @@ See [this Headscale documentation for more](https://headscale.net/stable/usage/c
 ### Server
 
 1. `systemctl stop headscale`
-2. Replace `/var/lib/headscale`
-3. `systemctl start headscale`
-4. Monitor logs for errors
+1. Replace `/var/lib/headscale`
+1. `systemctl start headscale`
+1. Monitor logs for errors
 
 Note: `/var/lib/headscale` contains a sqlite database.
 
 ### Clients
 
 1. `systemctl stop tailscaled`
-2. Replace `/var/lib/tailscale`
-3. `systemctl start tailscaled`
-4. Monitor logs for errors
+1. Replace `/var/lib/tailscale`
+1. `systemctl start tailscaled`
+1. Monitor logs for errors

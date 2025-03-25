@@ -1,16 +1,15 @@
 # Host: Cyprianspitz
 
-## Operations {#_operations}
+## Operations {#\_operations}
 
 Reboot requires passphrase.
 
-``` bash
+```bash
 # Get HDD Password:
 sops decrypt --extract '["system"]["hdd"]' private/nixos-configurations/cyprianspitz/secrets.sops.yaml
 
 ssh -p 8223 root@calanda.plessur-ext.net.qo.is
 ```
-
 
 Direct remote ssh access:
 
@@ -23,8 +22,6 @@ ssh -p 8222 root@calanda.plessur-ext.net.qo.is
 TODO
 
 - [Mainboard Manual](docs/z790m-itx-wifi.pdf)
-
-
 
 ### Top Overview
 

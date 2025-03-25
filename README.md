@@ -6,29 +6,29 @@ Check out the current [rendered documentation](https://docs-ops.qo.is).
 
 ## Structure
 
-`nixos-configurations`: Main nixos configuration for every host.  
-`defaults`: Configuration defaults  
-`nixos-modules`: Custom modules (e.g. for vpn and routers)  
+`nixos-configurations`: Main nixos configuration for every host.\
+`defaults`: Configuration defaults\
+`nixos-modules`: Custom modules (e.g. for vpn and routers)\
 `private`: Private configuration values (like users, sops-encrypted secrets and keys)
 
 ## Building
 
 This repository requires [nix flakes](https://nixos.wiki/wiki/Flakes)
 
-- `nix build`  
+- `nix build`\
   Build all host configurations and docs
-- `nix build .#nixosConfigurations.<hostname>.config.system.build.toplevel`  
+- `nix build .#nixosConfigurations.<hostname>.config.system.build.toplevel`\
   Build a single host configuration with
-- `nix build .#docs`  
+- `nix build .#docs`\
   Build the documentation website
 
 ## Development
 
-- `nix develop`  
+- `nix develop`\
   Development environment
-- `nix flake check`  
+- `nix flake check`\
   Execute the project's checks
-- `nix fmt`  
+- `nix fmt`\
   Autofix formatting
 
 ### Working with the private submodule
@@ -46,7 +46,7 @@ git add private
 nix flake lock --update-input private
 ```
 
-## Deployment 
+## Deployment
 
 `nix run .#deploy-qois`
 

@@ -1,18 +1,21 @@
 {
-    "eval": {
-        "target": {
-            "args": ["-f", "default.nix"],
-            "installable": ""
-        }
-    },
-    "formatting": {
-        "command": "nixfmt"
-    },
-    "options": {
-        "enable": true,
-        "target": {
-                "args": [],
-                "installable": ""
-        }
+  "eval": {
+    "target": {
+      "args": [
+        "-f",
+        "default.nix"
+      ],
+      "installable": ""
     }
+  },
+  "formatting": {
+    "command": "nixfmt"
+  },
+  "options": {
+    "enable": true,
+    "target": {
+      "args": [],
+      "installable": ""
+    }
+  }
 }

@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   options,
   ...
 }:
@@ -15,13 +14,6 @@ let
     description:
     (mkOption {
       type = str;
-      inherit description;
-    });
-  mkOptStr =
-    description:
-    (mkOption {
-      type = nullOr str;
-      default = null;
       inherit description;
     });
 
@@ -225,10 +217,10 @@ in
           (getHostNamesForNetworks hostname cfg.virtual) ++ (getHostNamesForNetworks hostname cfg.physical);
 
         hostsWithPublicKey = lib.filterAttrs (
-          hostName: hostConfig: hostConfig.sshKey != null
+          _hostName: hostConfig: hostConfig.sshKey != null
         ) config.qois.meta.hosts;
       in
-      mapAttrs (name: hostCfg: { extraHostNames = getHostNames name; }) hostsWithPublicKey;
+      mapAttrs (name: _hostCfg: { extraHostNames = getHostNames name; }) hostsWithPublicKey;
 
   };
 }

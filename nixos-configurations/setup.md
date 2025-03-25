@@ -3,8 +3,8 @@
 ## Prepare Remote Machine
 
 1. Boot nixos installer image
-2. Set a root password: `sudo passwd root`
-3. Get host ip to connect to ssh with `ip a`
+1. Set a root password: `sudo passwd root`
+1. Get host ip to connect to ssh with `ip a`
 
 ## Verify configuration
 
@@ -12,7 +12,7 @@
 
 ## Installation
 
-```bash
+````bash
 nix develop
 
 # Set according to what we want
@@ -60,11 +60,11 @@ sops exec-file --no-fifo --filename secret.key private/nixos-configurations/$REM
     --disk-encryption-keys /run/secrets/system/hdd.key <(yq --raw-output '.system.hdd' {}) \
     --disk-encryption-keys /run/secrets/system/initrd-ssh-key <(yq --raw-output '.system.\"initrd-ssh-key\"' {})
 "
-```
+````
 
 ## Post-Setup
 
-* Add backplane-vpn pubkey to `network-virtual.nix` configuration with
+- Add backplane-vpn pubkey to `network-virtual.nix` configuration with
   ```bash
   wg pubkey < /secrets/wireguard/private/backplane
   ```

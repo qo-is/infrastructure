@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   options,
   ...
 }:
@@ -43,10 +42,10 @@ in
   };
   config =
     let
-      hostsWithSshKey = lib.filterAttrs (name: hostCfg: hostCfg.sshKey != null) cfg;
+      hostsWithSshKey = lib.filterAttrs (_name: hostCfg: hostCfg.sshKey != null) cfg;
     in
     {
-      programs.ssh.knownHosts = lib.mapAttrs (name: hostCfg: {
+      programs.ssh.knownHosts = lib.mapAttrs (_name: hostCfg: {
         publicKey = hostCfg.sshKey;
       }) hostsWithSshKey;
     };

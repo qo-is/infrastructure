@@ -1,14 +1,12 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
 with lib;
 
 let
-  routerCfg = config.qois.router;
   cfg = config.qois.router.wireless;
 in
 {

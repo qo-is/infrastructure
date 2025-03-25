@@ -146,7 +146,7 @@ with lib;
     {
       systemd.services =
         genAttrs (genList (n: "gitea-runner-nix${builtins.toString n}") cfg.nixInstances)
-          (name: {
+          (_name: {
             after = [
               "gitea-runner-nix-image.service"
             ];

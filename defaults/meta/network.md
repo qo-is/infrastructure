@@ -74,7 +74,6 @@ All Services are published under the *qo.is* domain name. Following services are
 
 ## Contacts
 
-
 ### Init7
 
 - [Status Netzwerkdienste](https://www.init7.net/status/)

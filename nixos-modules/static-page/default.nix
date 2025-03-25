@@ -53,7 +53,7 @@ with lib;
   config = mkIf cfg.enable (
     let
       pageConfigs = concatMapAttrs (
-        name: page:
+        _name: page:
         let
           home = "/var/lib/nginx-${page.domain}";
         in
@@ -76,7 +76,7 @@ with lib;
 
       users = {
         groups = concatMapAttrs (
-          name:
+          _name:
           { user, ... }:
           {
             "${user}" = { };
@@ -84,10 +84,10 @@ with lib;
         ) pageConfigs;
         users =
           {
-            ${config.services.nginx.user}.extraGroups = mapAttrsToList (domain: getAttr "user") pageConfigs;
+            ${config.services.nginx.user}.extraGroups = mapAttrsToList (_domain: getAttr "user") pageConfigs;
           }
           // (concatMapAttrs (
-            name:
+            _name:
             {
               user,
               home,
@@ -134,10 +134,10 @@ with lib;
                     globalRedirect = domain;
                   };
                 });
-            aliasVhosts = concatMapAttrs (name: mkAliasVhost) pageConfigs;
+            aliasVhosts = concatMapAttrs (_name: mkAliasVhost) pageConfigs;
 
           in
-          aliasVhosts // (mapAttrs (name: mkVhost) pageConfigs);
+          aliasVhosts // (mapAttrs (_name: mkVhost) pageConfigs);
       };
     }
   );

@@ -1,17 +1,16 @@
 # Host: Lindberg
 
-## Operations {#_operations}
+## Operations {#\_operations}
 
 Reboot requires passphrase (see pass `host/lindberg/hdd_luks`)
 
-``` bash
+```bash
 ssh -p 2222 root@lindberg.riedbach-ext.net.qo.is
 ```
 
 ## Hardware
 
 - [Mainboard Manual](docs/X570Pro4-mainboard-manual.pdf)
-
 
 ### Front / Back
 

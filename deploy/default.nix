@@ -1,5 +1,4 @@
 {
-  deployPkgs,
   pkgs,
   self,
   ...

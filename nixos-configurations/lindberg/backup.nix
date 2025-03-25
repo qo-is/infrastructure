@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ ... }:
 {
 
   qois.backup-client.includePaths = [ "/mnt/data" ];

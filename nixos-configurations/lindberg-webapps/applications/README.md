@@ -2,7 +2,6 @@
 
 ## Setting up new static sites
 
-
 Generate ssh key for deployment:
 
 ```bash

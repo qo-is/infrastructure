@@ -41,9 +41,9 @@ let
   userAgeKeys = [ ];
   serverAgeKeys =
     let
-      getHostsWithSshKeys = filterAttrs (name: cfg: cfg ? sshKey);
+      getHostsWithSshKeys = filterAttrs (_name: cfg: cfg ? sshKey);
       mapHostToAgeKey = mapAttrs (
-        name: cfg:
+        _name: cfg:
         readFile (
           runCommand "sshToAgeKey"
             {

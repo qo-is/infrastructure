@@ -38,7 +38,6 @@ sudo -u forgejo 'nix run nixpkgs#forgejo -- admin user create --config ~custom/c
 ## Backup / Restore
 
 1. `systemctl stop forgejo.service`
-2. Import Postgresql Database Backup
-3. Restore `/var/lib/forgejo`
-4. `systemctl start forgejo.service`
-
+1. Import Postgresql Database Backup
+1. Restore `/var/lib/forgejo`
+1. `systemctl start forgejo.service`

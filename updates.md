@@ -16,7 +16,7 @@ git commit
 git push
 ```
 
-Deploy updates: 
+Deploy updates:
 
 ```bash
 nix develop
@@ -47,11 +47,10 @@ pssh -l root -H lindberg-nextcloud.backplane.net.qo.is -H lindberg-build.backpla
 
 ## Application Updates
 
-Some applications have pinned versions to prevent problems due to accidental upgrades.  
+Some applications have pinned versions to prevent problems due to accidental upgrades.\
 The version switch has to be done manually by switching the package used.
 
 This includes the modules for:
 
 - `nextcloud`
-- `postgresql`, [&rarr; Nixpkgs manual page](https://nixos.org/manual/nixos/stable/#module-services-postgres-upgrading)
-
+- `postgresql`, [→ Nixpkgs manual page](https://nixos.org/manual/nixos/stable/#module-services-postgres-upgrading)

@@ -1,11 +1,8 @@
 name: CI
-
 on:
   push:
-
 env:
   ATTIC_AUTH_TOKEN: ${{ secrets.ATTIC_AUTH_TOKEN }}
-
 jobs:
   build:
     runs-on: nix
@@ -15,18 +12,14 @@ jobs:
         with:
           token: ${{ secrets.CI_TOKEN }}
           lfs: false
-
       - name: Use attic cache
         run: nix run .#cache use
-
       - name: Build
         run: |
           nix build --max-jobs 12 --cores 12
           nix run .#cache push
-
       - name: Run Checks
         run: nix flake check
-
       - name: Deploy Docs
         if: success() && github.ref == 'refs/heads/main'
         run: |
@@ -36,4 +29,3 @@ jobs:
           # Remote build might be neccessary due to non-wheel nix users signing restrictions.
           # However, the build should come from the cache anyway.
           nix develop --command deploy --skip-checks --remote-build .#lindberg-webapps.\"docs-ops.qo.is\"
-

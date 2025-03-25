@@ -2,7 +2,6 @@
 
 Runner for the [Forgejo git instance](../git/README.md).
 
-
 ## Default docker/ubuntu Runner
 
 Registers a default runner with ubuntu OS or executes user's OCI container with podman.
