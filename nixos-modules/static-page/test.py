@@ -46,4 +46,4 @@ def test(subtest, webserver):
 
         url = "http://example.com/index.html"
         expect_http_code(webserver, "301", url)
-        expect_http_location(webserver, "http://localhost/index.html", url)
+        expect_http_location(webserver, "http://docs.example.com/index.html", url)

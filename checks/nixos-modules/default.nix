@@ -11,6 +11,7 @@ let
     filter
     path
     mkDefault
+    mkForce
     readFile
     attrNames
     concatStringsSep
@@ -32,7 +33,12 @@ let
         })
       ];
 
-      defaults.imports = [ defaultModule ];
+      defaults = {
+        imports = [ defaultModule ];
+
+        qois.outgoing-server-mail.enable = mkForce false;
+        qois.backup-client.enable = mkForce false;
+      };
 
       # Calls a `test(...)` python function in the test's python file with the list of nodes and helper functions.
       # Helper symbols may be added as function args when needed and can be found in:
