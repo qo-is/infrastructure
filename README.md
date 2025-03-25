@@ -41,7 +41,7 @@ git clone --recurse-submodules https://git.qo.is/qo.is/infrastructure.git
 ```
 
 Secrets are stored in `private/passwords.sops.yaml` (sysadmin passwords),
-`private/nixos-configurations/secrets.sops.yaml` (shared secrets for all hosts) and
+`private/nixos-modules/shared-secrets/default.sops.yaml` (shared secrets for all hosts) and
 `private/nixos-configurations/<hostname>/secrets.sops.yaml` (host specific secrets).
 
 To modify secrets:

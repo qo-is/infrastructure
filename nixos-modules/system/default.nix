@@ -11,7 +11,6 @@
     ./overlays.nix
     ./physical.nix
     ./security.nix
-    ./secrets.nix
     ./virtual-machine.nix
   ];
 
