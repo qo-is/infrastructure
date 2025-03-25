@@ -237,7 +237,9 @@ with lib;
                 pkgs.findutils
                 pkgs.gawk
                 pkgs.git
+                pkgs.git-lfs
                 pkgs.gnugrep
+                pkgs.gnused
                 pkgs.jq
                 pkgs.nix
                 pkgs.nodejs
