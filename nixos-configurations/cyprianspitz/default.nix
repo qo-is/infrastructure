@@ -10,8 +10,6 @@
     ./virtualisation.nix
 
     ../../defaults/hardware/asrock-z790m.nix
-
-    ../../defaults/meta
   ];
 
   qois.system.physical.enable = true;

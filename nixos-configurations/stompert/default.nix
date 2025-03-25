@@ -7,8 +7,6 @@
 {
   imports = [
     ../../defaults/hardware/apu.nix
-
-    ../../defaults/meta
   ];
 
   qois.system.physical.enable = true;

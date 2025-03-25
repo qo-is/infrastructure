@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../../defaults/meta
     ./applications
     ./backup.nix
     ./secrets.nix

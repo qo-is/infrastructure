@@ -2,8 +2,6 @@
   self,
   pkgs,
   nixpkgs-nixos-stable,
-  disko,
-  sops-nix,
   ...
 }@inputs:
 let
@@ -19,11 +17,8 @@ genAttrs configs (
       inherit inputs;
     };
     modules = [
-      disko.nixosModules.disko
-      sops-nix.nixosModules.sops
       self.nixosModules.default
       ./${config}/default.nix
-      ./secrets.nix
     ];
   }
 )

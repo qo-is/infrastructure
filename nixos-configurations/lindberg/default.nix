@@ -11,8 +11,6 @@
     ./virtualisation.nix
 
     ../../defaults/hardware/asrock.nix
-
-    ../../defaults/meta
   ];
 
   qois.system.physical.enable = true;

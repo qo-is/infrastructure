@@ -2,8 +2,6 @@
 
 {
   imports = [
-    ../../defaults/meta
-
     ./applications
     ./disko-config.nix
     ./networking.nix
