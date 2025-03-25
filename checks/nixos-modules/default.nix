@@ -4,6 +4,7 @@
   getSubDirs,
   lib,
   testers,
+  defaultModule,
 }:
 let
   inherit (lib)
@@ -23,6 +24,7 @@ let
     in
     testers.runNixOSTest {
       inherit name;
+
       imports = [
         (import (getFilePath "test.nix") {
           inherit name;
@@ -30,7 +32,7 @@ let
         })
       ];
 
-      defaults.imports = [ (getFilePath "default.nix") ];
+      defaults.imports = [ defaultModule ];
 
       # Calls a `test(...)` python function in the test's python file with the list of nodes and helper functions.
       # Helper symbols may be added as function args when needed and can be found in:

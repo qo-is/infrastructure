@@ -12,6 +12,7 @@
     formatting = treefmtEval.config.build.check flakeSelf;
 
     nixos-modules = pkgs.callPackage ./nixos-modules {
+      defaultModule = self.nixosModules.default;
       inherit (self.lib) getSubDirs isFolderWithFile;
     };
 
