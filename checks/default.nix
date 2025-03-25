@@ -1,14 +1,15 @@
 {
   self,
+  flakeSelf,
   system,
   pkgs,
   deployPkgs,
+  treefmtEval,
   ...
 }@inputs:
 {
   ${system} = {
-
-    # TODO: Check project formatting
+    formatting = treefmtEval.config.build.check flakeSelf;
 
     nixos-modules = pkgs.callPackage ./nixos-modules {
       inherit (self.lib) getSubDirs isFolderWithFile;

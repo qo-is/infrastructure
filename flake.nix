@@ -5,35 +5,44 @@
     extra-trusted-public-keys = "qois-infrastructure:lh35ymN7Aoxm5Hz0S6JusxE+cYzMU+x9OMKjDVIpfuE=";
   };
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-nixos-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    git-hooks-nix = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     deploy-rs.url = "github:serokell/deploy-rs";
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs-nixos-stable";
     };
-    nixpkgs-nixos-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-nixos-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs-nixos-unstable";
-      };
-    };
     private.url = "git+file:./private";
-    private.inputs.nixpkgs-nixos-unstable.follows = "nixpkgs-nixos-unstable";
+    private.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
     {
       self,
-      nixpkgs-nixos-unstable,
+      nixpkgs,
       deploy-rs,
+      treefmt-nix,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
       # Packages for development and build process
-      pkgs = import nixpkgs-nixos-unstable { inherit system; };
-      deployPkgs = import nixpkgs-nixos-unstable {
+      pkgs = import nixpkgs { inherit system; };
+      deployPkgs = import nixpkgs {
         inherit system;
         overlays = [
           deploy-rs.overlay
@@ -45,6 +54,7 @@
           })
         ];
       };
+      treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
       importParams = {
         inherit (inputs)
           deploy-rs
@@ -53,7 +63,12 @@
           sops-nix
           private
           ;
-        inherit pkgs deployPkgs system;
+        inherit
+          deployPkgs
+          pkgs
+          system
+          treefmtEval
+          ;
         flakeSelf = self;
       };
     in
@@ -93,7 +108,7 @@
           };
         }
       );
-      formatter.${system} = pkgs.nixfmt-tree;
+      formatter.${system} = treefmtEval.config.build.wrapper;
       nixosConfigurations = import ./nixos-configurations/default.nix (
         importParams
         // {
