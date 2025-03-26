@@ -25,6 +25,35 @@ with lib;
       default = 10;
       description = "How many nix runner instances to start";
     };
+
+    trustedSubstituters = mkOption {
+      type = types.listOf types.str;
+      default = [
+        # General substitutors (also elsewhere defined defaults, but without priority params)
+        "https://cache.nixos.org"
+        "https://${config.qois.nixpkgs-cache.hostname}"
+        "https://cache.garnix.io"
+
+        # Project builds
+        "https://attic.qo.is/qois-infrastructure" # https://git.qo.is/qo.is/infrastructure
+        "https://attic.qo.is/dotfiles" # https://git.qo.is/fabianhauser/dotfiles
+      ];
+      description = "Substitutors that are trusted by the host.";
+    };
+
+    trustedPublicKeys = mkOption {
+      type = types.listOf types.str;
+      default = [
+        # General subsitutors
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+
+        # Project builds
+        "qois-infrastructure:lh35ymN7Aoxm5Hz0S6JusxE+cYzMU+x9OMKjDVIpfuE=" # https://git.qo.is/qo.is/infrastructure
+        "dotfiles:KpLi0qe5O5rb8E8N8vntZWBDqFwG3Ksx4AFGizYCLoU=" # https://git.qo.is/fabianhauser/dotfiles
+      ];
+      description = "Substitutor public keys that are trusted by the host.";
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -33,6 +62,12 @@ with lib;
       sops.secrets."forgejo/runner-registration-token".restartUnits = [
         "gitea-runner-${defaultInstanceName}.service"
       ] ++ (genList (n: "gitea-runner-nix${builtins.toString n}.service") cfg.nixInstances);
+
+      nix.settings = {
+        trusted-substituters = cfg.trustedSubstituters;
+        trusted-public-keys = cfg.trustedPublicKeys;
+
+      };
 
       virtualisation.podman = {
         enable = true;
