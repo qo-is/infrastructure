@@ -18,3 +18,14 @@ Consequentially, don't use to build nix things that should stay secret (which is
 ## Create Secret Token
 
 To create a new token for registration, follow the steps outlined in the [Forgejo documentation](https://forgejo.org/docs/latest/user/actions/#forgejo-runner).
+
+## Clear Runner Caches
+
+Under some circumstances, runner caches need to be cleared. This can be  done with:
+
+```bash
+cd /var/lib/private/gitea-runner/
+systemctl stop --all gitea-runner-*
+rm -r */.cache/
+systemctl start --all gitea-runner-*
+```
