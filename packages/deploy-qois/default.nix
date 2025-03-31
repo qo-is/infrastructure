@@ -9,6 +9,6 @@ writeShellApplication {
   meta.description = "Deploy configuration to specificed targets.";
   runtimeInputs = [ deploy-rs ];
   text = ''
-    deploy --interactive --targets "''${@:-${flakeSelf}}"
+    deploy --remote-build --skip-checks --interactive --targets "''${@:-${flakeSelf}}"
   '';
 }
