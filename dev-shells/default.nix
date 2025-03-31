@@ -38,7 +38,7 @@ in
         deploy-rs
         jq
         nix-fast-build
-        nixVersions.git
+        nixVersions.latest
         nixd
         nixfmt-rfc-style
         nixos-anywhere

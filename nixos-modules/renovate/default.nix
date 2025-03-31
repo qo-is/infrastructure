@@ -49,7 +49,7 @@ in
     };
 
     systemd.services.renovate = {
-      path = mkBefore [ inputs.pkgs.nixVersions.git ]; # Circumvent submodule bug - remove after >=2.26 is the default.
+      path = mkBefore [ inputs.pkgs.nixVersions.latest ]; # Circumvent submodule bug - remove after >=2.26 is the default.
       script = mkBefore ''
         echo -e "machine ${cfg.gitServer}\n    login $(systemd-creds cat 'SECRET-RENOVATE_TOKEN')\n    password x-oauth-basic" > ~/.netrc
       '';
