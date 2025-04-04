@@ -2,9 +2,13 @@
 
 ## Operations {#\_operations}
 
-Reboot requires passphrase (see pass `host/lindberg/hdd_luks`)
+Reboot requires passphrase:
 
 ```bash
+# Get passphrase
+sops decrypt --extract '["system"]["hdd"]' private/nixos-configurations/lindberg/secrets.sops.yaml
+
+# Insert passphrase:
 ssh -p 2222 root@lindberg.riedbach-ext.net.qo.is
 ```
 
