@@ -29,9 +29,9 @@ in
       pre-commit-check.enabledPackages
       ++ [ vscodium-with-extensions ]
       ++ (with self.packages.${system}; [
-        deploy-qois
         sops
         sops-rekey
+        auto-deploy
       ])
       ++ (with pkgs; [
         attic-client

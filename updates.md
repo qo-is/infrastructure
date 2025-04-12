@@ -22,13 +22,14 @@ Deploy updates:
 nix develop
 
 # Deploy vms
-deploy-qois .#lindberg-nextcloud .#lindberg-build
+auto-deploy system-vm
 
-# Deploy fast physical hosts
-deploy-qois .#lindberg
+# Deploy CI hosts
+auto-deploy system-ci
 
-# Deploy slow physical hosts (maybe do individually)
-deploy-qois --confirm-timeout 600 --activation-timeout 600 --targets .#stompert .#stompert
+# Deploy physical hosts
+auto-deploy system-physical
+
 
 ```
 

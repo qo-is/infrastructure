@@ -19,11 +19,13 @@
         "*.toml"
       ]
       ++ [
-        ".envrc"
-        "robots.txt"
         ".vscode/*"
         "nixos-modules/system/etc/*"
+        "private"
         "private/*"
+
+        ".envrc"
+        "robots.txt"
       ];
     formatter.jsonfmt.excludes = [ ".vscode/*.json" ];
   };
