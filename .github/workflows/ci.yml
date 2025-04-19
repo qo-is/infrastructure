@@ -25,11 +25,22 @@ jobs:
           attic use "$CACHE_REPOSITORY"
       - name: Run Builds and Checks
         run: nix-fast-build --no-nom --max-jobs 6 --skip-cached --attic-cache "$CACHE_REPOSITORY"
-      - name: Deploy Docs
-        if: success() && github.ref == 'refs/heads/main'
-        run: |
-          mkdir ~/.ssh/
-          echo -e "Host lindberg-webapps.backplane.net.qo.is\n    StrictHostKeyChecking no" >> ~/.ssh/config
-          (umask 0077 && printf "%s\n" "${{ secrets.SSH_DEPLOY_KEY }}" > ~/.ssh/id_ed25519)
-          deploy --skip-checks --remote-build .#lindberg-webapps.\"docs-ops.qo.is\"
-          # Remote build is neccessary due to non-wheel nix users signing restrictions. However, the build should come from the cache anyway.
+  deploy:
+    needs: build
+    if: success() && github.ref == 'refs/heads/main'
+    runs-on: nix
+    env:
+      SSH_DEPLOY_KEY: "${{ secrets.SSH_DEPLOY_KEY }}"
+    strategy:
+      matrix:
+        profile:
+          - docs-ops.qo.is
+          - system-vm
+    steps:
+      - name: Initialize CI
+        uses: https://git.qo.is/qo.is/actions-nix-init@main
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          lfs: false
+      - name: "Deploy profile"
+        run: "auto-deploy ${{ matrix.profile }}"
