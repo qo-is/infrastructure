@@ -54,4 +54,5 @@ The version switch has to be done manually by switching the package used.
 This includes the modules for:
 
 - `nextcloud`
+  - Check [admin panel](https://cloud.qo.is/settings/admin/overview) for warnings after upgrading
 - `postgresql`, [→ Nixpkgs manual page](https://nixos.org/manual/nixos/stable/#module-services-postgres-upgrading)
