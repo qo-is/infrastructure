@@ -13,6 +13,10 @@ with lib;
 
   config = lib.mkIf cfg.enable {
 
+    users.users.root.openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBS65v7n5ozOUjYGuO/dgLC9C5MUGL5kTnQnvWAYP5B3 ci@git.qo.is"
+    ]; # TODO: Move this key to allow CI deployment for all machines.
+
     boot.loader.grub.enable = true;
 
     system.autoUpgrade.allowReboot = true;
