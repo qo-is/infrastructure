@@ -4,6 +4,6 @@
 
   qois.cloud = {
     enable = true;
-    package = pkgs.nextcloud30;
+    package = pkgs.nextcloud31;
   };
 }

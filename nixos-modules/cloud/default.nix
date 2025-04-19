@@ -71,7 +71,7 @@ with lib;
           contacts
           deck
           groupfolders
-          maps
+          # maps # Unsupported with nextcloud31, not widely used currently, so disable for now.
           memories
           music
           news
