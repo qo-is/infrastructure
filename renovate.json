@@ -3,12 +3,12 @@
   "extends": [
     "config:recommended"
   ],
-  "schedule": [
-    "* 18-19 * * *"
-  ],
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": true
+    "automerge": true,
+    "schedule": [
+      "* 18-19 * * *"
+    ]
   },
   "cloneSubmodules": true,
   "nix": {
