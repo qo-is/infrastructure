@@ -67,4 +67,4 @@ nix flake lock --update-input private
 
 ## Deployment
 
-See [Deployment](deploy/README.md) for details.
+See [Deployment](deploy/) for details.

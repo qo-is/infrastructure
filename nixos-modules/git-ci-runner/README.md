@@ -21,7 +21,7 @@ To create a new token for registration, follow the steps outlined in the [Forgej
 
 ## Clear Runner Caches
 
-Under some circumstances, runner caches need to be cleared. This can be  done with:
+Under some circumstances, runner caches need to be cleared. This can be done with:
 
 ```bash
 cd /var/lib/private/gitea-runner/
