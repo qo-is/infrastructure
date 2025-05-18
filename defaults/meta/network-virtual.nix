@@ -39,11 +39,6 @@
             publicKey = "6XGL4QKB8AMpm/VGcTgWqk9RiSws7DmY5TpIDkXbwlg=";
             persistentKeepalive = 25;
           };
-          stompert = {
-            v4.ip = "10.250.0.5";
-            publicKey = "CHTjQbmN9WhbRCxKgowxpMx4c5Zu0NDk0rRXEvuB3XA=";
-            persistentKeepalive = 25;
-          };
           calanda = {
             v4.ip = "10.250.0.6";
             publicKey = "WMuMCzo8e/aNeGP7256mhK0Fe+x06Ws7a9hOZDPCr0M=";

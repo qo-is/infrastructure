@@ -37,14 +37,6 @@ package "riedbach.net.qo.is" {
   riedbachrouter -- "enp5s0" lindberg
 }
 
-package "eem.net.qo.is" {
-  node eemrouter
-
-  node stompert
-
-  eemrouter -- "enp2s0" stompert
-}
-
 cloud internet[
 <b>@
 ]
@@ -59,7 +51,6 @@ package "coredump.net.qo.is" {
 
 internet .. mediaconvchur: INIT7 Fiber (1G/1G)
 internet .. riedbachrouter: iway Fiber (1G/1G)
-internet .. eemrouter: KPN NL Fiber
 internet .. coredumprouter: Openfactory DSL
 @enduml
 ```

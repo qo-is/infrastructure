@@ -28,4 +28,3 @@ ______________________________________________________________________
 - [calanda](nixos-configurations/calanda/README.md)
 - [cyprianspitz](nixos-configurations/cyprianspitz/README.md)
 - [lindberg](nixos-configurations/lindberg/README.md)
-- [stompert](nixos-configurations/stompert/README.md)

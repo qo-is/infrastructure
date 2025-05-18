@@ -52,13 +52,6 @@
       };
     };
 
-    eem-lan = {
-      domain = "eem-lan.net.qo.is";
-      hosts = {
-        stompert.v4.ip = ""; # TODO
-      };
-    };
-
     riedbach-ext = {
       # IP: Dynamic
       domain = "riedbach-ext.net.qo.is";

@@ -22,10 +22,6 @@
   "batzberg": {
     "hostName": "batzberg"
   },
-  "stompert": {
-    "hostName": "stompert",
-    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEKuqMPLbREFIrYcmReaRoHdz1TatpvlrZN14L6cikia"
-  },
   "router-coredump": {
     "hostName": "router"
   },
