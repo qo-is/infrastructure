@@ -20,14 +20,7 @@ in
   ${system}.default = pkgs.mkShellNoCC {
     name = "qois-infrastructure-shell";
     buildInputs =
-      let
-        vscodium-with-extensions = pkgs.vscode-with-extensions.override {
-          vscodeExtensions = with pkgs.vscode-extensions; [ jnoortheen.nix-ide ];
-          vscode = pkgs.vscodium;
-        };
-      in
       pre-commit-check.enabledPackages
-      ++ [ vscodium-with-extensions ]
       ++ (with self.packages.${system}; [
         sops
         sops-rekey
