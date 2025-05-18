@@ -38,7 +38,7 @@ if [ -z "$HOSTS" ]; then
   exit 1
 fi
 
-KNOWN_HOSTS_FILE=$(nix eval --raw .#nixosConfigurations.lindberg.config.environment.etc."ssh/ssh_known_hosts".source)
+KNOWN_HOSTS_FILE=$(nix build --no-link --print-out-paths .#nixosConfigurations.lindberg.config.environment.etc."ssh/ssh_known_hosts".source)
 
 #### Helpers
 retry() {
