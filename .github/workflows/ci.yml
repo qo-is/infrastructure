@@ -36,6 +36,7 @@ jobs:
         profile:
           - docs-ops.qo.is
           - system-vm
+          - system-physical
     steps:
       - name: Initialize CI
         uses: https://git.qo.is/qo.is/actions-nix-init@main
