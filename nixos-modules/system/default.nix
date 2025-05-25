@@ -4,6 +4,14 @@
   pkgs,
   ...
 }:
+let
+  inherit (lib)
+    concatLists
+    elem
+    mapAttrsToList
+    mkForce
+    ;
+in
 {
   imports = [
     ./applications.nix
@@ -35,20 +43,26 @@
   };
 
   users.mutableUsers = false;
+
   users.users = {
     root.openssh.authorizedKeys.keys =
-      with lib;
-      concatLists (
-        mapAttrsToList (
-          name: user:
-          if elem "wheel" user.extraGroups && name != "root" then user.openssh.authorizedKeys.keys else [ ]
-        ) config.users.users
-      );
+      let
+        wheelUserKeys = concatLists (
+          mapAttrsToList (
+            name: user:
+            if elem "wheel" user.extraGroups && name != "root" then user.openssh.authorizedKeys.keys else [ ]
+          ) config.users.users
+        );
+      in
+      wheelUserKeys
+      ++ [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBS65v7n5ozOUjYGuO/dgLC9C5MUGL5kTnQnvWAYP5B3 ci@git.qo.is"
+      ];
   };
 
   # Disable dependency on xorg
   # TODO: Set environment.noXlibs on hosts that don't need any x libraries.
-  security.pam.services.su.forwardXAuth = lib.mkForce false;
+  security.pam.services.su.forwardXAuth = mkForce false;
 
   # Package management
   nix = {
