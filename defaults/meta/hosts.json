@@ -17,7 +17,7 @@
   },
   "lindberg-webapps": {
     "hostName": "lindberg-webapps",
-    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJT99lj5OI+V1PlZl/T2ikBORwMiXjDfWpHYfq/GvUM5"
+    "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIByESy+XiBT8/PoE8DUB388B5MA6LVcJBgH1ZgYxr9Mg"
   },
   "batzberg": {
     "hostName": "batzberg"

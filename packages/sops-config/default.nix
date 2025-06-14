@@ -75,7 +75,7 @@ writeText ".sops.yaml" (
 
         # Secrets for all hosts
         {
-          path_regex = "private/nixos-configurations/secrets\.sops\.(yaml|json|env|ini)$";
+          path_regex = "private/nixos-modules/shared-secrets/default\.sops\.(yaml|json|env|ini)$";
           pgp = toCommaList userPgpKeys;
           age = toCommaList (userAgeKeys ++ builtins.attrValues serverAgeKeys);
         }
