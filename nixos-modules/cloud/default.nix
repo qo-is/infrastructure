@@ -3,6 +3,7 @@
   config,
   lib,
   pkgs,
+  options,
   ...
 }:
 
@@ -29,6 +30,10 @@ with lib;
         "nextcloud29"
         "nextcloud30"
       ];
+    };
+
+    adminpassFile = options.services.nextcloud.config.adminpassFile // {
+      default = config.sops.secrets."nextcloud/admin".path;
     };
   };
 
@@ -59,7 +64,7 @@ with lib;
       database.createLocally = true;
 
       config = {
-        adminpassFile = config.sops.secrets."nextcloud/admin".path;
+        inherit (cfg) adminpassFile;
         adminuser = "root";
         dbtype = "pgsql";
       };
