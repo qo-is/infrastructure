@@ -14,9 +14,9 @@ def test(subtest, webserver):
         value = node.succeed(
             f"curl -s --no-location -o /dev/null -w '%{{{variable}}}' '{url}'"
         )
-        assert value == expected, (
-            f"expected {variable} to be '{expected}' but got '{value}'"
-        )
+        assert (
+            value == expected
+        ), f"expected {variable} to be '{expected}' but got '{value}'"
 
     def expect_http_code(node, code, url):
         curl_variable_test(node, "http_code", code, url)
