@@ -1,12 +1,12 @@
 {
   self,
   pkgs,
-  nixpkgs-nixos-stable,
+  nixpkgs,
   ...
 }@inputs:
 let
   inherit (pkgs.lib) genAttrs;
-  inherit (nixpkgs-nixos-stable.lib) nixosSystem;
+  inherit (nixpkgs.lib) nixosSystem;
   configs = self.lib.foldersWithNix ./.;
 in
 genAttrs configs (

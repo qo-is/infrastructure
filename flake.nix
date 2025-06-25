@@ -5,8 +5,7 @@
     extra-trusted-public-keys = "qois-infrastructure:lh35ymN7Aoxm5Hz0S6JusxE+cYzMU+x9OMKjDVIpfuE=";
   };
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-nixos-stable.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
@@ -24,7 +23,7 @@
     deploy-rs.url = "github:serokell/deploy-rs";
     disko = {
       url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs-nixos-stable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     private.url = "git+file:./private";
     private.inputs.nixpkgs.follows = "nixpkgs";
@@ -59,7 +58,7 @@
         inherit (inputs)
           deploy-rs
           disko
-          nixpkgs-nixos-stable
+          nixpkgs
           sops-nix
           private
           git-hooks-nix
