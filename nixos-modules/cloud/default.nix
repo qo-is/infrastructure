@@ -83,16 +83,22 @@ with lib;
       };
 
       phpOptions = {
-        "opcache.interned_strings_buffer" = "23";
+        "opcache.interned_strings_buffer" = "64";
+        "opcache.memory_consumption" = "512";
+        "opcache.save_comments" = "1";
+        "opcache.max_accelerated_files" = "50000";
+        "opcache.fast_shutdown" = "1";
+        "opcache.jit" = "1255";
+        "opcache.jit_buffer_size" = "8M";
       };
 
       poolSettings = {
         "pm" = "dynamic";
-        "pm.max_children" = "256";
-        "pm.max_requests" = "500";
-        "pm.max_spare_servers" = "16";
-        "pm.min_spare_servers" = "2";
-        "pm.start_servers" = "8";
+        "pm.max_children" = "480";
+        "pm.max_requests" = "2000";
+        "pm.max_spare_servers" = "72";
+        "pm.min_spare_servers" = "24";
+        "pm.start_servers" = "48";
       };
 
       configureRedis = true;
@@ -114,12 +120,6 @@ with lib;
         mail_domain = "qo.is";
         default_phone_region = "CH";
       };
-    };
-
-    services.phpfpm.pools.nextcloud.settings = {
-      "pm.max_children" = lib.mkForce "256";
-      "pm.max_spare_servers" = lib.mkForce "16";
-      "pm.start_servers" = lib.mkForce "8";
     };
 
     users.users.nextcloud.extraGroups = [ "postdrop" ];
