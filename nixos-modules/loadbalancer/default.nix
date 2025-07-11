@@ -78,11 +78,11 @@ let
         server s1 ${getBackplaneIp "cyprianspitz"}:${headscalePort}
 
       # Winder Study Project (tmp)
-      backend workstations-3000
+      backend workstations-3000-http
         mode http
         server s1 10.247.0.156:3000
 
-      backend workstations-8080
+      backend workstations-8080-http
         mode http
         server s1 10.247.0.156:8080
     '';
