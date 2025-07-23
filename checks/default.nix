@@ -19,5 +19,6 @@
     nixos-configurations = import ./nixos-configurations inputs;
 
     # Import deploy-rs tests
-  } // (deployPkgs.deploy-rs.lib.deployChecks self.deploy);
+  }
+  // (deployPkgs.deploy-rs.lib.deployChecks self.deploy);
 }

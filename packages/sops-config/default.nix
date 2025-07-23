@@ -64,23 +64,22 @@ writeText ".sops.yaml" (
   ''
   + strings.toJSON {
     keys = userPgpKeys ++ userAgeKeys ++ attrValues serverAgeKeys;
-    creation_rules =
-      [
-        # Secrets for administrators (a.k.a. passwords)
-        {
-          path_regex = "private/passwords\.sops\.(yaml|json|env|ini)$";
-          pgp = toCommaList userPgpKeys;
-          age = toCommaList userAgeKeys;
-        }
+    creation_rules = [
+      # Secrets for administrators (a.k.a. passwords)
+      {
+        path_regex = "private/passwords\.sops\.(yaml|json|env|ini)$";
+        pgp = toCommaList userPgpKeys;
+        age = toCommaList userAgeKeys;
+      }
 
-        # Secrets for all hosts
-        {
-          path_regex = "private/nixos-modules/shared-secrets/default\.sops\.(yaml|json|env|ini)$";
-          pgp = toCommaList userPgpKeys;
-          age = toCommaList (userAgeKeys ++ builtins.attrValues serverAgeKeys);
-        }
-      ]
-      ++
+      # Secrets for all hosts
+      {
+        path_regex = "private/nixos-modules/shared-secrets/default\.sops\.(yaml|json|env|ini)$";
+        pgp = toCommaList userPgpKeys;
+        age = toCommaList (userAgeKeys ++ builtins.attrValues serverAgeKeys);
+      }
+    ]
+    ++
 
       # Server specific secrets
       (mapAttrsToList (serverName: serverKey: {

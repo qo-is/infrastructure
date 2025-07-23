@@ -61,7 +61,8 @@ with lib;
 
       sops.secrets."forgejo/runner-registration-token".restartUnits = [
         "gitea-runner-${defaultInstanceName}.service"
-      ] ++ (genList (n: "gitea-runner-nix${builtins.toString n}.service") cfg.nixInstances);
+      ]
+      ++ (genList (n: "gitea-runner-nix${builtins.toString n}.service") cfg.nixInstances);
 
       nix.settings = {
         trusted-substituters = cfg.trustedSubstituters;

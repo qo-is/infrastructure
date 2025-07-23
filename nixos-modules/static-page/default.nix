@@ -82,30 +82,29 @@ with lib;
             "${user}" = { };
           }
         ) pageConfigs;
-        users =
+        users = {
+          ${config.services.nginx.user}.extraGroups = mapAttrsToList (_domain: getAttr "user") pageConfigs;
+        }
+        // (concatMapAttrs (
+          _name:
           {
-            ${config.services.nginx.user}.extraGroups = mapAttrsToList (_domain: getAttr "user") pageConfigs;
+            user,
+            home,
+            authorizedKeys,
+            ...
+          }:
+          {
+            ${user} = {
+              inherit home;
+              isSystemUser = true;
+              useDefaultShell = true;
+              homeMode = "750";
+              createHome = true;
+              group = user;
+              openssh.authorizedKeys.keys = authorizedKeys;
+            };
           }
-          // (concatMapAttrs (
-            _name:
-            {
-              user,
-              home,
-              authorizedKeys,
-              ...
-            }:
-            {
-              ${user} = {
-                inherit home;
-                isSystemUser = true;
-                useDefaultShell = true;
-                homeMode = "750";
-                createHome = true;
-                group = user;
-                openssh.authorizedKeys.keys = authorizedKeys;
-              };
-            }
-          ) pageConfigs);
+        ) pageConfigs);
       };
 
       services.nginx = {

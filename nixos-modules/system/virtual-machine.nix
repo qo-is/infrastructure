@@ -19,13 +19,12 @@ with lib;
 
     services.qemuGuest.enable = true;
 
-    boot.initrd.availableKernelModules =
-      [
-        "ahci"
-        "xhci_pci"
-        "sr_mod"
-      ]
-      ++
+    boot.initrd.availableKernelModules = [
+      "ahci"
+      "xhci_pci"
+      "sr_mod"
+    ]
+    ++
       # Taken from https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/qemu-guest.nix
       [
         "virtio_net"

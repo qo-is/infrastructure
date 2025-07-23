@@ -12,21 +12,20 @@
     shfmt.enable = true;
   };
   settings = {
-    global.excludes =
-      [
-        "*.jpg"
-        "*.pdf"
-        "*.toml"
-      ]
-      ++ [
-        ".vscode/*"
-        "nixos-modules/system/etc/*"
-        "private"
-        "private/*"
+    global.excludes = [
+      "*.jpg"
+      "*.pdf"
+      "*.toml"
+    ]
+    ++ [
+      ".vscode/*"
+      "nixos-modules/system/etc/*"
+      "private"
+      "private/*"
 
-        ".envrc"
-        "robots.txt"
-      ];
+      ".envrc"
+      "robots.txt"
+    ];
     formatter.jsonfmt.excludes = [ ".vscode/*.json" ];
   };
 }
