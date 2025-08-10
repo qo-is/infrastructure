@@ -1,5 +1,8 @@
 { ... }:
 {
 
-  imports = [ ./loadbalancer.nix ];
+  imports = [
+    ./loadbalancer.nix
+    ./ssh-forwarding.nix
+  ];
 }
