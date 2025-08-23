@@ -35,8 +35,7 @@ let
     "www.raphael.li" = "lindberg-rzimmermann";
 
     "vpn.qo.is" = "cyprianspitz-headscale";
-    "api.winder.fh2.ch" = "workstations-8080";
-    "www.winder.fh2.ch" = "workstations-3000";
+    "www.resourcee.fh2.ch" = "workstations-9001";
   };
   getBackplaneIp = hostname: config.qois.meta.network.virtual.backplane.hosts.${hostname}.v4.ip;
   defaultHostmap =
@@ -78,13 +77,9 @@ let
         server s1 ${getBackplaneIp "cyprianspitz"}:${headscalePort}
 
       # Winder Study Project (tmp)
-      backend workstations-3000-http
+      backend workstations-9001-http
         mode http
-        server s1 10.247.0.156:3000
-
-      backend workstations-8080-http
-        mode http
-        server s1 10.247.0.156:8080
+        server s1 10.247.0.156:9001
     '';
   cfg = config.qois.loadbalancer;
 in
