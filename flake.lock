@@ -81,11 +81,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1757952233,
-        "narHash": "sha256-FDijKQRbtLNAOfaVSQxpQYfPMQ+Xf/uxYUuo5Ej2G+E=",
+        "lastModified": 1757953049,
+        "narHash": "sha256-PwWGLIn8XNXSP4iRno2vK6b/Hy/mo6qZuRDzSB1VA4Y=",
         "owner": "cachix",
         "repo": "git-hooks.nix",
-        "rev": "4e9fce4250345128ab0920ec1675ca09962d2c24",
+        "rev": "d1d8fe5cece10276fb7108e17c9a5efc07926ce5",
         "type": "github"
       },
       "original": {
