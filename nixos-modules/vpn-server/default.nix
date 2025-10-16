@@ -49,7 +49,7 @@ in
       (
         [
           database.sqlite.path
-          derp.server.private_key_path
+          #derp.server.private_key_path # Currently not used
           noise.private_key_path
         ]
         ++ derp.paths
