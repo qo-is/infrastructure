@@ -43,7 +43,6 @@ with lib;
       enable = true;
       notifications.mail = {
         enable = true;
-        mailer = "${pkgs.msmtp}/bin/sendmail";
         sender = "system@qo.is";
         recipient = "sysadmin@qo.is";
       };

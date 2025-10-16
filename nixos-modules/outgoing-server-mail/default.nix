@@ -26,6 +26,7 @@ with lib;
 
     programs.msmtp = {
       enable = true;
+      setSendmail = true;
       defaults = {
         aliases = pkgs.writeText "aliases" ''
           root: sysadmin@qo.is
