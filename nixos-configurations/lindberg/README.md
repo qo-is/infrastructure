@@ -62,3 +62,7 @@ ssh -p 2222 root@lindberg.riedbach-ext.net.qo.is
 ### SSD left
 
 ![](docs/ssd_1_left.jpg)
+
+### SSD (M2)
+
+![](docs/ssd_m2.jpg)
