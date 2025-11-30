@@ -130,5 +130,5 @@ in
   qois.outgoing-server-mail.enable = true;
   qois.backup-client.enable = true;
 
-  systemd.extraConfig = "DefaultLimitNOFILE=4096";
+  systemd.settings.Manager.DefaultLimitNOFILE = 4096;
 }
