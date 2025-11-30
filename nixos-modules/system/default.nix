@@ -37,9 +37,9 @@ in
     "900" # Wait for a DHCP lease on boot for 15mins
   ];
 
-  systemd.watchdog = {
-    runtimeTime = "5m";
-    rebootTime = "10m";
+  systemd.settings.Manager = {
+    RuntimeWatchdogSec = "5m";
+    RebootWatchdogSec = "10m";
   };
 
   users.mutableUsers = false;
