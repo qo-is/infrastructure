@@ -33,7 +33,6 @@ in
         nix-fast-build
         nixVersions.latest
         nixd
-        nixfmt-rfc-style
         nixos-anywhere
         pssh
         ssh-to-age
