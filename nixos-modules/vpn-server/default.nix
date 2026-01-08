@@ -8,12 +8,13 @@ with lib;
 let
   cfg = config.qois.vpn-server;
   cfgLoadbalancer = config.qois.loadbalancer;
+  vnet = config.qois.meta.network.virtual;
   defaultDnsRecords =
     (mapAttrs (
       _name: value: mkIf (cfgLoadbalancer.hostmap ? ${value}) cfgLoadbalancer.hostmap.${value}
     ) cfgLoadbalancer.domains)
     // {
-      "vpn.qo.is" = config.services.headscale.address;
+      "vpn.qo.is" = vnet.backplane.hosts.cyprianspitz.v4.ip;
     };
 in
 {
@@ -62,20 +63,16 @@ in
     ];
     services.headscale =
       let
-        vnet = config.qois.meta.network.virtual;
         vpnNet = vnet.vpn;
         vpnNetPrefix = "${vpnNet.v4.id}/${toString vpnNet.v4.prefixLength}";
         backplaneNetPrefix = "${vnet.backplane.v4.id}/${builtins.toString vnet.backplane.v4.prefixLength}";
       in
       {
         enable = true;
-        address = vnet.backplane.hosts.cyprianspitz.v4.ip;
+        address = "127.0.0.1";
         port = 46084;
         settings = {
           server_url = "https://${cfg.domain}:443";
-
-          tls_letsencrypt_challenge_type = "TLS-ALPN-01";
-          tls_letsencrypt_hostname = vpnNet.domain;
 
           dns = {
             base_domain = vpnNet.domain;
@@ -153,5 +150,22 @@ in
             };
         };
       };
+
+    networking.hosts."127.0.0.1" = [ cfg.domain ];
+    services.nginx = {
+      enable = true;
+      defaultSSLListenPort = 8443;
+      defaultHTTPListenPort = 8080;
+
+      virtualHosts.${cfg.domain} = {
+        kTLS = true;
+        forceSSL = true;
+        enableACME = true;
+        locations."/" = {
+          proxyPass = "http://127.0.0.1:${toString config.services.headscale.port}";
+          proxyWebsockets = true;
+        };
+      };
+    };
   });
 }

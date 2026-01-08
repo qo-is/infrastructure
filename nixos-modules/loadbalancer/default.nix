@@ -34,7 +34,7 @@ let
     "ha.raphael.li" = "lindberg-rzimmermann";
     "www.raphael.li" = "lindberg-rzimmermann";
 
-    "vpn.qo.is" = "cyprianspitz-headscale";
+    "vpn.qo.is" = "cyprianspitz-nginx";
     "www.resourcee.fh2.ch" = "workstations-9001";
   };
   getBackplaneIp = hostname: config.qois.meta.network.virtual.backplane.hosts.${hostname}.v4.ip;
@@ -44,6 +44,7 @@ let
         "lindberg-nextcloud"
         "lindberg-build"
         "lindberg-webapps"
+        "cyprianspitz"
       ]
       [
         (map (name: {
@@ -54,7 +55,6 @@ let
       ];
   defaultExtraConfig =
     let
-      headscalePort = toString 46084;
       rzimmermannIp = "10.247.0.113";
     in
     ''
@@ -67,14 +67,15 @@ let
         mode http
         server s1 ${rzimmermannIp}:80
 
-      # cyprianspitz headscale
-      backend cyprianspitz-headscale-http
-        mode http
-        server s1 ${getBackplaneIp "cyprianspitz"}:${headscalePort}
 
-      backend cyprianspitz-headscale-https
+      backend cyprianspitz-nginx-http
+        mode http
+        server s1 ${getBackplaneIp "cyprianspitz"}:8080
+
+      backend cyprianspitz-nginx-https
         mode tcp
-        server s1 ${getBackplaneIp "cyprianspitz"}:${headscalePort}
+        server s1 ${getBackplaneIp "cyprianspitz"}:8443
+
 
       # Winder Study Project (tmp)
       backend workstations-9001-http
