@@ -26,4 +26,12 @@ nix develop
 
 deploy --skip-checks .#cyprianspitz.system-physical
 deploy --skip-checks .#lindberg-build.system-vm
+
+
+# Fun example with possible real world use
+deploy --skip-checks \
+       --auto-rollback false \
+       --magic-rollback false \
+       --ssh-opts '-J root@calanda.plessur-ext.net.qo.is' \
+       .#cyprianspitz.system-physical
 ```
