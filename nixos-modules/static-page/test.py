@@ -3,9 +3,11 @@ def test(subtest, webserver):
     webserver.wait_for_open_port(80)
 
     # Preparations
-    webserverRoot = "/var/lib/nginx-docs.example.com/root"
+    webserverRoot = (
+        "/nix/var/nix/profiles/per-user/nginx-docs.example.com/profile/webroot"
+    )
     indexContent = "It works!"
-    webserver.succeed(f"mkdir {webserverRoot}")
+    webserver.succeed(f"mkdir -p {webserverRoot}")
     webserver.succeed(f"echo '{indexContent}' > {webserverRoot}/index.html")
     webserver.succeed(f"chown -R nginx-docs.example.com\: {webserverRoot}")
 

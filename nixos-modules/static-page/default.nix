@@ -56,12 +56,13 @@ with lib;
         _name: page:
         let
           home = "/var/lib/nginx-${page.domain}";
+          user = "${config.services.nginx.user}-${page.domain}";
         in
         {
           "${page.domain}" = page // {
             inherit home;
-            user = "${config.services.nginx.user}-${page.domain}";
-            root = "${home}/root";
+            inherit user;
+            root = "/nix/var/nix/profiles/per-user/${user}/profile/webroot";
           };
         }
       ) cfg.pages;
