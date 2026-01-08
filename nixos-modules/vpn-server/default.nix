@@ -104,7 +104,7 @@ in
                   "group:wheel" = cfg.wheelUsers;
                 };
                 tagOwners = {
-                  "tag:srv" = [ "srv" ]; # srv tag ist owned by srv user
+                  "tag:srv" = [ "srv@" ]; # srv tag ist owned by srv user
                 };
                 autoApprovers = {
                   exitNode = [
@@ -122,7 +122,7 @@ in
                     action = "accept";
                     src = [
                       "tag:srv"
-                      "srv"
+                      "srv@"
                     ];
                     dst = [ "*:*" ];
                   }
@@ -131,7 +131,7 @@ in
                     src = [ "*" ];
                     dst = [
                       "tag:srv:*"
-                      "srv:*"
+                      "srv@:*"
                     ];
                   }
 
