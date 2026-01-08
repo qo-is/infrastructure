@@ -76,7 +76,6 @@ with lib;
           music
           news
           notes
-          notify_push
           tasks
           twofactor_webauthn
           ;
@@ -101,7 +100,6 @@ with lib;
         "pm.start_servers" = "48";
       };
 
-      configureRedis = true;
       caching.redis = true;
 
       notify_push = {
