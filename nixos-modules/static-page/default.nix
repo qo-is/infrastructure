@@ -62,7 +62,7 @@ with lib;
           "${page.domain}" = page // {
             inherit home;
             inherit user;
-            root = "/nix/var/nix/profiles/per-user/${user}/profile/webroot";
+            root = "/nix/var/nix/profiles/per-user/${user}/webroot";
           };
         }
       ) cfg.pages;
