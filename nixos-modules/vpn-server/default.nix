@@ -57,7 +57,19 @@ in
       );
 
     networking.firewall.checkReversePath = "loose";
-    networking.firewall.allowedTCPPorts = [ config.services.headscale.port ];
+    networking.firewall.allowedTCPPorts =
+      let
+        inherit (config.services.nginx)
+          defaultSSLListenPort
+          defaultHTTPListenPort
+          ;
+      in
+      [
+        config.services.headscale.port
+        # open nginx ports to allow loadbalancer access from other backplane hosts
+        defaultSSLListenPort
+        defaultHTTPListenPort
+      ];
     networking.firewall.allowedUDPPorts = [
       41641
     ];
