@@ -5,6 +5,7 @@ let
 in
 {
   networking.hostName = meta.hosts.lindberg.hostName;
+  networking.enableIPv6 = false; # TODO(#5): Enable ipv6
 
   networking.useDHCP = false;
   networking.interfaces.enp5s0.useDHCP = true;
