@@ -36,7 +36,8 @@ in
             "${id}/${builtins.toString prefixLength}";
         in
         [
-          "--timeout 60s"
+          "--timeout"
+          "60s"
           "--accept-dns=false"
           "--accept-routes=false"
           "--login-server=https://${cfg.domain}"
