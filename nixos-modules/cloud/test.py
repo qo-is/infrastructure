@@ -1,8 +1,7 @@
 def test(subtest, webserver):
+    webserver.wait_for_unit("multi-user.target")
     webserver.wait_for_unit("nginx")
     webserver.wait_for_open_port(80)
-    webserver.wait_for_unit("nextcloud-setup.service")
-    webserver.wait_for_unit("phpfpm-nextcloud.service")
 
     # Helpers
     def curl_variable_test(node, variable, expected, url):
