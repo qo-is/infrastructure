@@ -55,14 +55,14 @@ with lib;
       pageConfigs = concatMapAttrs (
         _name: page:
         let
-          home = "/var/lib/nginx-${page.domain}";
           user = "${config.services.nginx.user}-${page.domain}";
+          home = "/var/lib/${user}";
         in
         {
           "${page.domain}" = page // {
             inherit home;
             inherit user;
-            root = "/nix/var/nix/profiles/per-user/${user}/webroot";
+            root = "${home}/.local/state/nix/profiles/webroot";
           };
         }
       ) cfg.pages;
