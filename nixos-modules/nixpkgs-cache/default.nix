@@ -10,7 +10,7 @@ in
 with lib;
 {
   options.qois.nixpkgs-cache = {
-    enable = mkEnableOption ''Enable nixpkgs cache server.'';
+    enable = mkEnableOption "Enable nixpkgs cache server.";
 
     hostname = mkOption {
       type = types.str;

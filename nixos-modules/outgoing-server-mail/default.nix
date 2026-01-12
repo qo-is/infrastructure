@@ -11,7 +11,7 @@ in
 with lib;
 {
   options.qois.outgoing-server-mail = {
-    enable = mkEnableOption ''Enable outgoing emails for server.'';
+    enable = mkEnableOption "Enable outgoing emails for server.";
   };
 
   config = mkIf cfg.enable {
