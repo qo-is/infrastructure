@@ -11,6 +11,7 @@ ______________________________________________________________________
 - [Backups](backups.md)
 - [Updates](updates.md)
 - [New Host Setup](nixos-configurations/setup.md)
+- [Disk Replacement (RAID)](nixos-configurations/disk-replacement.md)
 
 # Services
 

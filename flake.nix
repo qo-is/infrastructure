@@ -109,6 +109,7 @@
         }
       );
       formatter.${system} = treefmtEval.config.build.wrapper;
+      diskoConfigurations.replacement = import ./disko-replacement.nix { };
       nixosConfigurations = import ./nixos-configurations/default.nix (
         importParams
         // {

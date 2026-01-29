@@ -37,6 +37,7 @@ in
         pssh
         ssh-to-age
         yq
+        disko
       ]);
     LANG = "C.UTF-8";
     LC_ALL = "C.UTF-8";
