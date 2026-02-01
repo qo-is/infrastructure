@@ -58,7 +58,7 @@ disko --dry-run  --mode format /tmp/disko-replacement.nix > /tmp/format-disk.sh
 
 ```bash
 # Add to RAID
-mdadm $RAID_DEVICE --add ${REPLACEMENT_DISK}-part2
+mdadm --manage $RAID_DEVICE --add ${REPLACEMENT_DISK}-part2
 
 # Monitor rebuild
 watch -n 1 cat /proc/mdstat
