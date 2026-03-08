@@ -11,7 +11,7 @@
     ARRAY /dev/md/raid_data metadata=1.2 name=any:raid_data UUID=576eabb1:0722bc27:84d9314f:d0145000
   '';
 
-  services.fwupd.daemonSettings.EspLocation = pkgs.lib.mkForce config.disko.devices.disk.system-1.content.partitions.boot.content.mountpoint;
+  services.fwupd.daemonSettings.EspLocation = pkgs.lib.mkForce config.disko.devices.disk.system-2.content.partitions.boot.content.mountpoint;
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.efi.canTouchEfiVariables = true;
@@ -19,11 +19,11 @@
     enable = true;
     efiSupport = true;
     mirroredBoots = [
-      {
-        devices = [ "nodev" ];
-        path = "/boot-primary";
-        efiBootloaderId = "NixOS primary";
-      }
+      #{
+      #  devices = [ "nodev" ];
+      #  path = "/boot-primary";
+      #  efiBootloaderId = "NixOS primary";
+      #}
       {
         devices = [ "nodev" ];
         path = "/boot-secondary";

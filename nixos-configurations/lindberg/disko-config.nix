@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   disko.devices = {
     disk = rec {
@@ -50,9 +50,35 @@
           };
         };
       };
-      system-1 = {
+      #system-1 = {
+      #  type = "disk";
+      #  device = "/dev/disk/by-id/nvme-SAMSUNG_MZVL22T0HBLB-00B00_S677NE0NC01017";
+      #  content = {
+      #    type = "gpt";
+      #    partitions = {
+      #      boot = {
+      #        size = "1G";
+      #        type = "EF00";
+      #        content = {
+      #          type = "filesystem";
+      #          format = "vfat";
+      #          mountpoint = "/boot-primary";
+      #        };
+      #      };
+      #      raid_system = {
+      #        start = "5G";
+      #        size = "100%";
+      #        content = {
+      #          type = "mdraid";
+      #          name = "raid_system";
+      #        };
+      #      };
+      #    };
+      #  };
+      #};
+      system-2 = {
         type = "disk";
-        device = "/dev/disk/by-id/nvme-SAMSUNG_MZVL22T0HBLB-00B00_S677NE0NC01017";
+        device = "/dev/disk/by-id/nvme-Lexar_SSD_NM790_2TB_NLK644R000627P2202";
         content = {
           type = "gpt";
           partitions = {
@@ -62,7 +88,7 @@
               content = {
                 type = "filesystem";
                 format = "vfat";
-                mountpoint = "/boot-primary";
+                mountpoint = "/boot-secondary";
               };
             };
             raid_system = {
@@ -74,13 +100,6 @@
               };
             };
           };
-        };
-      };
-      system-2 = {
-        type = "disk";
-        device = "/dev/disk/by-id/nvme-Lexar_SSD_NM790_2TB_NLK644R000627P2202";
-        content = pkgs.lib.recursiveUpdate system-1.content {
-          partitions.boot.content.mountpoint = "/boot-secondary";
         };
       };
       cache = {
