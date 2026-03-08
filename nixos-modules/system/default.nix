@@ -69,7 +69,7 @@ in
     settings =
       let
         substituters = [
-          "https://${config.qois.nixpkgs-cache.hostname}?priority=30"
+          #"https://${config.qois.nixpkgs-cache.hostname}?priority=30" # TODO: Re-enable this once we have a stable solution
           "https://attic.qo.is/qois-infrastructure?priority=32"
           "https://cache.nixos.org?priority=40"
         ];
