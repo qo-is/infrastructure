@@ -19,6 +19,27 @@ let
     in
     "02:${hex 0}:${hex 2}:${hex 4}:${hex 6}:${hex 8}";
 
+  # IPv4 arithmetic helpers
+  parseIPv4 = addr: map builtins.fromJSON (splitString "." addr);
+  formatIPv4 = octets: concatStringsSep "." (map toString octets);
+  addToIPv4 =
+    addr: offset:
+    let
+      octets = parseIPv4 addr;
+      total = foldl' (acc: o: acc * 256 + o) 0 octets + offset;
+    in
+    formatIPv4 [
+      (mod (total / 16777216) 256)
+      (mod (total / 65536) 256)
+      (mod (total / 256) 256)
+      (mod total 256)
+    ];
+
+  # Network config derived from metadata
+  netConfig = config.qois.meta.network.microvm.${cfg.netName};
+  hostGateway = addToIPv4 netConfig.v4.id 1;
+  guestIP = name: addToIPv4 netConfig.v4.id (cfg.services.${name}.index + 1);
+
   secretSubmodule = types.submodule {
     options = {
       generator = mkOption {
@@ -75,14 +96,9 @@ let
           description = "Memory in MiB.";
         };
 
-        hostAddress = mkOption {
-          type = types.str;
-          description = "Host-side IP for the point-to-point link.";
-        };
-
-        guestAddress = mkOption {
-          type = types.str;
-          description = "Guest-side IP for the point-to-point link.";
+        index = mkOption {
+          type = types.ints.positive;
+          description = "VM index for IP allocation. Guest IP = subnet_base + index + 1.";
         };
 
         shares = mkOption {
@@ -120,9 +136,6 @@ let
 
   enabledServices = filterAttrs (_n: s: s.enable) cfg.services;
 
-  # All tap interface names for NAT
-  tapInterfaces = mapAttrsToList (name: _: "vm-${name}") enabledServices;
-
   # Build the list of secret generation services needed before a given VM
   secretServicesFor = svc: map (s: "microvm-secret-${s}.service") svc.secrets;
 
@@ -133,6 +146,11 @@ in
 {
   options.qois.microvm = {
     enable = mkEnableOption "microvm-based services";
+
+    netName = mkOption {
+      type = types.str;
+      description = "Name of the microvm network in qois.meta.network.microvm.";
+    };
 
     secrets = mkOption {
       type = types.attrsOf secretSubmodule;
@@ -148,6 +166,17 @@ in
   };
 
   config = mkIf cfg.enable {
+
+    assertions =
+      let
+        indices = mapAttrsToList (_: svc: svc.index) enabledServices;
+      in
+      [
+        {
+          assertion = (unique (sort lessThan indices)) == (sort lessThan indices);
+          message = "qois.microvm: service indices must be unique";
+        }
+      ];
 
     # Secret generation: one systemd oneshot per secret
     systemd.services = mkMerge [
@@ -184,6 +213,15 @@ in
         nameValuePair "microvm@${vmName}" {
           after = (secretServicesFor vmCfg) ++ (dependencyServicesFor vmCfg);
           wants = (secretServicesFor vmCfg) ++ (dependencyServicesFor vmCfg);
+        }
+      ) enabledServices)
+
+      # Ensure host-side address configuration runs after the tap interface is created
+      (mapAttrs' (
+        vmName: _vmCfg:
+        nameValuePair "network-addresses-vm-${vmName}" {
+          after = [ "microvm-tap-interfaces@${vmName}.service" ];
+          wants = [ "microvm-tap-interfaces@${vmName}.service" ];
         }
       ) enabledServices)
     ];
@@ -236,58 +274,57 @@ in
             ++ userShares;
           };
 
-          # Guest networking: point-to-point /32
+          # Guest networking: upstream-style routed /32
           networking.hostName = name;
           networking.useDHCP = false;
           networking.interfaces.eth0 = {
             useDHCP = false;
             ipv4.addresses = [
               {
-                address = svc.guestAddress;
+                address = guestIP name;
                 prefixLength = 32;
               }
             ];
             ipv4.routes = [
               {
-                address = svc.hostAddress;
+                address = hostGateway;
                 prefixLength = 32;
               }
             ];
           };
           networking.defaultGateway = {
-            address = svc.hostAddress;
+            address = hostGateway;
             interface = "eth0";
           };
-          networking.nameservers = [ svc.hostAddress ];
+          networking.nameservers = [ hostGateway ];
 
-          # Forward DNS to host
           system.stateVersion = config.system.stateVersion;
         };
       }
     ) enabledServices;
 
-    # Host-side networking: tap interfaces with /32 addresses and routes
+    # Host-side networking: all taps share the gateway address, each has a /32 route to its guest
     networking.interfaces = mapAttrs' (
-      name: svc:
+      name: _svc:
       nameValuePair "vm-${name}" {
         useDHCP = false;
         ipv4.addresses = [
           {
-            address = svc.hostAddress;
+            address = hostGateway;
             prefixLength = 32;
           }
         ];
         ipv4.routes = [
           {
-            address = svc.guestAddress;
+            address = guestIP name;
             prefixLength = 32;
           }
         ];
       }
     ) enabledServices;
 
-    # NAT for microvm tap interfaces
-    networking.nat.internalInterfaces = tapInterfaces;
+    # NAT for microvm subnet
+    networking.nat.internalIPs = with netConfig.v4; [ "${id}/${toString prefixLength}" ];
 
     # Enable IP forwarding for inter-VM communication
     boot.kernel.sysctl."net.ipv4.ip_forward" = 1;

@@ -188,6 +188,18 @@ in
     );
     default = { };
   };
+  options.qois.meta.network.microvm = mkOption {
+    description = "MicroVM network configuration";
+    type = types.attrsOf (
+      types.submodule {
+        options = {
+          v4 = mkOption { type = (mkNetworkIdOpts 4); };
+          domain = mkStr "Network DNS domain suffix";
+        };
+      }
+    );
+    default = { };
+  };
   config = {
     programs.ssh.knownHosts =
       let

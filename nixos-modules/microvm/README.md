@@ -1,6 +1,8 @@
 # MicroVM Platform Module
 
 Lightweight microvm.nix-based VMs running on host machines (primarily lindberg).
+Uses the [upstream routed /32 network pattern](https://microvm-nix.github.io/microvm.nix/routed-network.html)
+with a shared host gateway and index-based IP allocation from metadata.
 
 ## Adding a new microvm service
 
@@ -15,10 +17,9 @@ Lightweight microvm.nix-based VMs running on host machines (primarily lindberg).
    ```nix
    qois.microvm.services.<name> = {
      enable = true;
+     index = 3;        # Next available index → guest IP = subnet_base + index + 1
      vcpus = 2;
      mem = 2048;
-     hostAddress = "10.249.0.X";   # Next even number
-     guestAddress = "10.249.0.Y";  # X + 1
      guestModules = [({ ... }: {
        qois.<service-name>.enable = true;
      })];
@@ -29,15 +30,21 @@ Lightweight microvm.nix-based VMs running on host machines (primarily lindberg).
 
 ## Network addressing
 
-Subnet: `10.249.0.0/24` (point-to-point /32 links)
+Subnet and domain are defined in `qois.meta.network.microvm` metadata and referenced via `qois.microvm.netName`.
 
-| VM | Host-side | Guest-side |
-| -------- | ------------ | ------------ |
-| postgres | 10.249.0.2 | 10.249.0.3 |
-| jellyfin | 10.249.0.4 | 10.249.0.5 |
-| _next_ | 10.249.0.6 | 10.249.0.7 |
+- **Gateway**: `subnet_base + 1` (shared across all tap interfaces on the host)
+- **Guest IP**: `subnet_base + index + 1` (unique per VM, derived from `index`)
 
-Each VM gets a tap interface `vm-<name>` with a /32 point-to-point link. The host acts as gateway.
+For `lindberg-microvms` (`10.249.0.0/24`):
+
+| VM | Index | Host (gateway) | Guest IP |
+| -------- | ----- | -------------- | ---------- |
+| postgres | 1 | 10.249.0.1 | 10.249.0.2 |
+| jellyfin | 2 | 10.249.0.1 | 10.249.0.3 |
+| _next_ | 3 | 10.249.0.1 | 10.249.0.4 |
+
+Each VM gets a tap interface `vm-<name>` with a /32 point-to-point link. The host gateway address
+is the same on all tap interfaces. NAT uses the full subnet CIDR.
 
 ## Secrets
 

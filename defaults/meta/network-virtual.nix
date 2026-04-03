@@ -90,15 +90,5 @@
         };
       };
 
-      lindberg-microvms = {
-        v4 = {
-          id = "10.249.0.0";
-          prefixLength = 24;
-        };
-        domain = "lindberg-microvms.net.qo.is";
-        hosts = {
-          lindberg.v4.ip = "10.249.0.1";
-        };
-      };
     };
 }

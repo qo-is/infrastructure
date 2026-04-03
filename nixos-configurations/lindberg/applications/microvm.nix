@@ -9,15 +9,15 @@ in
 {
   qois.microvm = {
     enable = true;
+    netName = "lindberg-microvms";
 
     secrets.jellyfin-db-password = { }; # defaults: pwgen -s 32, fileName = "password"
 
     services.postgres = {
       enable = true;
+      index = 1; # → 10.249.0.2
       vcpus = 2;
       mem = 4096;
-      hostAddress = "10.249.0.2";
-      guestAddress = "10.249.0.3";
       secrets = [ "jellyfin-db-password" ];
       openHostFirewallTCP = [ 5432 ];
       guestModules = [
@@ -43,10 +43,9 @@ in
 
     services.jellyfin = {
       enable = true;
+      index = 2; # → 10.249.0.3
       vcpus = 4;
       mem = 4096;
-      hostAddress = "10.249.0.4";
-      guestAddress = "10.249.0.5";
       secrets = [ "jellyfin-db-password" ];
       dependsOn = [ "postgres" ];
       shares = [
@@ -64,7 +63,7 @@ in
             qois.jellyfin = {
               enable = true;
               dbPasswordFile = "/run/microvm-secrets/jellyfin-db-password/password";
-              dbHost = "10.249.0.3";
+              dbHost = "10.249.0.2"; # postgres VM (base + index + 1 = .0 + 1 + 1)
             };
           }
         )
