@@ -63,7 +63,7 @@ in
   config = mkIf cfg.enable {
     services.postgresql = {
       enable = true;
-      package = cfg.package;
+      package = mkDefault cfg.package;
       enableTCPIP = true;
 
       ensureDatabases = cfg.databases;
@@ -88,9 +88,15 @@ in
     # Set user passwords from the secret file after postgresql starts
     systemd.services.postgresql-set-passwords = {
       description = "Set PostgreSQL user passwords from secrets";
-      after = [ "postgresql.service" ];
+      after = [
+        "postgresql.service"
+        "postgresql-setup.service"
+      ];
       wantedBy = [ "multi-user.target" ];
-      requires = [ "postgresql.service" ];
+      requires = [
+        "postgresql.service"
+        "postgresql-setup.service"
+      ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
