@@ -25,6 +25,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    microvm = {
+      url = "github:astro/microvm.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     private.url = "git+file:./private";
     private.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -58,6 +62,7 @@
         inherit (inputs)
           deploy-rs
           disko
+          microvm
           nixpkgs
           sops-nix
           private
