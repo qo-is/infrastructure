@@ -5,7 +5,6 @@
     {
       imports = [
         ./default.nix
-        ../microvm-secrets/default.nix
       ];
 
       qois.meta.network.microvm.test-net = {
@@ -14,13 +13,6 @@
           prefixLength = 24;
         };
         domain = "test-microvms.local";
-      };
-
-      qois.microvm-secrets = {
-        enable = true;
-        secrets.test-secret = {
-          services = [ "test-vm" ];
-        };
       };
 
       qois.microvm = {

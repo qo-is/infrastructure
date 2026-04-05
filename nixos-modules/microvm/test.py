@@ -4,9 +4,6 @@ def test(subtest, host):
     with subtest("IP forwarding is enabled"):
         host.succeed("sysctl -n net.ipv4.ip_forward | grep -q 1")
 
-    with subtest("secret was generated"):
-        host.succeed("test -f /dev/shm/microvm-secrets/test-secret/password")
-
     with subtest("microvm service started"):
         host.wait_for_unit("microvm@test-vm.service")
 
