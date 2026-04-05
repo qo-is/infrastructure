@@ -13,8 +13,7 @@ in
 {
   options.qois.microvm-postgres = {
     enable = mkEnableOption "PostgreSQL for microvm guest";
-
-    package = mkPackageOption pkgs "postgresql_16" { };
+    # Note: the package gets defined by our postgres module.
 
     passwordFile = mkOption {
       type = types.str;
@@ -63,7 +62,6 @@ in
   config = mkIf cfg.enable {
     services.postgresql = {
       enable = true;
-      package = mkDefault cfg.package;
       enableTCPIP = true;
 
       ensureDatabases = cfg.databases;
