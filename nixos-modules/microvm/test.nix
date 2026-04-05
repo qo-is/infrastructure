@@ -3,7 +3,10 @@
   nodes.host =
     { pkgs, ... }:
     {
-      imports = [ ./default.nix ];
+      imports = [
+        ./default.nix
+        ../microvm-secrets/default.nix
+      ];
 
       qois.meta.network.microvm.test-net = {
         v4 = {
@@ -13,16 +16,20 @@
         domain = "test-microvms.local";
       };
 
+      qois.microvm-secrets = {
+        enable = true;
+        secrets.test-secret = {
+          services = [ "test-vm" ];
+        };
+      };
+
       qois.microvm = {
         enable = true;
         netName = "test-net";
 
-        secrets.test-secret = { };
-
         services.test-vm = {
           enable = true;
           index = 1; # → 192.168.100.2
-          secrets = [ "test-secret" ];
           openHostFirewallTCP = [ 8080 ];
           guestModules = [
             (
