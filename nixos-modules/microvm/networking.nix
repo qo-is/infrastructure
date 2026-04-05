@@ -13,7 +13,7 @@ let
   # Network config derived from metadata
   netConfig = config.qois.meta.network.microvm.${cfg.netName};
   hostGateway = helpers.addToIPv4 netConfig.v4.id 1;
-  guestIP = name: helpers.addToIPv4 netConfig.v4.id (cfg.services.${name}.index + 1);
+  guestIP = name: helpers.addToIPv4 netConfig.v4.id cfg.services.${name}.index;
 
   enabledServices = filterAttrs (_n: s: s.enable) cfg.services;
 in

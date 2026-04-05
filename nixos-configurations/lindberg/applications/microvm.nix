@@ -23,7 +23,7 @@ in
 
     services.postgres = {
       enable = true;
-      index = 1; # → 10.249.0.2
+      index = 2;
       vcpus = 2;
       mem = 4096;
       openHostFirewallTCP = [ 5432 ];
@@ -50,7 +50,7 @@ in
 
     services.jellyfin = {
       enable = true;
-      index = 2; # → 10.249.0.3
+      index = 3;
       vcpus = 4;
       mem = 4096;
       dependsOn = [ "postgres" ];
@@ -69,7 +69,7 @@ in
             qois.jellyfin = {
               enable = true;
               dbPasswordFile = "/run/microvm-secrets/jellyfin-db-password/password";
-              dbHost = "10.249.0.2"; # postgres VM (base + index + 1 = .0 + 1 + 1)
+              dbHost = "10.249.0.2"; # postgres VM (index = 2)
             };
           }
         )

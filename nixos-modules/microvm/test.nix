@@ -29,7 +29,7 @@
 
         services.test-vm = {
           enable = true;
-          index = 1; # → 192.168.100.2
+          index = 2; # → 192.168.100.2
           openHostFirewallTCP = [ 8080 ];
           guestModules = [
             (

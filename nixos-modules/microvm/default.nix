@@ -51,8 +51,8 @@ let
         };
 
         index = mkOption {
-          type = types.ints.positive;
-          description = "VM index for IP allocation. Guest IP = subnet_base + index + 1.";
+          type = types.ints.between 2 255;
+          description = "VM index for IP allocation. Guest IP = subnet_base + index (index 1 is reserved for the host gateway).";
         };
 
         shares = mkOption {
