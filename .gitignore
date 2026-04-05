@@ -7,3 +7,4 @@ result*
 /.sops.yaml
 /.nixos-test-history
 /.pre-commit-config.yaml
+*.local.json

@@ -48,12 +48,16 @@ is the same on all tap interfaces. NAT uses the full subnet CIDR.
 
 ## Secrets
 
-Declare secrets at the platform level and grant access per-VM:
+Secrets are managed by the separate `qois.microvm-secrets` module. Declare secrets there and grant access per-VM:
 
 ```nix
-qois.microvm.secrets.<secret-name> = {
-  generator = "${pkgs.pwgen}/bin/pwgen -s 32 1";  # default
-  fileName = "password";                            # default
+qois.microvm-secrets = {
+  enable = true;
+  secrets.<secret-name> = {
+    generator = "${pkgs.pwgen}/bin/pwgen -s 32 1";  # default
+    fileName = "password";                            # default
+    services = [ "<vm-name>" ];                       # microvms that need this secret
+  };
 };
 
 qois.microvm.services.<vm>.secrets = [ "<secret-name>" ];

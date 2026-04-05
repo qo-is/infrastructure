@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -39,21 +38,6 @@ let
   netConfig = config.qois.meta.network.microvm.${cfg.netName};
   hostGateway = addToIPv4 netConfig.v4.id 1;
   guestIP = name: addToIPv4 netConfig.v4.id (cfg.services.${name}.index + 1);
-
-  secretSubmodule = types.submodule {
-    options = {
-      generator = mkOption {
-        type = types.str;
-        default = "${pkgs.pwgen}/bin/pwgen -s 32 1";
-        description = "Shell command that outputs the secret value to stdout.";
-      };
-      fileName = mkOption {
-        type = types.str;
-        default = "password";
-        description = "Name of the file inside the secret directory.";
-      };
-    };
-  };
 
   shareSubmodule = types.submodule {
     options = {
@@ -107,12 +91,6 @@ let
           description = "Extra virtiofs shares (data volumes).";
         };
 
-        secrets = mkOption {
-          type = types.listOf types.str;
-          default = [ ];
-          description = "Names from qois.microvm.secrets this VM needs access to.";
-        };
-
         dependsOn = mkOption {
           type = types.listOf types.str;
           default = [ ];
@@ -136,9 +114,6 @@ let
 
   enabledServices = filterAttrs (_n: s: s.enable) cfg.services;
 
-  # Build the list of secret generation services needed before a given VM
-  secretServicesFor = svc: map (s: "microvm-secret-${s}.service") svc.secrets;
-
   # Build the list of dependent VM services
   dependencyServicesFor = svc: map (d: "microvm@${d}.service") svc.dependsOn;
 
@@ -150,12 +125,6 @@ in
     netName = mkOption {
       type = types.str;
       description = "Name of the microvm network in qois.meta.network.microvm.";
-    };
-
-    secrets = mkOption {
-      type = types.attrsOf secretSubmodule;
-      default = { };
-      description = "Secrets to generate on the host and share with VMs via virtiofs.";
     };
 
     services = mkOption {
@@ -178,41 +147,13 @@ in
         }
       ];
 
-    # Secret generation: one systemd oneshot per secret
     systemd.services = mkMerge [
-      # Secret generators
-      (mapAttrs' (
-        secretName: secretCfg:
-        nameValuePair "microvm-secret-${secretName}" {
-          description = "Generate microvm secret: ${secretName}";
-          wantedBy = [ "multi-user.target" ];
-          before =
-            # Before all VMs that use this secret
-            concatLists (
-              mapAttrsToList (
-                vmName: vmCfg: optional (elem secretName vmCfg.secrets) "microvm@${vmName}.service"
-              ) enabledServices
-            );
-          unitConfig.ConditionPathExists = "!/dev/shm/microvm-secrets/${secretName}/${secretCfg.fileName}";
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-          };
-          script = ''
-            mkdir -p /dev/shm/microvm-secrets/${secretName}
-            ${secretCfg.generator} > /dev/shm/microvm-secrets/${secretName}/${secretCfg.fileName}
-            chmod 400 /dev/shm/microvm-secrets/${secretName}/${secretCfg.fileName}
-            chmod 500 /dev/shm/microvm-secrets/${secretName}
-          '';
-        }
-      ) cfg.secrets)
-
-      # VM dependency ordering and secret dependencies
+      # VM dependency ordering
       (mapAttrs' (
         vmName: vmCfg:
         nameValuePair "microvm@${vmName}" {
-          after = (secretServicesFor vmCfg) ++ (dependencyServicesFor vmCfg);
-          wants = (secretServicesFor vmCfg) ++ (dependencyServicesFor vmCfg);
+          after = dependencyServicesFor vmCfg;
+          wants = dependencyServicesFor vmCfg;
         }
       ) enabledServices)
 
@@ -230,13 +171,6 @@ in
     microvm.vms = mapAttrs (
       name: svc:
       let
-        secretShares = map (s: {
-          tag = "secret-${s}";
-          source = "/dev/shm/microvm-secrets/${s}";
-          mountPoint = "/run/microvm-secrets/${s}";
-          proto = "virtiofs";
-        }) svc.secrets;
-
         userShares = map (s: {
           inherit (s) tag source mountPoint;
           proto = "virtiofs";
@@ -270,7 +204,6 @@ in
                 proto = "virtiofs";
               }
             ]
-            ++ secretShares
             ++ userShares;
           };
 
