@@ -128,6 +128,8 @@ in
       }
     ) enabledServices;
 
+    microvm.host.useNotifySockets = true;
+
     # Declare microvm.vms for each enabled service
     microvm.vms = mapAttrs (
       _name: svc:
@@ -148,7 +150,10 @@ in
             hypervisor = "cloud-hypervisor";
             vcpu = svc.vcpus;
             mem = svc.mem;
-
+            vsock = {
+              ssh.enable = true;
+              cid = svc.index + 12834; # Random offset: Fair dice roll
+            };
             shares = [
               {
                 tag = "ro-store";

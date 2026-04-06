@@ -1,8 +1,16 @@
 { ... }:
 {
+
   nodes.host =
     { pkgs, ... }:
     {
+      virtualisation.qemu.options = [
+        "-cpu"
+        "host"
+      ];
+      # virtiofs for nix ro store on top of 9p nixos test overlay doesn't work.
+      virtualisation.useNixStoreImage = true;
+
       imports = [
         ./default.nix
       ];

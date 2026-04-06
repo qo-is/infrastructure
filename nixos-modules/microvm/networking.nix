@@ -41,27 +41,26 @@ in
         ];
 
         networking.hostName = name;
-        networking.useDHCP = false;
-        networking.interfaces.eth0 = {
-          useDHCP = false;
-          ipv4.addresses = [
+        networking.useNetworkd = true;
+
+        systemd.network.networks."10-eth" = {
+          matchConfig.MACAddress = helpers.macAddress name;
+          address = [
+            "${guestIP name}/32"
+          ];
+          routes = [
             {
-              address = guestIP name;
-              prefixLength = 32;
+              Destination = "${hostGateway}/32";
+              GatewayOnLink = true;
+            }
+            {
+              Destination = "0.0.0.0/0";
+              Gateway = hostGateway;
+              GatewayOnLink = true;
             }
           ];
-          ipv4.routes = [
-            {
-              address = hostGateway;
-              prefixLength = 32;
-            }
-          ];
+          networkConfig.DNS = [ hostGateway ];
         };
-        networking.defaultGateway = {
-          address = hostGateway;
-          interface = "eth0";
-        };
-        networking.nameservers = [ hostGateway ];
       };
     }) enabledServices;
 
@@ -77,6 +76,10 @@ in
           }
         ];
         ipv4.routes = [
+          {
+            address = hostGateway;
+            prefixLength = 32;
+          }
           {
             address = guestIP name;
             prefixLength = 32;
