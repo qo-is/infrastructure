@@ -24,8 +24,8 @@ in
     systemd.services = mapAttrs' (
       vmName: _vmCfg:
       nameValuePair "network-addresses-vm-${vmName}" {
-        after = [ "microvm-tap-interfaces@${vmName}.service" ];
-        wants = [ "microvm-tap-interfaces@${vmName}.service" ];
+        after = [ "sys-subsystem-net-devices-vm\\x2d${vmName}.device" ];
+        bindsTo = [ "sys-subsystem-net-devices-vm\\x2d${vmName}.device" ];
       }
     ) enabledServices;
 
