@@ -1,7 +1,51 @@
-{ inputs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  ...
+}:
 let
   certs = import "${inputs.nixpkgs}/nixos/tests/common/acme/server/snakeoil-certs.nix";
   serverDomain = certs.domain;
+
+  seleniumScript =
+    pkgs.writers.writePython3Bin "grafana-selenium-test"
+      { libraries = with pkgs.python3Packages; [ selenium ]; }
+      ''
+        import sys
+        from selenium import webdriver
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.firefox.options import Options
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+
+        domain = sys.argv[1]
+        base_url = f"https://{domain}"
+
+        options = Options()
+        options.add_argument("--headless")
+        service = webdriver.FirefoxService(
+            executable_path="${lib.getExe pkgs.geckodriver}"  # noqa: E501
+        )
+
+        driver = webdriver.Firefox(options=options, service=service)
+        driver.implicitly_wait(10)
+
+        # Log in
+        driver.get(f"{base_url}/login")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "user"))
+        )
+        driver.find_element(By.NAME, "user").send_keys("testadmin")
+        driver.find_element(By.NAME, "password").send_keys("snakeoilpwd")
+        driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
+
+        # Navigate to the Overview dashboard
+        driver.get(f"{base_url}/d/overview")
+        WebDriverWait(driver, 30).until(EC.title_contains("Overview"))
+
+        driver.quit()
+      '';
 in
 {
   args = {
@@ -20,6 +64,9 @@ in
         environment.systemPackages = [
           pkgs.curl
           pkgs.jq
+          pkgs.firefox-unwrapped
+          pkgs.geckodriver
+          seleniumScript
         ];
       };
     server =

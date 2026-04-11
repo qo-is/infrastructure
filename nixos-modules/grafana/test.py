@@ -67,3 +67,6 @@ def test(server, client, serverDomain, subtest):
         assert len(overview) == 1, (
             f"expected exactly 1 dashboard titled 'Overview' but found {len(overview)}"
         )
+
+    with subtest("e2e-login-and-dashboard"):
+        client.succeed(f"grafana-selenium-test {serverDomain}")
