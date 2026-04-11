@@ -1,11 +1,11 @@
 {
-  inputs,
   linkFarmFromDrvs,
   isFolderWithFile,
   getSubDirs,
   lib,
   testers,
   defaultModule,
+  inputSubsetForNixosConfigurations,
 }:
 let
   inherit (lib)
@@ -29,7 +29,7 @@ let
       {
         imports = [
           (import (getFilePath "test.nix") {
-            inherit inputs;
+            inputs = inputSubsetForNixosConfigurations;
             inherit name;
             inherit lib;
             inherit pkgs;
@@ -45,6 +45,9 @@ let
 
         config = {
           inherit name;
+          node.specialArgs = {
+            inputs = inputSubsetForNixosConfigurations;
+          };
 
           defaults = {
             imports = [ defaultModule ];

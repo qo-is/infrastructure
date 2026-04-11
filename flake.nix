@@ -20,6 +20,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    srvos = {
+      url = "github:nix-community/srvos";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     deploy-rs.url = "github:serokell/deploy-rs";
     disko = {
       url = "github:nix-community/disko";
@@ -34,13 +39,14 @@
       self,
       nixpkgs,
       deploy-rs,
-      treefmt-nix,
       ...
     }@inputs:
     let
       system = "x86_64-linux";
       # Packages for development and build process
       pkgs = import nixpkgs { inherit system; };
+      inherit (pkgs.lib) recursiveUpdate;
+
       deployPkgs = import nixpkgs {
         inherit system;
         overlays = [
@@ -53,86 +59,63 @@
           })
         ];
       };
-      treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
-      importParams = {
+
+      # Create input sets to reduce risk of cyclic dependencies.
+      extendSelfOf = old: self: recursiveUpdate old { inherit self; };
+      inputSubsetExternal = {
+        inherit pkgs;
+        inherit deployPkgs;
+        inherit system;
         inherit (inputs)
           deploy-rs
           disko
           nixpkgs
           sops-nix
+          srvos
           private
           git-hooks-nix
+          treefmt-nix
           ;
-        inherit
-          deployPkgs
-          pkgs
-          system
-          treefmtEval
-          ;
-        flakeSelf = self;
+
+        ### Usage of self directly should be avoided, to reduce the risk of cyclic dependencies.
+        flakeSelfSpecialUsage = self;
+        self = { };
       };
+      inputSubsetWithLibAndFormatter = extendSelfOf inputSubsetExternal {
+        inherit (self) lib formatter;
+      };
+      inputSubsetWithPackages = extendSelfOf inputSubsetWithLibAndFormatter {
+        inherit (self) packages;
+      };
+      inputSubsetForNixosModules = inputSubsetWithPackages;
+      inputSubsetForNixosConfigurations = extendSelfOf inputSubsetWithPackages {
+        inherit (self) nixosModules devShells;
+      };
+      inputSubsetForDeploy = extendSelfOf inputSubsetForNixosConfigurations {
+        inherit (self) nixosConfigurations;
+      };
+      inputSubsetForChecks =
+        (extendSelfOf inputSubsetForDeploy {
+          inherit (self) deploy;
+        })
+        // {
+          inherit inputSubsetForNixosConfigurations;
+        }; # We have nixos tests that need to pass the relevant specialArgs.
     in
     {
-      checks = import ./checks/default.nix (
-        importParams
-        // {
-          self = {
-            inherit (self)
-              lib
-              packages
-              nixosModules
-              nixosConfigurations
-              deploy
-              ;
-          };
-        }
-      );
-      deploy = import ./deploy/default.nix (
-        importParams
-        // {
-          self = {
-            inherit (self)
-              lib
-              packages
-              nixosModules
-              nixosConfigurations
-              ;
-          };
-        }
-      );
-      devShells = import ./dev-shells/default.nix (
-        importParams
-        // {
-          self = {
-            inherit (self) lib packages;
-          };
-        }
-      );
-      formatter.${system} = treefmtEval.config.build.wrapper;
-      nixosConfigurations = import ./nixos-configurations/default.nix (
-        importParams
-        // {
-          self = {
-            inherit (self) lib packages nixosModules;
-          };
-        }
-      );
-      nixosModules = import ./nixos-modules/default.nix (
-        importParams
-        // {
-          self = {
-            inherit (self) lib packages;
-          };
-        }
-      );
-      packages = import ./packages/default.nix (
-        importParams
-        // {
-          self = {
-            inherit (self) lib packages;
-          };
-        }
-      );
-      lib = import ./lib/default.nix { inherit pkgs; };
+      ## Dependency graph: checks -> deploy -> nixosConfigurations -> (nixosModules, devShells) -> packages🔄 -> (lib, formatter)
+      checks = import ./checks/default.nix inputSubsetForChecks;
+      deploy = import ./deploy/default.nix inputSubsetForDeploy;
+      nixosConfigurations = import ./nixos-configurations/default.nix inputSubsetForNixosConfigurations;
+      nixosModules = import ./nixos-modules/default.nix inputSubsetForNixosModules;
+      devShells = import ./dev-shells/default.nix inputSubsetWithPackages;
+      packages = import ./packages/default.nix inputSubsetWithPackages;
+      lib = import ./lib/default.nix inputSubsetExternal;
+      formatter.${system} =
+        let
+          inherit (inputSubsetExternal) pkgs treefmt-nix;
+        in
+        (treefmt-nix.lib.evalModule pkgs ./treefmt.nix).config.build.wrapper;
+
     };
 }
