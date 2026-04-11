@@ -101,7 +101,4 @@ in
   systemd.settings.Manager.DefaultLimitNOFILE = 4096;
 
   networking.useNetworkd = false;
-
-  # Users are managed via the private module (SrvOS would enable userborn)
-  services.userborn.enable = false;
 }
