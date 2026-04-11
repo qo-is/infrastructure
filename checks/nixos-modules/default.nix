@@ -25,13 +25,14 @@ let
       getFilePath = file: path.append modulesBaseDir "./${name}/${file}";
     in
     testers.runNixOSTest (
-      { config, ... }:
+      { config, pkgs, ... }:
       {
         imports = [
           (import (getFilePath "test.nix") {
             inherit inputs;
             inherit name;
             inherit lib;
+            inherit pkgs;
           })
         ];
         options = {
