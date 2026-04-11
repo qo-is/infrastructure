@@ -9,5 +9,6 @@
   qois.postgresql.package = pkgs.postgresql_15;
 
   qois.prometheus.enable = true;
+  qois.grafana.enable = true;
 
 }
