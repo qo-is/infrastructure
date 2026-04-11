@@ -1,6 +1,6 @@
 {
   self,
-  flakeSelf,
+  flakeSelfSpecialUsage,
   system,
   private,
   pkgs,
@@ -19,7 +19,7 @@ in
     pkgs.callPackage (path.append ./. "./${name}/default.nix") {
       inherit
         self
-        flakeSelf
+        flakeSelfSpecialUsage
         system
         private
         ;

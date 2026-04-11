@@ -1,19 +1,20 @@
 {
   self,
-  flakeSelf,
+  inputSubsetForNixosConfigurations,
   system,
   pkgs,
   deployPkgs,
-  treefmtEval,
+  treefmt-nix,
+  flakeSelfSpecialUsage,
   ...
 }@inputs:
 {
   ${system} = {
-    formatting = treefmtEval.config.build.check flakeSelf;
+    formatting = (treefmt-nix.lib.evalModule pkgs ../treefmt.nix).config.build.check flakeSelfSpecialUsage;
 
     nixos-modules = pkgs.callPackage ./nixos-modules {
       defaultModule = self.nixosModules.default;
-      inherit inputs;
+      inherit inputSubsetForNixosConfigurations;
       inherit (self.lib) getSubDirs isFolderWithFile;
     };
 

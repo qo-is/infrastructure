@@ -68,3 +68,6 @@ nix flake lock --update-input private
 ## Deployment
 
 See [Deployment](deploy/) for details.
+
+Deployments are triggered automatically via CI on [git.qo.is](https://git.qo.is/qo.is/infrastructure).
+Open a pull request to trigger the pipeline; merging to `main` deploys to all hosts.

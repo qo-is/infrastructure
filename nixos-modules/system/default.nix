@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -14,6 +15,8 @@ let
 in
 {
   imports = [
+    inputs.srvos.nixosModules.server
+
     ./applications.nix
     ./overlays.nix
     ./physical.nix
@@ -131,4 +134,11 @@ in
   qois.backup-client.enable = true;
 
   systemd.settings.Manager.DefaultLimitNOFILE = 4096;
+
+  # We use classical NixOS networking, not systemd-networkd (SrvOS default)
+  networking.useNetworkd = false;
+  # Users are managed via the private module (SrvOS would enable userborn)
+  services.userborn.enable = false;
+  # We use classic initrd for luks-ssh and udhcpc (SrvOS enables systemd initrd by default)
+  boot.initrd.systemd.enable = false;
 }

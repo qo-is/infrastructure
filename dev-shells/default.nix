@@ -1,7 +1,6 @@
 {
   pkgs,
   git-hooks-nix,
-  treefmtEval,
   system,
   self,
   ...
@@ -11,7 +10,7 @@ let
     src = ../.;
     hooks.treefmt = {
       enable = true;
-      package = treefmtEval.config.build.wrapper;
+      package = self.formatter.${system};
       always_run = true;
     };
   };

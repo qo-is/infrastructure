@@ -3,12 +3,12 @@
   mdbook-plantuml,
   mdbook,
   plantuml,
-  flakeSelf,
+  flakeSelfSpecialUsage,
   stdenv,
   ...
 }:
 let
-  version = flakeSelf.rev or flakeSelf.dirtyRev;
+  version = flakeSelfSpecialUsage.rev or flakeSelfSpecialUsage.dirtyRev;
 in
 stdenv.mkDerivation {
   inherit version;
@@ -19,6 +19,6 @@ stdenv.mkDerivation {
     mdbook-plantuml
     plantuml
   ];
-  src = flakeSelf;
+  src = flakeSelfSpecialUsage;
   buildPhase = "mdbook build --dest-dir $out";
 }
