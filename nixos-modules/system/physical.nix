@@ -36,6 +36,8 @@ with lib;
         tcpdump
       ];
 
+    srvos.server.docs.enable = true;
+
     # System Services
     services.fwupd.enable = true;
 
