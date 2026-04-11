@@ -62,6 +62,17 @@ with lib;
           feedback_links_enabled = false;
         };
       };
+
+      provision.dashboards.settings = {
+        apiVersion = 1;
+        providers = [
+          {
+            name = "default";
+            type = "file";
+            options.path = "/etc/grafana/dashboards";
+          }
+        ];
+      };
     };
 
     services.postgresql =
@@ -90,6 +101,8 @@ with lib;
             jsonData.timeInterval = "15s";
           }
         ];
+
+    environment.etc."grafana/dashboards/overview.json".source = ./dashboards/overview.json;
 
     networking.hosts."127.0.0.1" = [ cfg.domain ];
     services.nginx = {
