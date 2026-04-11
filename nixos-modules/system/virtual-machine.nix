@@ -42,16 +42,5 @@ with lib;
       "virtio_gpu"
     ];
 
-    # Taken from https://github.com/NixOS/nixpkgs/blob/master/nixos/modules/profiles/minimal.nix
-    documentation.enable = lib.mkDefault false;
-
-    documentation.doc.enable = lib.mkDefault false;
-
-    documentation.info.enable = lib.mkDefault false;
-
-    documentation.man.enable = lib.mkDefault false;
-
-    documentation.nixos.enable = lib.mkDefault false;
-
   };
 }

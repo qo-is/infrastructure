@@ -10,7 +10,6 @@ let
     concatLists
     elem
     mapAttrsToList
-    mkForce
     ;
 in
 {
@@ -40,13 +39,6 @@ in
     "900" # Wait for a DHCP lease on boot for 15mins
   ];
 
-  systemd.settings.Manager = {
-    RuntimeWatchdogSec = "5m";
-    RebootWatchdogSec = "10m";
-  };
-
-  users.mutableUsers = false;
-
   users.users = {
     root.openssh.authorizedKeys.keys =
       let
@@ -63,10 +55,6 @@ in
       ];
   };
 
-  # Disable dependency on xorg
-  # TODO: Set environment.noXlibs on hosts that don't need any x libraries.
-  security.pam.services.su.forwardXAuth = mkForce false;
-
   # Package management
   nix = {
     settings =
@@ -78,10 +66,6 @@ in
         ];
       in
       {
-        trusted-users = [
-          "root"
-          "@wheel"
-        ];
         trusted-public-keys = [
           "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
           "qois-infrastructure:lh35ymN7Aoxm5Hz0S6JusxE+cYzMU+x9OMKjDVIpfuE="
@@ -95,21 +79,10 @@ in
       options = "--delete-older-than 90d";
     };
     package = pkgs.nixVersions.stable;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
   };
 
   # Network services
-  networking.firewall = {
-    allowPing = true;
-    allowedTCPPorts = [ 22 ];
-  };
-
-  services.openssh = {
-    enable = true;
-    settings.PasswordAuthentication = false;
-  };
+  networking.firewall.allowPing = true;
 
   security.acme = {
     acceptTerms = true;
@@ -123,10 +96,6 @@ in
   };
 
   programs.autojump.enable = true;
-  programs.vim = {
-    enable = true;
-    defaultEditor = true;
-  };
 
   services.fstrim.enable = true;
 
