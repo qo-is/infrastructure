@@ -48,7 +48,11 @@ with lib;
         };
 
         "auth.anonymous".enabled = false;
-        security.disable_initial_admin_creation = true;
+
+        security = {
+          admin_user = "$__file{${config.sops.secrets."grafana/admin/user".path}}";
+          admin_password = "$__file{${config.sops.secrets."grafana/admin/password".path}}";
+        };
 
         database = {
           type = "postgres";
@@ -74,6 +78,20 @@ with lib;
         ];
       };
     };
+
+    sops.secrets =
+      let
+        user = config.users.users."grafana";
+        grafanaSecret = {
+          restartUnits = [ "grafana.service" ];
+          owner = user.name;
+          group = user.group;
+        };
+      in
+      {
+        "grafana/admin/user" = grafanaSecret;
+        "grafana/admin/password" = grafanaSecret;
+      };
 
     services.postgresql =
       let

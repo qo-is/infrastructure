@@ -96,13 +96,20 @@ in
 
         qois.postgresql.package = pkgs.postgresql;
 
-        services.grafana.settings = {
-          security = {
-            admin_user = "testadmin";
-            # env-var provider avoids the plaintext-in-Nix-store eval warning
-            admin_password = "$__env{GF_SECURITY_ADMIN_PASSWORD}";
-            disable_initial_admin_creation = lib.mkForce false;
-          };
+        # Dummy sops file so secret paths resolve at eval time
+        sops.defaultSopsFile = builtins.toFile "dummy-secrets" (
+          builtins.toJSON {
+            grafana.admin = {
+              user = "unused";
+              password = "unused";
+            };
+          }
+        );
+
+        # Override sops-based credentials with env var for testing
+        services.grafana.settings.security = lib.mkForce {
+          admin_user = "testadmin";
+          admin_password = "$__env{GF_SECURITY_ADMIN_PASSWORD}";
         };
         systemd.services.grafana.environment.GF_SECURITY_ADMIN_PASSWORD = "snakeoilpwd";
       };
