@@ -26,6 +26,7 @@ in
   boot.loader.timeout = 2;
   boot.tmp.useTmpfs = true;
   boot.loader.grub.splashImage = null;
+  boot.loader.systemd-boot.editor = false;
 
   console.keyMap = "de_CH-latin1";
   i18n.defaultLocale = "en_US.UTF-8";
@@ -33,11 +34,6 @@ in
   boot.kernel.sysctl = {
     "kernel.panic" = 20; # Reboot kernel on panic after this much seconds
   };
-
-  boot.initrd.network.udhcpc.extraArgs = [
-    "-A"
-    "900" # Wait for a DHCP lease on boot for 15mins
-  ];
 
   users.users = {
     root.openssh.authorizedKeys.keys =
@@ -104,10 +100,8 @@ in
 
   systemd.settings.Manager.DefaultLimitNOFILE = 4096;
 
-  # We use classical NixOS networking, not systemd-networkd (SrvOS default)
   networking.useNetworkd = false;
+
   # Users are managed via the private module (SrvOS would enable userborn)
   services.userborn.enable = false;
-  # We use classic initrd for luks-ssh and udhcpc (SrvOS enables systemd initrd by default)
-  boot.initrd.systemd.enable = false;
 }

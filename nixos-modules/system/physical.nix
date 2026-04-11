@@ -49,5 +49,11 @@ with lib;
         recipient = "sysadmin@qo.is";
       };
     };
+
+    boot.initrd.systemd.enable = false;
+    boot.initrd.network.udhcpc.extraArgs = [
+      "-A"
+      "900" # Wait for a DHCP lease on boot for 15mins
+    ];
   };
 }
