@@ -1,0 +1,28 @@
+{
+  config,
+  lib,
+  ...
+}:
+let
+  cfg = config.qois.prometheus;
+in
+{
+  options.qois.prometheus = {
+    enable = lib.mkEnableOption "Enable prometheus";
+  };
+
+  config = lib.mkIf cfg.enable {
+    services.prometheus = {
+      enable = true;
+      checkConfig = true;
+      scrapeConfigs = [
+        {
+          job_name = "prometheus";
+          static_configs = [
+            { targets = [ "localhost:${builtins.toString config.services.prometheus.port}" ]; }
+          ];
+        }
+      ];
+    };
+  };
+}
