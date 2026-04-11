@@ -34,6 +34,8 @@ in
           domain = serverDomain;
         };
 
+        qois.prometheus.enable = true;
+
         # Use snakeoil certs instead of ACME
         services.nginx.virtualHosts."${serverDomain}" = {
           enableACME = lib.mkForce false;

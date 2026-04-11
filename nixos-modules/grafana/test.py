@@ -41,3 +41,19 @@ def test(server, client, serverDomain, subtest):
 
     with subtest("postgresql-initialized"):
         server.succeed("sudo -u grafana psql grafana -c '\\dt' | grep -q dashboard")
+
+    with subtest("prometheus-datasource-provisioned"):
+        result = client.succeed(
+            f"curl --basic --user testadmin:snakeoilpwd https://{serverDomain}/api/datasources"
+        )
+        datasources = json.loads(result)
+        prometheus_ds = [ds for ds in datasources if ds.get("type") == "prometheus"]
+        assert len(prometheus_ds) == 1, (
+            f"expected exactly 1 prometheus datasource but found {len(prometheus_ds)}"
+        )
+        assert prometheus_ds[0].get("isDefault") is True, (
+            f"expected prometheus datasource to be default but isDefault was '{prometheus_ds[0].get('isDefault')}'"
+        )
+        assert prometheus_ds[0].get("name") == "Prometheus", (
+            f"expected datasource name 'Prometheus' but was '{prometheus_ds[0].get('name')}'"
+        )

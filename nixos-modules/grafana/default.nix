@@ -79,6 +79,18 @@ with lib;
         ensureDatabases = [ name ];
       };
 
+    services.grafana.provision.datasources.settings.datasources =
+      lib.mkIf config.services.prometheus.enable
+        [
+          {
+            name = "Prometheus";
+            type = "prometheus";
+            url = "http://localhost:${toString config.services.prometheus.port}";
+            isDefault = true;
+            jsonData.timeInterval = "15s";
+          }
+        ];
+
     networking.hosts."127.0.0.1" = [ cfg.domain ];
     services.nginx = {
       enable = true;
