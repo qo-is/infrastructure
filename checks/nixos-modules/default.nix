@@ -1,4 +1,5 @@
 {
+  inputs,
   linkFarmFromDrvs,
   isFolderWithFile,
   getSubDirs,
@@ -28,6 +29,7 @@ let
 
       imports = [
         (import (getFilePath "test.nix") {
+          inherit inputs;
           inherit name;
           inherit lib;
         })
