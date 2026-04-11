@@ -20,6 +20,8 @@ let
   defaultDomains = staticPages // {
     "cloud.qo.is" = "lindberg-nextcloud";
 
+    "monitoring.qo.is" = "lindberg-webapps";
+
     "build.qo.is" = "lindberg-build";
     "gitlab-runner.qo.is" = "lindberg-build";
     "nixpkgs-cache.qo.is" = "lindberg-build";
