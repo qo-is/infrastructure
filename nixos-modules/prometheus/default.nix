@@ -22,7 +22,11 @@ in
             { targets = [ "localhost:${builtins.toString config.services.prometheus.port}" ]; }
           ];
         }
-      ];
+      ]
+      ++ lib.optional config.services.telegraf.enable {
+        job_name = "self";
+        static_configs = [ { targets = [ "localhost:9273" ]; } ];
+      };
     };
   };
 }
