@@ -24,11 +24,14 @@ in
         sops
         sops-rekey
         auto-deploy
+        diff-closures
       ])
       ++ (with pkgs; [
         attic-client
         deploy-rs
+        dix
         jq
+        nix-diff
         nix-fast-build
         nixVersions.latest
         nixd
