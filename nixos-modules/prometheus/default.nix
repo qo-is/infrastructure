@@ -22,11 +22,22 @@ in
             { targets = [ "localhost:${builtins.toString config.services.prometheus.port}" ]; }
           ];
         }
-      ]
-      ++ lib.optional config.services.telegraf.enable {
-        job_name = "self";
-        static_configs = [ { targets = [ "localhost:9273" ]; } ];
-      };
+        {
+          job_name = "telegraf";
+          static_configs = [
+            {
+              targets = [
+                "calanda.backplane.net.qo.is:9273"
+                "cyprianspitz.backplane.net.qo.is:9273"
+                "lindberg.backplane.net.qo.is:9273"
+                "lindberg-build.backplane.net.qo.is:9273"
+                "lindberg-nextcloud.backplane.net.qo.is:9273"
+                "lindberg-webapps.backplane.net.qo.is:9273"
+              ];
+            }
+          ];
+        }
+      ];
     };
   };
 }

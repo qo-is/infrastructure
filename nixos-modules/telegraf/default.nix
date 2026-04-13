@@ -10,8 +10,7 @@ in
   options.qois.telegraf.enable = lib.mkEnableOption "telegraf metrics agent";
 
   config = lib.mkIf cfg.enable {
-    # Only expose the port when prometheus is not running locally
-    networking.firewall.allowedTCPPorts = lib.mkIf (!config.services.prometheus.enable) [ 9273 ];
+    networking.firewall.interfaces."wg-backplane".allowedTCPPorts = [ 9273 ];
 
     services.telegraf = {
       enable = true;
