@@ -20,7 +20,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -33,9 +33,9 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
-          "expr": "100 - cpu_usage_idle{cpu=\"cpu-total\"}",
+          "expr": "100 - cpu_usage_idle{cpu=\"cpu-total\", host=~\"$host\"}",
           "legendFormat": "{{host}}",
           "refId": "A"
         }
@@ -53,7 +53,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -66,9 +66,9 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
-          "expr": "mem_used_percent",
+          "expr": "mem_used_percent{host=~\"$host\"}",
           "legendFormat": "{{host}}",
           "refId": "A"
         }
@@ -78,11 +78,20 @@
   "templating": {
     "list": [
       {
-        "name": "datasource",
-        "type": "datasource",
-        "query": "prometheus",
+        "name": "host",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
+        "query": {
+          "query": "label_values(cpu_usage_idle, host)",
+          "refId": "host"
+        },
         "hide": 0,
-        "refresh": 1,
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
         "current": {},
         "options": []
       }
