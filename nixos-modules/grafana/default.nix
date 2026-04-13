@@ -114,6 +114,7 @@ with lib;
           {
             name = "Prometheus";
             type = "prometheus";
+            uid = "PBFA97CFB590B2093";
             url = "http://localhost:${toString config.services.prometheus.port}";
             isDefault = true;
             jsonData.timeInterval = "15s";
