@@ -28,7 +28,7 @@ in
   boot.loader.grub.splashImage = null;
   boot.loader.systemd-boot.editor = false;
 
-  console.keyMap = "de_CH-latin1";
+  console.keyMap = "us";
   i18n.defaultLocale = "en_US.UTF-8";
 
   boot.kernel.sysctl = {
