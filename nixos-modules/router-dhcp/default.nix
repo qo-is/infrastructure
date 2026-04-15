@@ -42,6 +42,10 @@ in
   };
 
   config = mkIf cfg.enable {
+    # dnsmasq runs on port 5553, not the system DNS port.
+    # Nameserver is set by router-dns (unbound), not dnsmasq.
+    services.dnsmasq.resolveLocalQueries = false;
+
     services.dnsmasq = {
       enable = true;
       settings = {

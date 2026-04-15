@@ -25,6 +25,9 @@ in
   };
 
   config = mkIf cfg.enable {
+    networking.nameservers = [ "127.0.0.1" ];
+    systemd.services.systemd-resolved.enable = false;
+
     services.unbound =
       let
         revIpDomain = concatStringsSep "." (reverseList (take 3 (splitString "." cfg.networkIdIp)));
