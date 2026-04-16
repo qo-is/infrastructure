@@ -1,4 +1,5 @@
 {
+  inputs,
   config,
   lib,
   ...
@@ -7,6 +8,10 @@ let
   cfg = config.qois.telegraf;
 in
 {
+  imports = [
+    inputs.srvos.nixosModules.mixins-telegraf
+  ];
+
   options.qois.telegraf.enable = lib.mkEnableOption "telegraf metrics agent";
 
   config = lib.mkIf cfg.enable {
@@ -15,10 +20,7 @@ in
     services.telegraf = {
       enable = true;
       extraConfig = {
-        agent.interval = "60s";
         inputs = {
-          system = { };
-          mem = { };
           cpu = [
             {
               percpu = false;
@@ -27,12 +29,6 @@ in
             }
           ];
         };
-        outputs.prometheus_client = [
-          {
-            listen = ":9273";
-            metric_version = 2;
-          }
-        ];
       };
     };
   };
