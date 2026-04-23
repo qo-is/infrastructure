@@ -9,7 +9,6 @@
   ];
 
   qois.system.physical.enable = true;
-  qois.telegraf.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like fi:le locations and database versions

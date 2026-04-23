@@ -101,4 +101,7 @@ in
   systemd.settings.Manager.DefaultLimitNOFILE = 4096;
 
   networking.useNetworkd = false;
+
+  # Monitoring
+  qois.telegraf.enable = true;
 }

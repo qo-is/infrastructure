@@ -8,7 +8,6 @@
   qois.static-page.enable = true;
   qois.postgresql.package = pkgs.postgresql_15;
 
-  qois.telegraf.enable = true;
   qois.prometheus.enable = true;
   qois.grafana.enable = true;
 
