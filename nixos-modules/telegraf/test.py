@@ -8,9 +8,9 @@ def test(server, subtest):
 
     with subtest("metrics-exposed"):
         server.wait_until_succeeds(
-            "curl -s http://localhost:9273/metrics | grep -q cpu_usage_idle",
+            "curl -s http://localhost:9273/metrics | grep -c cpu_usage_idle",
             timeout=120,
         )
         server.wait_until_succeeds(
-            "curl -s http://localhost:9273/metrics | grep -q mem_available", timeout=120
+            "curl -s http://localhost:9273/metrics | grep -c mem_available", timeout=120
         )

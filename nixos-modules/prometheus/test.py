@@ -10,6 +10,6 @@ def test(server, subtest):
     with subtest("telegraf-scrape"):
         server.wait_for_unit("telegraf.service")
         server.wait_until_succeeds(
-            "curl -s 'http://localhost:9090/api/v1/query?query=mem_available' | grep -q '\"resultType\":\"vector\"'",
+            "curl -s 'http://localhost:9090/api/v1/query?query=mem_available' | grep -c '\"resultType\":\"vector\"'",
             timeout=120,
         )

@@ -40,7 +40,7 @@ def test(server, client, serverDomain, subtest):
         client.fail("curl --max-time 5 https://192.168.1.2:3000/api/org")
 
     with subtest("postgresql-initialized"):
-        server.succeed("sudo -u grafana psql grafana -c '\\dt' | grep -q dashboard")
+        server.succeed("sudo -u grafana psql grafana -c '\\dt' | grep -c dashboard")
 
     with subtest("prometheus-datasource-provisioned"):
         result = client.succeed(
