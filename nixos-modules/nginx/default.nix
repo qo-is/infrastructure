@@ -11,5 +11,6 @@
     recommendedBrotliSettings = true;
     logError = "stderr warn";
     proxyResolveWhileRunning = true;
+    statusPage = true;
   };
 }
