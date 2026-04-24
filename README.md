@@ -7,8 +7,8 @@ Check out the current [rendered documentation](https://docs-ops.qo.is).
 ## Structure
 
 `nixos-configurations`: Main nixos configuration for every host.\
-`defaults`: Configuration defaults\
-`nixos-modules`: Custom modules (e.g. for vpn and routers)\
+`defaults`: Static/Meta configurations, e.g. list of host and keys\
+`nixos-modules`: Custom modules (all configurations that are not host specific live here)\
 `private`: Private configuration values (like users, sops-encrypted secrets and keys)
 
 ## Development
