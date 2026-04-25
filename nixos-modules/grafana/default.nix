@@ -121,7 +121,7 @@ with lib;
           }
         ];
 
-    environment.etc."grafana/dashboards/overview.json".source = ./dashboards/overview.json;
+    environment.etc."grafana/dashboards".source = ./dashboards;
 
     services.telegraf.extraConfig.inputs.x509_cert = [
       { sources = [ "https://${cfg.domain}:443" ]; }
