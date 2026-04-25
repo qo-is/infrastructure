@@ -27,7 +27,6 @@ with lib;
       dbBackend = "postgresql";
       environmentFile = config.sops.secrets."vaultwarden/environment-file".path;
       config = {
-        DATA_FOLDER = "/var/lib/bitwarden_rs";
         DATABASE_URL = "postgresql:///vaultwarden";
 
         DOMAIN = "https://${cfg.domain}";
