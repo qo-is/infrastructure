@@ -10,6 +10,7 @@ in
 {
   imports = [
     inputs.srvos.nixosModules.mixins-telegraf
+    ./monitoring.nix
   ];
 
   options.qois.telegraf.enable = lib.mkEnableOption "telegraf metrics agent";
@@ -28,6 +29,7 @@ in
               collect_cpu_time = false;
             }
           ];
+          net = { };
         };
       };
     };

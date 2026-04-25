@@ -12,6 +12,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    qois.telegraf.monitoring.enable = lib.mkDefault true;
+
     services.prometheus = {
       enable = true;
       checkConfig = true;
