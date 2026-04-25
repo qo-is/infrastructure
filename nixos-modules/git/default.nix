@@ -65,6 +65,12 @@ with lib;
       config.sops.secrets."msmtp/password".path
     ];
 
+    services.telegraf.extraConfig.inputs = {
+      x509_cert = [
+        { sources = [ "https://${cfg.domain}:443" ]; }
+      ];
+    };
+
     networking.hosts."127.0.0.1" = [ cfg.domain ];
     services.nginx = {
       enable = true;

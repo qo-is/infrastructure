@@ -93,5 +93,9 @@ in
         locations."/".proxyPass = "http://127.0.0.1:${toString cfg.port}";
       };
     };
+
+    services.telegraf.extraConfig.inputs.x509_cert = [
+      { sources = [ "https://${cfg.domain}:443" ]; }
+    ];
   };
 }

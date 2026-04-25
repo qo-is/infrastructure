@@ -86,5 +86,11 @@ with lib;
         };
       };
     };
+
+    services.telegraf.extraConfig.inputs = {
+      x509_cert = [
+        { sources = [ "https://${cfg.domain}:443" ]; }
+      ];
+    };
   };
 }

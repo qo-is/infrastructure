@@ -108,6 +108,16 @@ with lib;
         ) pageConfigs);
       };
 
+      services.telegraf.extraConfig.inputs.x509_cert = [
+        {
+          sources = pipe cfg.pages [
+            attrValues
+            (map (page: [ "https://${page.domain}:443" ] ++ map (d: "https://${d}:443") page.domainAliases))
+            flatten
+          ];
+        }
+      ];
+
       services.nginx = {
         enable = true;
         virtualHosts =
@@ -128,12 +138,12 @@ with lib;
               if (domainAliases == [ ]) then
                 { }
               else
-                ({
+                {
                   "${head domainAliases}" = defaultVhostConfig // {
                     serverAliases = tail domainAliases;
                     globalRedirect = domain;
                   };
-                });
+                };
             aliasVhosts = concatMapAttrs (_name: mkAliasVhost) pageConfigs;
 
           in
