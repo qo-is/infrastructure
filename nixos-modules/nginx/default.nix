@@ -1,4 +1,5 @@
 {
+  config,
   ...
 }:
 
@@ -11,6 +12,6 @@
     recommendedBrotliSettings = true;
     logError = "stderr warn";
     proxyResolveWhileRunning = true;
-    statusPage = true;
+    statusPage = config.services.nginx.enable;
   };
 }
