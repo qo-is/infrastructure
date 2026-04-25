@@ -84,6 +84,7 @@ let
         mode http
         server s1 10.247.0.156:9001
     '';
+  statsIpPort = "127.0.0.1:8404";
   cfg = config.qois.loadbalancer;
 in
 {
@@ -120,6 +121,10 @@ in
         443
       ];
 
+      services.telegraf.extraConfig.inputs.haproxy = [
+        { servers = [ "http://${statsIpPort}/metrics" ]; }
+      ];
+
       services.haproxy =
         let
           domainMappingFile = pipe cfg.domains [
@@ -153,6 +158,13 @@ in
               timeout connect 5000
               timeout client 50000
               timeout server 50000
+
+            listen stats
+              bind ${statsIpPort}
+              mode http
+              stats enable
+              stats uri /metrics
+              stats hide-version
 
             frontend http
               mode http
