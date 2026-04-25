@@ -4,20 +4,32 @@
   lib,
   ...
 }:
-
 let
+  inherit (lib) mkEnableOption mkIf mkOption;
+  inherit (lib.types) path str;
   cfg = config.qois.git;
 in
-with lib;
 {
   options.qois.git = {
     enable = mkEnableOption "Enable qois git service";
 
     domain = mkOption {
-      type = types.str;
+      type = str;
       default = "git.qo.is";
       description = "Domain, under which the service is served.";
     };
+
+    msmtpPasswordFile =
+      mkOption {
+        type = path;
+        description = "Path to the msmtp password file.";
+      }
+      // (
+        if config.sops.secrets ? "msmtp/password" then
+          { default = config.sops.secrets."msmtp/password".path; }
+        else
+          { }
+      );
   };
 
   config = mkIf cfg.enable {
@@ -52,9 +64,10 @@ with lib;
           SENDMAIL_PATH = "${pkgs.msmtp}/bin/sendmail";
           # Note: The sendmail passwordeval has to use the coreutil cat (that is in the services path)
           #       instead of the busybox one due to filtered syscalls.
-          SENDMAIL_ARGS = "--passwordeval 'cat ${config.sops.secrets."msmtp/password".path}'";
+          SENDMAIL_ARGS = "--passwordeval 'cat ${cfg.msmtpPasswordFile}' --";
         };
         log.LEVEL = "Warn";
+        metrics.ENABLED = true;
       };
     };
 
@@ -62,10 +75,16 @@ with lib;
 
     users.users.forgejo.extraGroups = [ "postdrop" ];
     systemd.services.forgejo.serviceConfig.ReadOnlyPaths = [
-      config.sops.secrets."msmtp/password".path
+      cfg.msmtpPasswordFile
     ];
 
     services.telegraf.extraConfig.inputs = {
+      prometheus = [
+        {
+          urls = [ "https://${cfg.domain}/metrics" ];
+          metric_version = 2;
+        }
+      ];
       x509_cert = [
         { sources = [ "https://${cfg.domain}:443" ]; }
       ];
@@ -82,6 +101,14 @@ with lib;
         extraConfig = ''
           client_max_body_size 512M;
         '';
+        locations."/metrics" = {
+          extraConfig = ''
+            allow 127.0.0.1/24;
+            allow 10.250.0.0/24;
+            deny all;
+          '';
+          proxyPass = "http://unix:${config.services.forgejo.settings.server.HTTP_ADDR}";
+        };
         locations."/" = {
           proxyPass = "http://unix:${config.services.forgejo.settings.server.HTTP_ADDR}";
           proxyWebsockets = true;
