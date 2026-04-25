@@ -1,23 +1,35 @@
 {
   config,
+  options,
   pkgs,
   lib,
   ...
 }:
-
 let
+  inherit (lib) mkEnableOption mkIf mkOption;
+  inherit (lib.types) str;
   cfg = config.qois.vault;
 in
-with lib;
 {
   options.qois.vault = {
     enable = mkEnableOption "Enable qois vault service";
 
     domain = mkOption {
-      type = types.str;
+      type = str;
       default = "vault.qo.is";
       description = "Domain, under which the service is served.";
     };
+
+    environmentFile =
+      options.services.vaultwarden.environmentFile
+      // (
+        if config.sops.secrets ? "vaultwarden/environment-file" then
+          {
+            default = config.sops.secrets."vaultwarden/environment-file".path;
+          }
+        else
+          { }
+      );
   };
 
   config = mkIf cfg.enable {
@@ -25,7 +37,7 @@ with lib;
     services.vaultwarden = {
       enable = true;
       dbBackend = "postgresql";
-      environmentFile = config.sops.secrets."vaultwarden/environment-file".path;
+      inherit (cfg) environmentFile;
       config = {
         DATA_FOLDER = "/var/lib/vaultwarden";
         DATABASE_URL = "postgresql:///vaultwarden";
