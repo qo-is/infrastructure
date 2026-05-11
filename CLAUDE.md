@@ -1,3 +1,4 @@
+@AGENTS.md
 @CODESTYLE.md
 @SUMMARY.md
 @checks/README.md
