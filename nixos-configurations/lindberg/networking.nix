@@ -4,6 +4,8 @@ let
   meta = config.qois.meta;
 in
 {
+  qois.networkd.enable = true;
+
   networking.hostName = meta.hosts.lindberg.hostName;
   networking.enableIPv6 = false; # TODO(#5): Enable ipv6
 
@@ -25,6 +27,7 @@ in
   ];
 
   networking.bridges.vms-nat.interfaces = [ ];
+  systemd.network.networks."40-vms-nat".networkConfig.ConfigureWithoutCarrier = true;
   networking.nat = {
     enable = true;
     internalInterfaces = [ "vms-nat" ];
@@ -55,14 +58,10 @@ in
         dhcp-authoritative = true;
       };
     };
-  systemd.services.dnsmasq =
-    let
-      vmsNat = [ "network-addresses-vms-nat.service" ];
-    in
-    {
-      bindsTo = vmsNat;
-      after = vmsNat;
-    };
+  systemd.services.dnsmasq = {
+    requires = [ "systemd-networkd-wait-online@vms-nat.service" ];
+    after = [ "systemd-networkd-wait-online@vms-nat.service" ];
+  };
   networking.firewall.interfaces.vms-nat = {
     allowedUDPPorts = [
       53
