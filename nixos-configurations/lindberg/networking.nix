@@ -27,7 +27,10 @@ in
   ];
 
   networking.bridges.vms-nat.interfaces = [ ];
-  systemd.network.networks."40-vms-nat".networkConfig.ConfigureWithoutCarrier = true;
+  systemd.network.networks."40-vms-nat" = {
+    networkConfig.ConfigureWithoutCarrier = true;
+    linkConfig.RequiredForOnline = "no-carrier";
+  };
   networking.nat = {
     enable = true;
     internalInterfaces = [ "vms-nat" ];
