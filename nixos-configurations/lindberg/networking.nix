@@ -2,6 +2,7 @@
 
 let
   meta = config.qois.meta;
+  netConfig = meta.network.virtual.lindberg-vms-nat;
 in
 {
   qois.networkd.enable = true;
@@ -15,56 +16,38 @@ in
   # Virtualization
   networking.interfaces.vms-nat.useDHCP = false;
   networking.interfaces.vms-nat.ipv4.addresses = [
-    (
-      let
-        netConfig = meta.network.virtual.lindberg-vms-nat;
-      in
-      {
-        address = netConfig.hosts.lindberg.v4.ip;
-        prefixLength = netConfig.v4.prefixLength;
-      }
-    )
+    {
+      address = netConfig.hosts.lindberg.v4.ip;
+      prefixLength = netConfig.v4.prefixLength;
+    }
   ];
 
   networking.bridges.vms-nat.interfaces = [ ];
   systemd.network.networks."40-vms-nat" = {
-    networkConfig.ConfigureWithoutCarrier = true;
+    networkConfig = {
+      ConfigureWithoutCarrier = true;
+      DHCPServer = true;
+    };
     linkConfig.RequiredForOnline = "no-carrier";
+    dhcpServerConfig = {
+      PoolOffset = 2;
+      PoolSize = 252;
+      EmitDNS = "yes";
+      DNS = netConfig.hosts.lindberg.v4.ip;
+    };
   };
+
   networking.nat = {
     enable = true;
     internalInterfaces = [ "vms-nat" ];
-    internalIPs = with meta.network.virtual.lindberg-vms-nat.v4; [
-      "${id}/${builtins.toString prefixLength}"
-    ];
+    internalIPs = [ "${netConfig.v4.id}/${builtins.toString netConfig.v4.prefixLength}" ];
     externalInterface = "enp5s0";
   };
-  services.dnsmasq =
-    let
-      netConfig = meta.network.virtual.lindberg-vms-nat;
-    in
-    {
-      enable = true;
-      resolveLocalQueries = true;
-      settings = {
-        interface = "vms-nat";
-        bind-interfaces = true;
 
-        domain-needed = true;
+  services.resolved.extraConfig = ''
+    DNSStubListenerExtra=${netConfig.hosts.lindberg.v4.ip}
+  '';
 
-        domain = netConfig.domain;
-        dhcp-range = [ "10.247.0.2,10.247.0.253" ];
-        dhcp-option = [
-          "option:router,${netConfig.hosts.lindberg.v4.ip}"
-          "option:domain-search,${netConfig.domain}"
-        ];
-        dhcp-authoritative = true;
-      };
-    };
-  systemd.services.dnsmasq = {
-    requires = [ "systemd-networkd-wait-online@vms-nat.service" ];
-    after = [ "systemd-networkd-wait-online@vms-nat.service" ];
-  };
   networking.firewall.interfaces.vms-nat = {
     allowedUDPPorts = [
       53
