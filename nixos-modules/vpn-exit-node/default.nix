@@ -29,6 +29,7 @@ in
       openFirewall = true;
       useRoutingFeatures = "server";
       authKeyFile = config.sops.secrets."tailscale/key".path;
+      extraDaemonFlags = [ "--no-logs-no-support" ];
       extraUpFlags =
         let
           backplaneRoute =
