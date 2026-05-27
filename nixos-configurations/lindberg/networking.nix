@@ -35,6 +35,13 @@ in
       EmitDNS = "yes";
       DNS = netConfig.hosts.lindberg.v4.ip;
     };
+    extraConfig = ''
+      [Network]
+      Domains=${netConfig.domain}
+
+      [DHCPServer]
+      EmitDomains=yes
+    '';
   };
 
   networking.nat = {
