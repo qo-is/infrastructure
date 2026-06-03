@@ -19,6 +19,9 @@
     "hostName": "lindberg-webapps",
     "sshKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIByESy+XiBT8/PoE8DUB388B5MA6LVcJBgH1ZgYxr9Mg"
   },
+  "lindberg-jellyfin": {
+    "hostName": "lindberg-jellyfin"
+  },
   "batzberg": {
     "hostName": "batzberg"
   },
