@@ -10,6 +10,7 @@ let
     concatLists
     elem
     mapAttrsToList
+    mkDefault
     ;
 in
 {
@@ -94,10 +95,10 @@ in
   programs.autojump.enable = true;
 
   services.fstrim.enable = true;
-  services.btrfs.autoScrub.enable = true;
+  services.btrfs.autoScrub.enable = mkDefault true;
 
-  qois.outgoing-server-mail.enable = true;
-  qois.backup-client.enable = true;
+  qois.outgoing-server-mail.enable = mkDefault true;
+  qois.backup-client.enable = mkDefault true;
 
   systemd.settings.Manager.DefaultLimitNOFILE = 4096;
 
@@ -114,6 +115,6 @@ in
   systemd.services.nix-gc.serviceConfig.LogFilterPatterns = [ "~^deleting '/nix/store/" ];
 
   # Monitoring
-  qois.telegraf.enable = true;
-  qois.vector.enable = lib.mkDefault true;
+  qois.telegraf.enable = mkDefault true;
+  qois.vector.enable = mkDefault true;
 }
