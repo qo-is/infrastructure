@@ -16,6 +16,7 @@ ______________________________________________________________________
 
 - [E-mail](email.md)
 - [Git CI Runner](nixos-modules/git-ci-runner/README.md)
+- [Jellyfin](nixos-modules/jellyfin/README.md)
 - [Git Hosting](nixos-modules/git/README.md)
 - [Nextcloud](nixos-modules/cloud/README.md)
 - [Nix Caches](nixos-configurations/lindberg-build/applications/README.md)
