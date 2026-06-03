@@ -34,6 +34,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixflix = {
+      url = "github:kiriwalawren/nixflix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     private.url = "git+file:./private";
     private.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -74,6 +78,7 @@
           deploy-rs
           disko
           nix-topology
+          nixflix
           nixpkgs
           sops-nix
           srvos
