@@ -17,6 +17,7 @@ ______________________________________________________________________
 - [Authoritative DNS](nixos-modules/knot/README.md)
 - [E-mail](email.md)
 - [Git CI Runner](nixos-modules/git-ci-runner/README.md)
+- [Jellyfin](nixos-modules/jellyfin/README.md)
 - [Git Hosting](nixos-modules/git/README.md)
 - [KanIDm](nixos-modules/kanidm/README.md)
 - [Nextcloud](nixos-modules/cloud/README.md)
