@@ -4,10 +4,24 @@
   lib,
   ...
 }:
-
-with lib;
 let
-  # We assume that all static pages are hosted on lindberg-webapps
+  inherit (lib)
+    concatLines
+    flatten
+    listToAttrs
+    mapAttrsToList
+    mkEnableOption
+    mkIf
+    mkOption
+    pipe
+    unique
+    ;
+  inherit (lib.types)
+    attrsOf
+    lines
+    nullOr
+    str
+    ;
   staticPages = pipe config.qois.static-page.pages [
     (mapAttrsToList (_name: { domain, domainAliases, ... }: [ domain ] ++ domainAliases))
     flatten
@@ -40,6 +54,8 @@ let
     "www.resourcee.fh2.ch" = "workstations-9001";
   };
   getBackplaneIp = hostname: config.qois.meta.network.virtual.backplane.hosts.${hostname}.v4.ip;
+  getContainerIp =
+    hostname: config.qois.meta.network.virtual.lindberg-containers-nat.hosts.${hostname}.v4.ip;
   defaultHostmap =
     lib.pipe
       [
@@ -88,103 +104,118 @@ let
   cfg = config.qois.loadbalancer;
 in
 {
-
   options.qois.loadbalancer = {
     enable = mkEnableOption "Enable services http+s loadbalancing";
 
     domains = mkOption {
       description = "Domain to hostname mappings";
-      type = with lib.types; attrsOf str;
+      type = attrsOf str;
       default = defaultDomains;
+    };
+
+    containerDomains = mkOption {
+      description = "Full domain to container-name mappings; IPs taken from lindberg-containers-nat network";
+      type = attrsOf str;
+      default = {
+        "jellyfin.media.qo.is" = "lindberg-jellyfin";
+      };
     };
 
     hostmap = mkOption {
       description = "Hostname to IP mappings for TLS-TCP and http forwarding";
-      type = with lib.types; attrsOf str;
+      type = attrsOf str;
       default = defaultHostmap;
     };
 
     extraConfig = mkOption {
       description = "Additional haproxy mapping configs. Amended to services.haproxy.config. Make sure indentations are correct.";
-      type = types.nullOr types.lines;
+      type = nullOr lines;
       default = defaultExtraConfig;
     };
 
   };
 
-  config =
-    with lib;
-    mkIf cfg.enable {
+  config = mkIf cfg.enable {
 
-      networking.firewall.allowedTCPPorts = [
-        80
-        443
-      ];
+    networking.firewall.allowedTCPPorts = [
+      80
+      443
+    ];
 
-      services.telegraf.extraConfig.inputs.haproxy = [
-        { servers = [ "http://${statsIpPort}/metrics" ]; }
-      ];
+    services.telegraf.extraConfig.inputs.haproxy = [
+      { servers = [ "http://${statsIpPort}/metrics" ]; }
+    ];
 
-      services.haproxy =
-        let
-          domainMappingFile = pipe cfg.domains [
-            (mapAttrsToList (host: backend: "${host} ${backend}"))
-            concatLines
-            (pkgs.writeText "haproxy_backend_map")
-          ];
-          genHttpBackend = hostName: ip: ''
+    services.haproxy =
+      let
+        effectiveDomains = cfg.domains // cfg.containerDomains;
+        domainMappingFile = pipe effectiveDomains [
+          (mapAttrsToList (host: backend: "${host} ${backend}"))
+          concatLines
+          (pkgs.writeText "haproxy_backend_map")
+        ];
+        genHttpBackend = hostName: ip: ''
 
-            # Mapping for ${hostName}
-            backend ${hostName}-https
-              mode tcp
-              server s1 ${ip}:443
+          # Mapping for ${hostName}
+          backend ${hostName}-https
+            mode tcp
+            server s1 ${ip}:443
 
-            backend ${hostName}-http
-              mode http
-              server s1 ${ip}:80
-          '';
-          httpBackends = pipe cfg.hostmap [
-            (mapAttrsToList genHttpBackend)
-            concatLines
-          ];
-        in
-        {
-          enable = true;
-          config = ''
-            defaults
-              mode http
-              retries 3
-              maxconn 2000
-              timeout connect 5000
-              timeout client 50000
-              timeout server 50000
+          backend ${hostName}-http
+            mode http
+            server s1 ${ip}:80
+        '';
+        httpBackends = pipe cfg.hostmap [
+          (mapAttrsToList genHttpBackend)
+          concatLines
+        ];
+        containerBackends = pipe cfg.containerDomains [
+          (mapAttrsToList (_domain: name: name))
+          unique
+          (map (name: genHttpBackend name (getContainerIp name)))
+          concatLines
+        ];
+      in
+      {
+        enable = true;
+        config = ''
+          defaults
+            mode http
+            retries 3
+            maxconn 2000
+            timeout connect 5000
+            timeout client 50000
+            timeout server 50000
 
-            listen stats
-              bind ${statsIpPort}
-              mode http
-              stats enable
-              stats uri /metrics
-              stats hide-version
+          listen stats
+            bind ${statsIpPort}
+            mode http
+            stats enable
+            stats uri /metrics
+            stats hide-version
 
-            frontend http
-              mode http
-              bind *:80
-              use_backend %[req.hdr(host),lower,map(${domainMappingFile})]-http
+          frontend http
+            mode http
+            bind *:80
+            use_backend %[req.hdr(host),lower,map(${domainMappingFile})]-http
 
-            frontend https
-              bind *:443
-              mode tcp
-              tcp-request inspect-delay 5s
-              tcp-request content accept if { req_ssl_hello_type 1 }
+          frontend https
+            bind *:443
+            mode tcp
+            tcp-request inspect-delay 5s
+            tcp-request content accept if { req_ssl_hello_type 1 }
 
-              use_backend %[req.ssl_sni,lower,map(${domainMappingFile})]-https
+            use_backend %[req.ssl_sni,lower,map(${domainMappingFile})]-https
 
-            ## Generated Backends:
-            ${httpBackends}
+          ## Generated Backends:
+          ${httpBackends}
 
-            ## extraConfig
-            ${cfg.extraConfig}
-          '';
-        };
-    };
+          ## Container Backends:
+          ${containerBackends}
+
+          ## extraConfig
+          ${cfg.extraConfig}
+        '';
+      };
+  };
 }
