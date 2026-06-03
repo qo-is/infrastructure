@@ -68,6 +68,18 @@
         };
       };
 
+      lindberg-containers-nat = {
+        v4 = {
+          id = "10.246.0.0";
+          prefixLength = 24;
+        };
+        domain = "lindberg-containers-nat.net.qo.is";
+        hosts = {
+          lindberg.v4.ip = "10.246.0.1";
+          lindberg-jellyfin.v4.ip = "10.246.0.2";
+        };
+      };
+
       lindberg-vms-nat = {
         v4 = {
           id = "10.247.0.0";
