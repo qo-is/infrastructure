@@ -9,7 +9,12 @@ let
 in
 {
   nodes = pipe self.nixosConfigurations [
-    (filterAttrs (_n: v: !v.config.services.qemuGuest.enable && !v.config.qois.git-ci-runner.enable))
+    (filterAttrs (
+      _n: v:
+      !v.config.services.qemuGuest.enable
+      && !v.config.qois.git-ci-runner.enable
+      && !v.config.boot.isContainer
+    ))
     (mapAttrs (
       host: config: {
         hostname = "${host}.backplane.net.qo.is";
