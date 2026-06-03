@@ -1,7 +1,12 @@
 { ... }:
 {
 
-  qois.backup-client.includePaths = [ "/mnt/data" ];
+  qois.backup-client.includePaths = [
+    "/mnt/data"
+    "/var/lib/jellyfin"
+    "/var/lib/nixos-containers"
+  ];
+  qois.backup-client.excludePaths = [ "/var/lib/jellyfin/data/transcodes" ];
 
   services.borgbackup.jobs = {
     data-local = {

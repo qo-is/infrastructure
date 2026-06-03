@@ -3,6 +3,7 @@
 let
   meta = config.qois.meta;
   netConfig = meta.network.virtual.lindberg-vms-nat;
+  containerNetConfig = meta.network.virtual.lindberg-containers-nat;
 in
 {
   qois.networkd.enable = true;
@@ -46,18 +47,29 @@ in
 
   networking.nat = {
     enable = true;
-    internalInterfaces = [ "vms-nat" ];
+    internalInterfaces = [
+      "vms-nat"
+      "ve-jellyfin"
+    ];
     internalIPs = [ "${netConfig.v4.id}/${builtins.toString netConfig.v4.prefixLength}" ];
     externalInterface = "enp5s0";
   };
 
-  services.resolved.settings.Resolve.DNSStubListenerExtra = netConfig.hosts.lindberg.v4.ip;
+  services.resolved.settings.Resolve.DNSStubListenerExtra = [
+    netConfig.hosts.lindberg.v4.ip
+    containerNetConfig.hosts.lindberg.v4.ip
+  ];
 
   networking.firewall.interfaces.vms-nat = {
     allowedUDPPorts = [
       53
       67
     ];
+    allowedTCPPorts = [ 53 ];
+  };
+
+  networking.firewall.interfaces."ve-jellyfin" = {
+    allowedUDPPorts = [ 53 ];
     allowedTCPPorts = [ 53 ];
   };
 

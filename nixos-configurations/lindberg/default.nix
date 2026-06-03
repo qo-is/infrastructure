@@ -4,6 +4,7 @@
   imports = [
     ./applications
     ./backup.nix
+    ./containers.nix
     ./disko-config.nix
     ./filesystems.nix
     ./networking.nix
