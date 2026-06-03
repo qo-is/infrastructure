@@ -10,6 +10,7 @@ let
     concatLists
     elem
     mapAttrsToList
+    mkDefault
     ;
 in
 {
@@ -95,11 +96,11 @@ in
 
   services.fstrim.enable = true;
 
-  qois.outgoing-server-mail.enable = true;
-  qois.backup-client.enable = true;
+  qois.outgoing-server-mail.enable = mkDefault true;
+  qois.backup-client.enable = mkDefault true;
 
   systemd.settings.Manager.DefaultLimitNOFILE = 4096;
 
   # Monitoring
-  qois.telegraf.enable = true;
+  qois.telegraf.enable = mkDefault true;
 }
