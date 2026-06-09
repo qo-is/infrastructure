@@ -1,24 +1,10 @@
 # Jellyfin
 
-Jellyfin media server running as a NixOS container (systemd-nspawn) on `lindberg`, configured via [nixflix](https://kiriwalawren.github.io/nixflix/reference/).
-
-## Container
-
-The container is managed by lindberg's NixOS configuration (`nixos-configurations/lindberg/containers.nix`). It runs as a private routed network container with volatile `/var` (state is ephemeral except for bind-mounted paths), but machine-id persists so journal linkage is stable.
-
-```bash
-# Container lifecycle
-systemctl start container@jellyfin
-systemctl stop container@jellyfin
-machinectl shell jellyfin  # shell inside container
-
-# Logs (from host)
-journalctl -M jellyfin -f
-```
+Jellyfin media server configured via [nixflix](https://kiriwalawren.github.io/nixflix/reference/).
 
 ## Configuration
 
-The `qois.jellyfin` module wraps nixflix. Key options:
+The `qois.jellyfin` module wraps nixflix and serves Jellyfin at `jellyfin.${domain}` (a subdomain of the configured primary domain):
 
 ```nix
 qois.jellyfin = {
@@ -27,31 +13,32 @@ qois.jellyfin = {
 };
 ```
 
+The host running the container is responsible for the systemd-nspawn integration, secret materialization, and bind-mounts (see the host's `containers.nix` for an example).
+
 ## Secret Setup
 
-Before deploying, create both secrets on lindberg:
+Both the Jellyfin API key and the initial admin password are passed into the container as systemd credentials (`--load-credential`). Create them in the host's secrets file before deploying:
 
 ```bash
-sops private/nixos-configurations/lindberg/secrets.sops.yaml
-# Add entries:
-#   jellyfin/apiKey: <output of: openssl rand -hex 16>
-#   jellyfin/adminPassword: <output of: openssl rand -base64 24>
+SECRETS_FILE=private/nixos-configurations/<hostname>/secrets.sops.yaml
+
+sops set $SECRETS_FILE '["jellyfin"]["apiKey"]' "\"$(openssl rand -hex 16)\""
+sops set $SECRETS_FILE '["jellyfin"]["adminPassword"]' "\"$(openssl rand -base64 24)\""
 ```
 
-Both secrets are passed to the container via systemd credentials (`--load-credential`). The API key is injected into Jellyfin's SQLite database; the admin password is used to create and configure the initial admin user.
+The API key is injected into Jellyfin's SQLite database; the admin password is consumed by `jellyfin-credential-setup.service` and used to provision the initial `admin` user.
+
+## Admin Login
+
+Username is `admin` (set in `default.nix`). Retrieve the password:
+
+```bash
+sops -d --extract '["jellyfin"]["adminPassword"]' $SECRETS_FILE
+```
 
 ## Hardware Acceleration (Optional)
 
-To enable Intel QSV or AMD VAAPI transcoding, add to `nixos-configurations/lindberg/containers.nix`:
-
-```nix
-containers.jellyfin = {
-  allowedDevices = [{ node = "/dev/dri/renderD128"; modifier = "rwm"; }];
-  extraFlags = [ ... "--bind=/dev/dri/renderD128" ];
-};
-```
-
-And in `nixos-configurations/lindberg-jellyfin/default.nix`:
+To enable Intel QSV or AMD VAAPI transcoding, bind `/dev/dri/renderD128` into the container on the host (`containers.<name>.allowedDevices` + `extraFlags = [ "--bind=/dev/dri/renderD128" ]`) and configure nixflix encoding:
 
 ```nix
 nixflix.jellyfin.encoding = {
