@@ -114,11 +114,23 @@ in
     };
 
     containerDomains = mkOption {
-      description = "Full domain to container-name mappings; IPs taken from lindberg-containers-nat network";
+      description = ''
+        Full domain to container-name mappings. On the host running the
+        containers (`containerHost`), backends resolve to the container IP
+        via `lindberg-containers-nat`. On every other loadbalancer, backends
+        forward to `containerHost`'s backplane IP, where the local
+        loadbalancer routes to the container.
+      '';
       type = attrsOf str;
       default = {
         "jellyfin.media.qo.is" = "lindberg-jellyfin";
       };
+    };
+
+    containerHost = mkOption {
+      description = "Backplane hostname running the containers referenced in `containerDomains`.";
+      type = str;
+      default = "lindberg";
     };
 
     hostmap = mkOption {
@@ -169,10 +181,16 @@ in
           (mapAttrsToList genHttpBackend)
           concatLines
         ];
+        containerBackendIp =
+          name:
+          if cfg.containerHost == config.networking.hostName then
+            getContainerIp name
+          else
+            getBackplaneIp cfg.containerHost;
         containerBackends = pipe cfg.containerDomains [
           (mapAttrsToList (_domain: name: name))
           unique
-          (map (name: genHttpBackend name (getContainerIp name)))
+          (map (name: genHttpBackend name (containerBackendIp name)))
           concatLines
         ];
       in
