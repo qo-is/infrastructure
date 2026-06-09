@@ -22,6 +22,8 @@ in
       qois.jellyfin.enable = true;
       qois.jellyfin.domain = "acme.test";
 
+      nixflix.nginx.addHostsEntries = true;
+
       # Clear all SOPS secrets — test VM has no decryption keys
       sops.secrets = lib.mkForce { };
 
@@ -38,7 +40,5 @@ in
         sslCertificate = "${certs}/${jellyfinDomain}.cert.pem";
         sslCertificateKey = "${certs}/${jellyfinDomain}.key.pem";
       };
-
-      networking.extraHosts = "127.0.0.1 ${jellyfinDomain}";
     };
 }
