@@ -49,7 +49,7 @@ in
     enable = true;
     internalInterfaces = [
       "vms-nat"
-      "ve-jellyfin"
+      "ve-+"
     ];
     internalIPs = [ "${netConfig.v4.id}/${builtins.toString netConfig.v4.prefixLength}" ];
     externalInterface = "enp5s0";
@@ -68,7 +68,7 @@ in
     allowedTCPPorts = [ 53 ];
   };
 
-  networking.firewall.interfaces."ve-jellyfin" = {
+  networking.firewall.interfaces."ve-+" = {
     allowedUDPPorts = [ 53 ];
     allowedTCPPorts = [ 53 ];
   };
