@@ -63,9 +63,6 @@ in
       '';
     };
 
-    # API key read from systemd credential passed by the container host via --load-credential.
-    # Create: sops private/nixos-configurations/lindberg/secrets.sops.yaml
-    #         add entry: jellyfin/apiKey: $(openssl rand -hex 16)
     nixflix.jellyfin.apiKey = {
       _secret = "/run/credentials/jellyfin-api-key.service/jellyfin-api-key";
     };
@@ -73,10 +70,6 @@ in
       "jellyfin-api-key:jellyfin-api-key"
     ];
 
-    # Reverse proxy via nixflix's nginx module: it builds the virtual host
-    # "${subdomain}.${domain}" with proxyPass, websockets, buffering off, and
-    # forceSSL via mkVirtualHost, and auto-derives knownProxies/localNetworkAddresses.
-    # We layer per-host ACME (instead of nixflix's wildcard useACMEHost pattern) and kTLS on top.
     nixflix.nginx.enable = true;
     nixflix.nginx.domain = cfg.domain;
     nixflix.nginx.forceSSL = true;
