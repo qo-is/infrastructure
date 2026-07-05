@@ -32,11 +32,8 @@ in
       description = "Grant pg_read_all_stats to telegraf PostgreSQL user";
       wantedBy = [ "telegraf.service" ];
       before = [ "telegraf.service" ];
-      after = [
-        "postgresql.service"
-        "postgresql-setup.service"
-      ];
-      requires = [ "postgresql.service" ];
+      after = [ "postgresql.target" ];
+      requires = [ "postgresql.target" ];
       serviceConfig = {
         Type = "oneshot";
         User = "postgres";
