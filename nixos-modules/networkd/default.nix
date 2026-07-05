@@ -10,12 +10,14 @@ in
     (mkIf config.qois.networkd.enable {
       services.resolved = {
         enable = true;
-        llmnr = "false";
-        fallbackDns = [
-          # dns.switch.ch
-          "130.59.31.248"
-          "130.59.31.251"
-        ];
+        settings.Resolve = {
+          LLMNR = "false";
+          FallbackDNS = [
+            # dns.switch.ch
+            "130.59.31.248"
+            "130.59.31.251"
+          ];
+        };
       };
     })
   ];

@@ -51,9 +51,7 @@ in
     externalInterface = "enp5s0";
   };
 
-  services.resolved.extraConfig = ''
-    DNSStubListenerExtra=${netConfig.hosts.lindberg.v4.ip}
-  '';
+  services.resolved.settings.Resolve.DNSStubListenerExtra = netConfig.hosts.lindberg.v4.ip;
 
   networking.firewall.interfaces.vms-nat = {
     allowedUDPPorts = [
