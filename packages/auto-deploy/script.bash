@@ -25,7 +25,7 @@ else
   trap 'rm -f "${TEMP_KEY_FILE}"' SIGQUIT
 fi
 
-HOSTS=$(nix eval --raw "${FLAKE_ROOT}"#deploy.nodes --apply "
+HOSTS=$(nix eval --raw "${FLAKE_ROOT}#deploy.nodes" --apply "
    nodes: let
      inherit (builtins) attrNames filter concatStringsSep;
      names = attrNames nodes;
