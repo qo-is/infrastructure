@@ -31,8 +31,8 @@
       iotop
       tree
       vim
-      vimPlugins.pathogen
-      vimPlugins.airline
+      vimPlugins.vim-pathogen
+      vimPlugins.vim-airline
       git
       git-lfs
     ]
