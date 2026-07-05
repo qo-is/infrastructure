@@ -52,6 +52,7 @@ with lib;
         security = {
           admin_user = "$__file{${config.sops.secrets."grafana/admin/user".path}}";
           admin_password = "$__file{${config.sops.secrets."grafana/admin/password".path}}";
+          secret_key = "$__file{${config.sops.secrets."grafana/secret_key".path}}";
         };
 
         database = {
@@ -91,6 +92,7 @@ with lib;
       {
         "grafana/admin/user" = grafanaSecret;
         "grafana/admin/password" = grafanaSecret;
+        "grafana/secret_key" = grafanaSecret;
       };
 
     services.postgresql =

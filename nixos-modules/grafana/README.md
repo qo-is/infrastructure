@@ -10,6 +10,20 @@ Serves [Grafana](https://grafana.com/) behind nginx with TLS.
    - new users are not admins by default - which is sufficient (least priviledge)
    - Make user "editor" or "admin" of Main Org
 
+## Secrets
+
+Grafana credentials and its data-source encryption key live in
+`private/nixos-configurations/lindberg-webapps/secrets.sops.yaml`.
+
+The `secret_key` signs data-source secrets. It has no default since NixOS 26.05 and
+must be generated once per instance. Generate and store it with:
+
+```bash
+sops set private/nixos-configurations/lindberg-webapps/secrets.sops.yaml '["grafana"]["secret_key"]' "\"`openssl rand -hex 32`\""
+```
+
+Changing this key afterwards requires re-encoding existing data-source settings.
+
 ## Storage
 
 Dashboard and user data is stored in PostgreSQL.

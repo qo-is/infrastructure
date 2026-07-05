@@ -99,9 +99,12 @@ in
         # Dummy sops file so secret paths resolve at eval time
         sops.defaultSopsFile = builtins.toFile "dummy-secrets" (
           builtins.toJSON {
-            grafana.admin = {
-              user = "unused";
-              password = "unused";
+            grafana = {
+              admin = {
+                user = "unused";
+                password = "unused";
+              };
+              secret_key = "unused";
             };
           }
         );
