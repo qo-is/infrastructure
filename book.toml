@@ -1,7 +1,6 @@
 [book]
 authors = ["qo.is contributers"]
 language = "en"
-multilingual = false
 src = "."
 title = "qo.is infrastructure docs"
 
