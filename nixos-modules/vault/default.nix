@@ -37,16 +37,20 @@ in
     services.vaultwarden = {
       enable = true;
       dbBackend = "postgresql";
-      inherit (cfg) environmentFile;
+
+      inherit (cfg) environmentFile domain;
+      configureNginx = true;
+      configurePostgres = true;
+
       config = {
         DATA_FOLDER = "/var/lib/vaultwarden";
-        DATABASE_URL = "postgresql:///vaultwarden";
-
-        DOMAIN = "https://${cfg.domain}";
-        ROCKET_PORT = 8222;
 
         USE_SENDMAIL = true;
         SENDMAIL_COMMAND = "${pkgs.msmtp}/bin/sendmail";
+
+        ## Enable this to bypass the admin panel security. This option is only
+        ## meant to be used with the use of a separate auth layer in front
+        # DISABLE_ADMIN_TOKEN=false
 
         SMTP_FROM = "vault@qo.is";
         SMTP_FROM_NAME = cfg.domain;
@@ -55,6 +59,9 @@ in
         INVITATIONS_ALLOWED = false;
         SIGNUPS_DOMAINS_WHITELIST = "qo.is";
         SIGNUPS_VERIFY = true;
+        EMAIL_CHANGE_ALLOWED = false;
+
+        # TODO: push notifications, see https://github.com/dani-garcia/vaultwarden/blob/1.36.0/.env.template#L112
 
         EXPERIMENTAL_CLIENT_FEATURE_FLAGS = "fido2-vault-credentials";
         SHOW_PASSWORD_HINT = false;
@@ -64,39 +71,16 @@ in
 
     qois.backup-client.includePaths = [ config.services.vaultwarden.config.DATA_FOLDER ];
 
-    services.postgresql =
-      let
-        name = config.users.users.vaultwarden.name;
-      in
-      {
-        enable = true;
-        ensureUsers = [
-          {
-            inherit name;
-            ensureDBOwnership = true;
-          }
-        ];
-        ensureDatabases = [ name ];
-      };
-
     # See https://search.nixos.org/options?channel=unstable&show=services.vaultwarden.environmentFile
     sops.secrets."vaultwarden/environment-file".restartUnits = [ "vaultwarden.service" ];
 
     users.users.vaultwarden.extraGroups = [ "postdrop" ];
 
     networking.hosts."127.0.0.1" = [ cfg.domain ];
-    services.nginx = {
-      enable = true;
 
-      virtualHosts.${cfg.domain} = {
-        kTLS = true;
-        forceSSL = true;
-        enableACME = true;
-        locations."/" = {
-          proxyPass = "http://127.0.0.1:${toString config.services.vaultwarden.config.ROCKET_PORT}";
-          proxyWebsockets = true;
-        };
-      };
+    services.nginx.virtualHosts.${cfg.domain} = {
+      kTLS = true;
+      enableACME = true;
     };
 
     services.telegraf.extraConfig.inputs = {
