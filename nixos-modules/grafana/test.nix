@@ -113,6 +113,7 @@ in
         services.grafana.settings.security = lib.mkForce {
           admin_user = "testadmin";
           admin_password = "$__env{GF_SECURITY_ADMIN_PASSWORD}";
+          secret_key = "snakeoil-test-secret-key";
         };
         systemd.services.grafana.environment.GF_SECURITY_ADMIN_PASSWORD = "snakeoilpwd";
       };
