@@ -7,6 +7,7 @@ let
     prefixLength = net.v4.prefixLength;
   };
   calandaIp = meta.network.physical.plessur-lan.hosts.calanda.v4.ip;
+  plessurLanIp = getNetV4Ip meta.network.physical.plessur-lan;
 in
 {
   networking.enableIPv6 = false;
@@ -14,9 +15,7 @@ in
 
   networking.nameservers = [ calandaIp ];
   networking.useDHCP = false;
-  networking.interfaces.enp0s31f6.ipv4.addresses = [
-    (getNetV4Ip meta.network.physical.plessur-lan)
-  ];
+  networking.interfaces.enp0s31f6.ipv4.addresses = [ plessurLanIp ];
 
   networking.defaultGateway = {
     address = calandaIp;
@@ -76,6 +75,9 @@ in
   qois.initrd-ssh-unlock = {
     enable = true;
     interface = "enp0s31f6";
+
+    ip = "${plessurLanIp.address}/${builtins.toString plessurLanIp.prefixLength}";
+    gateway = calandaIp;
 
     sshPort = 2222;
     sshHostKey = "/secrets/system/initrd-ssh-key";
