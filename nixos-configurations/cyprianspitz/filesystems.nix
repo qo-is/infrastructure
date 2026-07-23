@@ -15,22 +15,19 @@
 
   services.fwupd.daemonSettings.EspLocation = pkgs.lib.mkForce config.disko.devices.disk.system-1.content.partitions.boot.content.mountpoint;
 
-  # Use the systemd-boot EFI boot loader.
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub = {
+  boot.loader.efi.efiSysMountPoint =
+    config.disko.devices.disk.system-1.content.partitions.boot.content.mountpoint;
+
+  qois.lanzaboote = {
     enable = true;
-    efiSupport = true;
-    mirroredBoots = [
-      {
-        devices = [ "nodev" ];
-        path = "/boot-primary";
-        efiBootloaderId = "NixOS primary";
-      }
-      {
-        devices = [ "nodev" ];
-        path = "/boot-secondary";
-        efiBootloaderId = "NixOS secondary";
-      }
+    extraEfiSysMountPoints = [
+      config.disko.devices.disk.system-2.content.partitions.boot.content.mountpoint
     ];
+
+    autoCryptenroll.devices = {
+      system = config.boot.initrd.luks.devices.crypted_system.device;
+      data = config.boot.initrd.luks.devices.crypted_data.device;
+    };
   };
 }

@@ -65,6 +65,20 @@ sops exec-file --no-fifo --filename secret.key private/nixos-configurations/$REM
 ## Post-Setup
 
 - Add backplane-vpn pubkey to `network-virtual.nix` configuration with
+
   ```bash
   wg pubkey < /secrets/wireguard/private/backplane
   ```
+
+- If the host has `qois.lanzaboote.enable = true`: after the first successful deploy,
+  `generate-sb-keys`/`prepare-sb-auto-enroll` will have generated Secure Boot keys and
+  written `PK.auth`/`KEK.auth`/`db.auth` to `<efiSysMountPoint>/loader/keys/auto/`, but
+  the firmware won't actually enroll them yet. Enrollment requires the firmware to be in
+  Setup Mode, which can't be triggered remotely:
+
+  1. Physically (or via IPMI/KVM) enter the firmware setup and clear the Platform Key
+     (PK) to put the machine into Secure Boot Setup Mode.
+  1. Reboot once. `systemd-boot` auto-enrolls the prepared `.auth` files on this boot
+     (`secure-boot-enroll = "force"` in `loader.conf`, set automatically whenever
+     `autoEnrollKeys.enable = true`).
+  1. Confirm with `bootctl status` — it should report `Secure Boot: enabled (user)`.
