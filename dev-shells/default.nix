@@ -54,6 +54,9 @@ in
       done
       export XDG_DATA_DIRS
 
+      FLAKE_ROOT="$(git rev-parse --show-toplevel)"
+      nix build --out-link "$FLAKE_ROOT/.sops.yaml" "$FLAKE_ROOT#sops-config"
+
       ${pre-commit-check.shellHook}
     '';
   };
