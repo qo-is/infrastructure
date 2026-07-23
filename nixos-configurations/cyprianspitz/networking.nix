@@ -73,13 +73,13 @@ in
   };
 
   # Boot
-  qois.luks-ssh = {
+  qois.initrd-ssh-unlock = {
     enable = true;
-    interface = "eth0";
+    interface = "enp0s31f6";
 
     sshPort = 2222;
     sshHostKey = "/secrets/system/initrd-ssh-key";
-    # TODO Solve sops dependency porblem: config.sops.secrets."system/initrd-ssh-key".path;
+    # TODO Solve sops dependency problem: config.sops.secrets."system/initrd-ssh-key".path;
   };
 
   qois.backplane-net.enable = true;

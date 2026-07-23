@@ -104,6 +104,7 @@
               mountOptions = [
                 "defaults"
                 "noatime"
+                "x-systemd.device-timeout=infinity"
               ];
             };
           };
@@ -119,6 +120,7 @@
               mountOptions = [
                 "defaults"
                 "noatime"
+                "x-systemd.device-timeout=infinity"
               ];
               subvolumes = {
                 "/root".mountpoint = "/";
