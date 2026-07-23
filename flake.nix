@@ -30,6 +30,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     private.url = "git+file:./private";
     private.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -69,6 +73,7 @@
         inherit (inputs)
           deploy-rs
           disko
+          lanzaboote
           nixpkgs
           sops-nix
           srvos
