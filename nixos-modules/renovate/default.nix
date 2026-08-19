@@ -28,7 +28,7 @@ in
   config = mkIf cfg.enable {
     sops.secrets."renovate/token".restartUnits = [ "renovate.service" ];
     sops.secrets."renovate/host_rules".restartUnits = [ "renovate.service" ];
-    systemd.services.renovate.environment.LOG_LEVEL = "debug";
+    systemd.services.renovate.environment.LOG_LEVEL = "info";
     services.renovate = {
       enable = true;
       credentials = {
