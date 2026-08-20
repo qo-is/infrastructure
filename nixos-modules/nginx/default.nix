@@ -20,15 +20,7 @@ let
   cfg = config.qois.nginx;
 in
 {
-  options.qois.nginx.behindLoadbalancer = mkEnableOption ''
-    that this host is only ever reached over ports 80/443 through one of the
-    backplane HAProxy instances (nixos-modules/loadbalancer), which forward
-    with send-proxy-v2. When set, nginx requires and trusts the PROXY
-    protocol header on its public listener, while a separate loopback
-    listener without it keeps local self-calls (e.g. via the per-service
-    `networking.hosts."127.0.0.1"` aliases) and telegraf's plain-HTTP
-    nginx_status scrape working
-  '';
+  options.qois.nginx.behindLoadbalancer = mkEnableOption "requiring and trusting the PROXY protocol header on nginx's public listener";
 
   config.services.nginx = {
     recommendedTlsSettings = true;
