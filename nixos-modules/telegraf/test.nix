@@ -6,7 +6,7 @@ in
   nodes.server =
     { ... }:
     {
-      qois.telegraf.enable = true;
+      qois.telegraf.enable = mkForce true;
       qois.telegraf.monitoring = {
         enable = true;
         ping = [ "127.0.0.1" ];

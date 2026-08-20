@@ -3,7 +3,7 @@
   nodes.server =
     { pkgs, ... }:
     {
-      qois.telegraf.enable = true;
+      qois.telegraf.enable = lib.mkForce true;
       services.telegraf.extraConfig.agent.interval = lib.mkForce "50ms";
 
       sops.secrets = lib.mkForce { };

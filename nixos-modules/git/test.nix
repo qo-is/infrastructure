@@ -23,7 +23,7 @@ in
       sops.secrets = lib.mkForce { };
 
       qois.postgresql.package = pkgs.postgresql;
-      qois.telegraf.enable = true;
+      qois.telegraf.enable = lib.mkForce true;
       services.telegraf.extraConfig.agent.interval = lib.mkForce "50ms";
 
       services.nginx.virtualHosts.${serverDomain} = {

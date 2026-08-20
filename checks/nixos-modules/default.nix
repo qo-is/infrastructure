@@ -13,6 +13,7 @@ let
     path
     mkDefault
     mkForce
+    mkOverride
     readFile
     attrNames
     concatStringsSep
@@ -55,6 +56,9 @@ let
             qois.outgoing-server-mail.enable = mkForce false;
             qois.backup-client.enable = mkForce false;
             qois.vector.enable = false;
+            # Weaker than mkForce, so tests that need telegraf can still opt back in with
+            # mkForce, but stronger than the plain `true` default in nixos-modules/system.
+            qois.telegraf.enable = mkOverride 75 false;
           };
 
           # Calls a `test(...)` python function in the test's python file with the list of nodes and helper functions.
