@@ -72,11 +72,11 @@ let
 
       backend cyprianspitz-nginx-http
         mode http
-        server s1 ${getBackplaneIp "cyprianspitz"}:8080
+        server s1 ${getBackplaneIp "cyprianspitz"}:8080 send-proxy-v2
 
       backend cyprianspitz-nginx-https
         mode tcp
-        server s1 ${getBackplaneIp "cyprianspitz"}:8443
+        server s1 ${getBackplaneIp "cyprianspitz"}:8443 send-proxy-v2
 
 
       # Winder Study Project (tmp)
@@ -140,11 +140,11 @@ in
             # Mapping for ${hostName}
             backend ${hostName}-https
               mode tcp
-              server s1 ${ip}:443
+              server s1 ${ip}:443 send-proxy-v2
 
             backend ${hostName}-http
               mode http
-              server s1 ${ip}:80
+              server s1 ${ip}:80 send-proxy-v2
           '';
           httpBackends = pipe cfg.hostmap [
             (mapAttrsToList genHttpBackend)

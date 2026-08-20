@@ -1,5 +1,6 @@
 { pkgs, ... }:
 {
+  qois.nginx.behindLoadbalancer = true;
   qois.postgresql.package = pkgs.postgresql_14;
 
   qois.cloud = {

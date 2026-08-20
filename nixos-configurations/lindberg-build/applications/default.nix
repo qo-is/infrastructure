@@ -9,6 +9,7 @@
     ./nixpkgs-cache.nix
   ];
 
+  qois.nginx.behindLoadbalancer = true;
   qois.git-ci-runner.enable = true;
   qois.attic.enable = true;
   qois.postgresql.package = pkgs.postgresql_15;

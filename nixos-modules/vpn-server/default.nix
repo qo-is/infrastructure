@@ -10,10 +10,9 @@ let
   cfgLoadbalancer = config.qois.loadbalancer;
   vnet = config.qois.meta.network.virtual;
   defaultDnsRecords =
-    (mapAttrs (
-      _name: value: mkIf (cfgLoadbalancer.hostmap ? ${value}) cfgLoadbalancer.hostmap.${value}
-    ) cfgLoadbalancer.domains)
-    // {
+    # Route through HAProxy on lindberg, same as internet clients, instead of
+    # resolving straight to each domain's backend over the backplane.
+    (mapAttrs (_name: _value: vnet.backplane.hosts.lindberg.v4.ip) cfgLoadbalancer.domains) // {
       "vpn.qo.is" = vnet.backplane.hosts.cyprianspitz.v4.ip;
     };
 in
