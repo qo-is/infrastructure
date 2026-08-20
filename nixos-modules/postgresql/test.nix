@@ -9,6 +9,7 @@
       sops.secrets = lib.mkForce { };
 
       services.postgresql.enable = true;
+      services.postgresql.initdbArgs = [ "--data-checksums" ];
       qois.postgresql.package = pkgs.postgresql_14;
 
       specialisation.upgraded.configuration = {

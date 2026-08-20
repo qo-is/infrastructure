@@ -48,7 +48,6 @@ in
       requiredBy = [ "postgresql.service" ];
       unitConfig.ConditionPathExists = "!${pgCfg.dataDir}/PG_VERSION";
       environment.PGDATA = pgCfg.dataDir;
-      path = [ pkgs.gawk ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -60,35 +59,21 @@ in
       script = ''
         set -euo pipefail
 
-        # initdb defaults have changed across major versions (e.g. postgresql 18 enables
-        # data checksums by default). pg_upgrade requires the checksum setting to match
-        # between the old and new cluster, so match whatever the old cluster already has.
-        oldChecksumVersion=$("${cfg.upgradeFrom}/bin/pg_controldata" "${oldDataDir}" | awk -F': *' '/Data page checksum version/ { print $2 }')
-        checksumArg="--data-checksums"
-        if [ "$oldChecksumVersion" = "0" ]; then
-          checksumArg="--no-data-checksums"
-        fi
-
-        "${pgCfg.finalPackage}/bin/initdb" -U "${pgCfg.superUser}" "$checksumArg" ${escapeShellArgs pgCfg.initdbArgs}
+        "${pgCfg.finalPackage}/bin/initdb" -U "${pgCfg.superUser}" ${escapeShellArgs pgCfg.initdbArgs}
         "${pgCfg.finalPackage}/bin/pg_upgrade" \
           --old-datadir "${oldDataDir}" \
           --new-datadir "${pgCfg.dataDir}" \
           --old-bindir "${cfg.upgradeFrom}/bin" \
           --new-bindir "${pgCfg.finalPackage}/bin"
-      '';
-    };
 
-    systemd.services.postgresql-vacuum-after-upgrade = mkIf (cfg.upgradeFrom != null) {
-      description = "Vacuum and analyze the PostgreSQL cluster upgraded from ${cfg.upgradeFrom.psqlSchema}";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "postgresql.target" ];
-      requires = [ "postgresql.target" ];
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        User = "postgres";
-        ExecStart = "${pgCfg.finalPackage}/bin/vacuumdb --all --analyze-in-stages";
-      };
+        # Analyze the new cluster before postgresql.service opens it up to real traffic,
+        # via a throwaway local-socket-only instance (pg_upgrade's own generated
+        # analyze_new_cluster.sh script recommends this before serving queries).
+        "${pgCfg.finalPackage}/bin/pg_ctl" -D "${pgCfg.dataDir}" -w \
+          -o "-c listen_addresses= -c unix_socket_directories=${pgCfg.dataDir}" start
+        "${pgCfg.finalPackage}/bin/vacuumdb" -h "${pgCfg.dataDir}" --all --analyze-in-stages
+        "${pgCfg.finalPackage}/bin/pg_ctl" -D "${pgCfg.dataDir}" -w stop
+      '';
     };
 
     systemd.services.telegraf-postgresql-setup = {
