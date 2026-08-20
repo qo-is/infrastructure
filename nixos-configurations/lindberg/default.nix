@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 {
   imports = [
@@ -14,6 +14,10 @@
   ];
 
   qois.system.physical.enable = true;
+
+  # No serial console (IPMI/SOL) wired up on this board; srvos defaults to
+  # requesting one on ttyS0, which crash-loops serial-getty@ttyS0.service.
+  srvos.boot.consoles = lib.mkForce [ "tty0" ];
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

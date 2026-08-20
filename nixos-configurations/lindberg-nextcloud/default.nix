@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 
 {
   imports = [
@@ -8,6 +8,8 @@
   ];
 
   qois.system.virtual-machine.enable = true;
+
+  srvos.boot.consoles = lib.mkForce [ "tty0" ];
 
   boot.loader.grub.device = "/dev/vda";
   fileSystems."/" = {
