@@ -10,12 +10,16 @@ def test(subtest, client, server):
     with client.nested("waiting for initrd SSH server to come up"):
         retry(ssh_is_up)  # noqa: F821
 
-    ssh_cmd = "ssh -i /etc/sshKey -o UserKnownHostsFile=/etc/knownHosts -p 2222 root@192.168.1.2"
+    ssh_cmd = (
+        "ssh -i /etc/sshKey -o UserKnownHostsFile=/etc/knownHosts "
+        "-o ConnectTimeout=15 -o ServerAliveInterval=5 -o ServerAliveCountMax=3 "
+        "-p 2222 root@192.168.1.2"
+    )
 
     with subtest(
         "authorized key is forced to run systemctl default, not arbitrary commands"
     ):
-        output = client.succeed(f"{ssh_cmd} 'echo should-not-print'")
+        output = client.succeed(f"timeout 30 {ssh_cmd} 'echo should-not-print'")
         assert "should-not-print" not in output, (
             "command= restriction on the authorized key was not enforced"
         )
