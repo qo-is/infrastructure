@@ -80,8 +80,9 @@ in
       };
     };
     systemd.services.wgautomesh = {
-      requires = wgService;
-      after = wgService;
+      requires = wgService ++ [ "network-online.target" ];
+      after = wgService ++ [ "network-online.target" ];
+      wants = [ "network-online.target" ];
     };
   };
 }
