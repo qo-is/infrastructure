@@ -2627,14 +2627,14 @@
           "type": "prometheus",
           "uid": "PBFA97CFB590B2093"
         },
-        "definition": "label_values(postgresql_nb_connections, host)",
+        "definition": "label_values(postgresql_numbackends, host)",
         "hide": 0,
         "includeAll": false,
         "multi": false,
         "name": "host",
         "options": [],
         "query": {
-          "query": "label_values(postgresql_nb_connections, host)",
+          "query": "label_values(postgresql_numbackends, host)",
           "refId": "Prometheus-host-Variable-Query"
         },
         "refresh": 1,
