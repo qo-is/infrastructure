@@ -31,6 +31,7 @@ in
         deploy-rs
         dix
         jq
+        mcp-grafana
         nix-diff
         nix-fast-build
         nixVersions.latest
