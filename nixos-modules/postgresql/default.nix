@@ -5,8 +5,10 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkPackageOption;
+  inherit (lib) mkIf mkPackageOption escapeShellArgs;
   cfg = config.qois.postgresql;
+  pgCfg = config.services.postgresql;
+  oldDataDir = "/var/lib/postgresql/${cfg.upgradeFrom.psqlSchema}";
 in
 {
   options.qois.postgresql = {
@@ -14,6 +16,18 @@ in
     package = mkPackageOption pkgs "postgresql" {
       example = "postgresql_15";
       default = null;
+    };
+
+    upgradeFrom = mkPackageOption pkgs "postgresql" {
+      nullable = true;
+      default = null;
+      example = "postgresql_15";
+      extraDescription = ''
+        Set to the previously-deployed postgresql package while performing a major-version
+        upgrade. A preflight service pg_upgrades data from this package's data directory into
+        the new one before postgresql.service starts. Remove this option once the upgrade is
+        confirmed successful.
+      '';
     };
   };
 
@@ -27,6 +41,55 @@ in
 
     services.postgresqlBackup.enable = true;
     qois.backup-client.includePaths = [ config.services.postgresqlBackup.location ];
+
+    systemd.services.postgresql-upgrade = mkIf (cfg.upgradeFrom != null) {
+      description = "Upgrade PostgreSQL data from ${cfg.upgradeFrom.psqlSchema} to ${cfg.package.psqlSchema}";
+      before = [ "postgresql.service" ];
+      requiredBy = [ "postgresql.service" ];
+      unitConfig.ConditionPathExists = "!${pgCfg.dataDir}/PG_VERSION";
+      environment.PGDATA = pgCfg.dataDir;
+      path = [ pkgs.gawk ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        User = "postgres";
+        Group = "postgres";
+        StateDirectory = "postgresql postgresql/${cfg.package.psqlSchema}";
+        WorkingDirectory = pgCfg.dataDir;
+      };
+      script = ''
+        set -euo pipefail
+
+        # initdb defaults have changed across major versions (e.g. postgresql 18 enables
+        # data checksums by default). pg_upgrade requires the checksum setting to match
+        # between the old and new cluster, so match whatever the old cluster already has.
+        oldChecksumVersion=$("${cfg.upgradeFrom}/bin/pg_controldata" "${oldDataDir}" | awk -F': *' '/Data page checksum version/ { print $2 }')
+        checksumArg="--data-checksums"
+        if [ "$oldChecksumVersion" = "0" ]; then
+          checksumArg="--no-data-checksums"
+        fi
+
+        "${pgCfg.finalPackage}/bin/initdb" -U "${pgCfg.superUser}" "$checksumArg" ${escapeShellArgs pgCfg.initdbArgs}
+        "${pgCfg.finalPackage}/bin/pg_upgrade" \
+          --old-datadir "${oldDataDir}" \
+          --new-datadir "${pgCfg.dataDir}" \
+          --old-bindir "${cfg.upgradeFrom}/bin" \
+          --new-bindir "${pgCfg.finalPackage}/bin"
+      '';
+    };
+
+    systemd.services.postgresql-vacuum-after-upgrade = mkIf (cfg.upgradeFrom != null) {
+      description = "Vacuum and analyze the PostgreSQL cluster upgraded from ${cfg.upgradeFrom.psqlSchema}";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "postgresql.target" ];
+      requires = [ "postgresql.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        User = "postgres";
+        ExecStart = "${pgCfg.finalPackage}/bin/vacuumdb --all --analyze-in-stages";
+      };
+    };
 
     systemd.services.telegraf-postgresql-setup = {
       description = "Grant pg_read_all_stats to telegraf PostgreSQL user";
