@@ -64,37 +64,5 @@
       };
     };
 
-    lattenbach-ext = {
-      # Forwarded ports:
-      # udp:51820 -> 10.0.0.60:51820
-      # tcp:51022 -> 10.0.0.60:22
-      # tcp:51023 -> 10.0.0.60:2222
-      domain = "lattenbach-ext.net.qo.is";
-      hosts.router-coredump.v4.ip = "5.226.148.126";
-    };
-
-    lattenbach-lan = {
-      # Coredump LAN
-      v4 = {
-        id = "10.0.0.0";
-        prefixLength = 16;
-      };
-      domain = "lattenbach-lan.net.qo.is";
-      hosts = {
-      };
-    };
-
-    lattenbach-nas = {
-      # Coredump net between apu and nas
-      v4 = {
-        id = "192.168.254.0";
-        prefixLength = 24;
-      };
-      domain = "lattenbach-nas.net.qo.is";
-      hosts = {
-        tierberg.v4.ip = "192.168.254.2";
-        batzberg.v4.ip = "192.168.254.1";
-      };
-    };
   };
 }
