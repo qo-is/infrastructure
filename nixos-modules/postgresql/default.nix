@@ -5,9 +5,10 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkPackageOption escapeShellArgs;
+  inherit (lib) mkIf mkPackageOption;
   cfg = config.qois.postgresql;
   pgCfg = config.services.postgresql;
+  pgServiceCfg = config.systemd.services.postgresql;
   oldDataDir = "/var/lib/postgresql/${cfg.upgradeFrom.psqlSchema}";
 in
 {
@@ -48,31 +49,31 @@ in
       requiredBy = [ "postgresql.service" ];
       unitConfig.ConditionPathExists = "!${pgCfg.dataDir}/PG_VERSION";
       environment.PGDATA = pgCfg.dataDir;
+      path = [ pgCfg.finalPackage ];
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        User = "postgres";
-        Group = "postgres";
+        inherit (pgServiceCfg.serviceConfig) User Group RuntimeDirectory;
         StateDirectory = "postgresql postgresql/${cfg.package.psqlSchema}";
         WorkingDirectory = pgCfg.dataDir;
       };
       script = ''
         set -euo pipefail
 
-        "${pgCfg.finalPackage}/bin/initdb" -U "${pgCfg.superUser}" ${escapeShellArgs pgCfg.initdbArgs}
-        "${pgCfg.finalPackage}/bin/pg_upgrade" \
+        ${pgServiceCfg.preStart}
+
+        pg_upgrade \
           --old-datadir "${oldDataDir}" \
           --new-datadir "${pgCfg.dataDir}" \
           --old-bindir "${cfg.upgradeFrom}/bin" \
           --new-bindir "${pgCfg.finalPackage}/bin"
 
-        # Analyze the new cluster before postgresql.service opens it up to real traffic,
-        # via a throwaway local-socket-only instance (pg_upgrade's own generated
-        # analyze_new_cluster.sh script recommends this before serving queries).
-        "${pgCfg.finalPackage}/bin/pg_ctl" -D "${pgCfg.dataDir}" -w \
-          -o "-c listen_addresses= -c unix_socket_directories=${pgCfg.dataDir}" start
-        "${pgCfg.finalPackage}/bin/vacuumdb" -h "${pgCfg.dataDir}" --all --analyze-in-stages
-        "${pgCfg.finalPackage}/bin/pg_ctl" -D "${pgCfg.dataDir}" -w stop
+        ${pgServiceCfg.serviceConfig.ExecStart} &
+        serverPid=$!
+        until pg_isready -q; do sleep 0.5; done
+        vacuumdb --all --analyze-in-stages
+        kill -s ${pgServiceCfg.serviceConfig.KillSignal} "$serverPid"
+        wait "$serverPid"
       '';
     };
 
