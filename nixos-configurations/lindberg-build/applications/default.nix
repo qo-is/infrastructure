@@ -12,7 +12,8 @@
   qois.nginx.behindLoadbalancer = true;
   qois.git-ci-runner.enable = true;
   qois.attic.enable = true;
-  qois.postgresql.package = pkgs.postgresql_15;
+  qois.postgresql.package = pkgs.postgresql_18;
+  qois.postgresql.upgradeFrom = pkgs.postgresql_15;
   qois.renovate.enable = true;
 
   # Remove substituters that are hosted on this node, to prevent lockups
