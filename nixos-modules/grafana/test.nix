@@ -82,6 +82,7 @@ in
         };
 
         qois.prometheus.enable = true;
+        qois.loki.enable = true;
 
         # Use snakeoil certs instead of ACME
         services.nginx.virtualHosts."${serverDomain}" = {

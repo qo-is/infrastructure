@@ -39,7 +39,13 @@ in
             }
           ];
         }
-      ];
+      ]
+      ++ lib.optional config.qois.loki.enable {
+        job_name = "loki";
+        static_configs = [
+          { targets = [ "localhost:${builtins.toString config.qois.loki.port}" ]; }
+        ];
+      };
     };
   };
 }

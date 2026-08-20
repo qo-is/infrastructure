@@ -54,6 +54,7 @@ let
 
             qois.outgoing-server-mail.enable = mkForce false;
             qois.backup-client.enable = mkForce false;
+            qois.vector.enable = false;
           };
 
           # Calls a `test(...)` python function in the test's python file with the list of nodes and helper functions.

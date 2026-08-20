@@ -102,4 +102,5 @@ in
 
   # Monitoring
   qois.telegraf.enable = true;
+  qois.vector.enable = lib.mkDefault true;
 }

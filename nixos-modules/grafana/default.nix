@@ -111,17 +111,20 @@ with lib;
       };
 
     services.grafana.provision.datasources.settings.datasources =
-      lib.mkIf config.services.prometheus.enable
-        [
-          {
-            name = "Prometheus";
-            type = "prometheus";
-            uid = "PBFA97CFB590B2093";
-            url = "http://localhost:${toString config.services.prometheus.port}";
-            isDefault = true;
-            jsonData.timeInterval = "15s";
-          }
-        ];
+      lib.optional config.services.prometheus.enable {
+        name = "Prometheus";
+        type = "prometheus";
+        uid = "PBFA97CFB590B2093";
+        url = "http://localhost:${toString config.services.prometheus.port}";
+        isDefault = true;
+        jsonData.timeInterval = "15s";
+      }
+      ++ lib.optional config.services.loki.enable {
+        name = "Loki";
+        type = "loki";
+        uid = "P8E80F9AEF21F6940";
+        url = "http://localhost:${toString config.qois.loki.port}";
+      };
 
     environment.etc."grafana/dashboards".source = ./dashboards;
 

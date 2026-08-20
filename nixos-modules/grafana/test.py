@@ -58,6 +58,19 @@ def test(server, client, serverDomain, subtest):
             f"expected datasource name 'Prometheus' but was '{prometheus_ds[0].get('name')}'"
         )
 
+    with subtest("loki-datasource-provisioned"):
+        result = client.succeed(
+            f"curl --basic --user testadmin:snakeoilpwd https://{serverDomain}/api/datasources"
+        )
+        datasources = json.loads(result)
+        loki_ds = [ds for ds in datasources if ds.get("type") == "loki"]
+        assert len(loki_ds) == 1, (
+            f"expected exactly 1 loki datasource but found {len(loki_ds)}"
+        )
+        assert loki_ds[0].get("name") == "Loki", (
+            f"expected datasource name 'Loki' but was '{loki_ds[0].get('name')}'"
+        )
+
     with subtest("dashboard-provisioned"):
         result = client.succeed(
             f"curl --basic --user testadmin:snakeoilpwd 'https://{serverDomain}/api/search?type=dash-db'"
