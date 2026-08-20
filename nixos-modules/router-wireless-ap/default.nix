@@ -88,6 +88,7 @@ in
               wpa_pairwise = lib.mkForce "CCMP";
               rsn_pairwise = lib.mkForce "CCMP";
               bridge = "lan";
+              logger_syslog = 0;
             };
           };
 
