@@ -30,6 +30,11 @@ in
             }
           ];
           net = { };
+          nginx.urls = lib.mkIf config.services.nginx.statusPage (
+            lib.mkForce [
+              "http://localhost:${toString config.services.nginx.defaultHTTPListenPort}/nginx_status"
+            ]
+          );
         };
       };
     };
