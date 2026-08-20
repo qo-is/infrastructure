@@ -14,5 +14,16 @@
   "cloneSubmodules": true,
   "nix": {
     "enabled": true
-  }
+  },
+  "packageRules": [
+    {
+      "matchManagers": [
+        "nix"
+      ],
+      "matchDepNames": [
+        "private"
+      ],
+      "enabled": false
+    }
+  ]
 }
