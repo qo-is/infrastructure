@@ -48,13 +48,25 @@ in
       before = [ "postgresql.service" ];
       requiredBy = [ "postgresql.service" ];
       unitConfig.ConditionPathExists = "!${pgCfg.dataDir}/PG_VERSION";
-      environment.PGDATA = pgCfg.dataDir;
-      path = [ pgCfg.finalPackage ];
+      inherit (pgServiceCfg) path;
+      environment.PGDATA = pgServiceCfg.environment.PGDATA;
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        inherit (pgServiceCfg.serviceConfig) User Group RuntimeDirectory;
-        StateDirectory = "postgresql postgresql/${cfg.package.psqlSchema}";
+        inherit (pgServiceCfg.serviceConfig)
+          User
+          Group
+          RuntimeDirectory
+          StateDirectory
+          StateDirectoryMode
+          ;
+        # The analyze instance below reuses postgresql.service's own ExecStart, so it
+        # listens on the same /run/postgresql socket. Give this unit a private, empty
+        # /run/postgresql and no network access so that socket is never reachable by
+        # any other service while the analyze instance is briefly up.
+        TemporaryFileSystem = [ "/run/postgresql" ];
+        PrivateNetwork = true;
+        # pg_upgrade writes its logs and dumps into the current directory.
         WorkingDirectory = pgCfg.dataDir;
       };
       script = ''
