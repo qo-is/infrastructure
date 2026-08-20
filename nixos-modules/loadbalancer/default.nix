@@ -121,8 +121,11 @@ in
         443
       ];
 
-      services.telegraf.extraConfig.inputs.haproxy = [
-        { servers = [ "http://${statsIpPort}/metrics" ]; }
+      services.telegraf.extraConfig.inputs.prometheus = [
+        {
+          urls = [ "http://${statsIpPort}/metrics" ];
+          metric_version = 2;
+        }
       ];
 
       services.haproxy =
@@ -162,8 +165,9 @@ in
             listen stats
               bind ${statsIpPort}
               mode http
+              http-request use-service prometheus-exporter if { path /metrics }
               stats enable
-              stats uri /metrics
+              stats uri /stats
               stats hide-version
 
             frontend http
