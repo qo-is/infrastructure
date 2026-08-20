@@ -11,5 +11,6 @@
   qois.prometheus.enable = true;
   qois.grafana.enable = true;
   qois.loki.enable = true;
+  qois.alertmanager.enable = true;
 
 }

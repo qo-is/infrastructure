@@ -1,4 +1,5 @@
 {
+  inputs,
   config,
   lib,
   ...
@@ -13,6 +14,8 @@ let
   cfg = config.qois.prometheus;
 in
 {
+  imports = [ inputs.srvos.nixosModules.roles-prometheus ];
+
   options.qois.prometheus = {
     enable = mkEnableOption "Enable prometheus";
   };
