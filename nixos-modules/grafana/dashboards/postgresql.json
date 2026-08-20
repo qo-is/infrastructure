@@ -106,7 +106,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -153,7 +153,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
           "expr": "postgresql_numbackends{host=\"$host\"}",
@@ -180,7 +180,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -228,7 +228,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_replication_lag{host=\"$host\"}",
           "instant": true,
@@ -243,7 +243,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -300,7 +300,7 @@
           "alias": "used_percent",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "container_memory_usage_bytes{pod=~\"$host\", container=\"postgres\"} / kube_pod_container_resource_limits{pod=~\"$host\", resource=\"memory\", container=\"postgres\"} * 100",
           "groupBy": [
@@ -354,7 +354,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -415,7 +415,7 @@
           "alias": "$tag_usename",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -469,7 +469,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -537,7 +537,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "sum(disk_used_percent{host=\"$host\", path=\"/home/postgres/pgdata\"}) by (device, path)",
           "groupBy": [
@@ -592,7 +592,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -649,7 +649,7 @@
           "alias": "used_percent",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "max(container_start_time_seconds{pod=\"$host\"})*1000",
           "groupBy": [
@@ -706,7 +706,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -753,7 +753,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "sum(container_memory_usage_bytes{pod=\"$host\", container!=\"\"}) by (container)",
           "groupBy": [
@@ -839,7 +839,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -890,7 +890,7 @@
           "alias": "$tag_usename",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_nb_connections{host=\"$host\", usename!=\"\"}",
           "groupBy": [
@@ -970,7 +970,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -1024,7 +1024,7 @@
           "alias": "checkpoint_sync_time",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_checkpoint_sync_time{host=\"$host\"}",
           "groupBy": [
@@ -1082,7 +1082,7 @@
           "alias": "checkpoint_write_time",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_checkpoint_write_time{host=\"$host\"}",
           "groupBy": [
@@ -1140,7 +1140,7 @@
           "alias": "checkpoint_req",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_checkpoints_req{host=\"$host\"}",
           "groupBy": [
@@ -1198,7 +1198,7 @@
           "alias": "checkpoint_timed",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_checkpoints_timed{host=\"$host\"}",
           "groupBy": [
@@ -1291,7 +1291,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -1339,7 +1339,7 @@
           "alias": "buffers_alloc",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_buffers_alloc{host=\"$host\"}",
           "groupBy": [
@@ -1395,7 +1395,7 @@
           "alias": "buffers_backend",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_buffers_backend{host=\"$host\"}",
           "groupBy": [
@@ -1451,7 +1451,7 @@
           "alias": "buffers_backend_fsync",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_buffers_checkpoint{host=\"$host\"}",
           "groupBy": [
@@ -1507,7 +1507,7 @@
           "alias": "buffers_checkpoints",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_buffers_clean{host=\"$host\"}",
           "groupBy": [
@@ -1563,7 +1563,7 @@
           "alias": "buffers_clean",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_buffers_backend_fsync{host=\"$host\"}",
           "groupBy": [
@@ -1649,7 +1649,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -1693,7 +1693,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "max(postgresql_table_total_disc_size{host=\"$host\"}) by (tablename)",
           "instant": true,
@@ -1712,7 +1712,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -1760,7 +1760,7 @@
           "alias": "tup_deleted",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_tup_deleted{host=\"$host\"}[5m])",
           "groupBy": [
@@ -1816,7 +1816,7 @@
           "alias": "tup_fetched",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_tup_fetched{host=\"$host\"}[5m])",
           "groupBy": [
@@ -1872,7 +1872,7 @@
           "alias": "tup_inserted",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_tup_inserted{host=\"$host\"}[5m])",
           "groupBy": [
@@ -1928,7 +1928,7 @@
           "alias": "tup_returned",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_tup_returned{host=\"$host\"}[5m])",
           "groupBy": [
@@ -1984,7 +1984,7 @@
           "alias": "tup_updated",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_tup_updated{host=\"$host\"}[5m])",
           "groupBy": [
@@ -2074,7 +2074,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -2122,7 +2122,7 @@
           "alias": "xact_commit",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_xact_commit{host=\"$host\"}[5m])",
           "groupBy": [
@@ -2178,7 +2178,7 @@
           "alias": "xact_rollback",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_xact_rollback{host=\"$host\"}[5m])",
           "groupBy": [
@@ -2268,7 +2268,7 @@
       "dashes": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -2321,7 +2321,7 @@
           "alias": "blks_read_time",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_blk_read_time{host=\"$host\"}",
           "groupBy": [
@@ -2377,7 +2377,7 @@
           "alias": "blks_write_time",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "postgresql_blk_write_time{host=\"$host\"}",
           "groupBy": [
@@ -2433,7 +2433,7 @@
           "alias": "blks_hits",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_blks_hit{host=\"$host\"}[5m])",
           "groupBy": [
@@ -2489,7 +2489,7 @@
           "alias": "blks_read",
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "PBFA97CFB590B2093"
           },
           "expr": "rate(postgresql_blks_read{host=\"$host\"}[5m])",
           "groupBy": [
@@ -2625,7 +2625,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "PBFA97CFB590B2093"
         },
         "definition": "label_values(postgresql_nb_connections, host)",
         "hide": 0,

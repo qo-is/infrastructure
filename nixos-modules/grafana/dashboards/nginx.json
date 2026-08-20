@@ -75,7 +75,10 @@
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_PROMETHEUS.INTERNAL-ODMONT.COM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -94,7 +97,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -187,7 +193,10 @@
       }
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -241,7 +250,10 @@
       "type": "gauge"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -306,7 +318,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "decimals": 2,
       "fieldConfig": {
         "defaults": {
@@ -367,7 +382,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": "${DS_PROMETHEUS.INTERNAL-ODMONT.COM}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "expr": "rate(net_bytes_recv[5m])",
           "format": "time_series",
           "instant": false,
@@ -377,7 +395,10 @@
           "refId": "A"
         },
         {
-          "datasource": "${DS_PROMETHEUS.INTERNAL-ODMONT.COM}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "expr": "rate(net_conntrack_listener_conn_accepted_total[5m])",
           "hide": false,
           "interval": "30s",
@@ -438,7 +459,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "decimals": 2,
       "fieldConfig": {
         "defaults": {
@@ -499,14 +523,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "datasource": "${DS_PROMETHEUS.INTERNAL-ODMONT.COM}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "expr": "rate(net_bytes_sent[5m])",
           "interval": "30s",
           "legendFormat": "net_bytes_sent",
           "refId": "B"
         },
         {
-          "datasource": "${DS_PROMETHEUS.INTERNAL-ODMONT.COM}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
           "expr": "rate(net_conntrack_listener_conn_accepted_total[5m])",
           "hide": false,
           "interval": "30s",
@@ -559,7 +589,10 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_PROMETHEUS.INTERNAL-ODMONT.COM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -578,7 +611,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "decimals": null,
       "description": "Requests with 200 Status Code",
       "fieldConfig": {
@@ -674,7 +710,10 @@
       }
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "Total number of request in 24 hours for 200 response by nginx server",
       "fieldConfig": {
         "defaults": {
@@ -729,7 +768,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "Requests with 4XX Status Code",
       "fieldConfig": {
         "defaults": {
@@ -824,7 +866,10 @@
       }
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "Total number of request in 24 hours for 404 response from nginx server",
       "fieldConfig": {
         "defaults": {
@@ -879,7 +924,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "Requests with 3XX Status Code",
       "fieldConfig": {
         "defaults": {
@@ -977,7 +1025,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "Requests with 5XX Status Code",
       "fieldConfig": {
         "defaults": {
@@ -1071,7 +1122,10 @@
       }
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {},
@@ -1123,7 +1177,10 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_PROMETHEUS.INTERNAL-ODMONT.COM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1143,7 +1200,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "The total number of accepted connections from clients since the nginx master process started. Note that reloading configurations or restarting worker processes will not reset this metric. If you terminate and restart the master process, you will reset the metric.\n\n",
       "fieldConfig": {
         "defaults": {
@@ -1255,7 +1315,10 @@
       }
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "The current number of connections from clients where nginx is writing a response back to the client.\n",
       "fieldConfig": {
         "defaults": {
@@ -1313,7 +1376,10 @@
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "The current number of active (accepted) connections from clients. Includes all connections with the statuses Idle / Waiting, Reading, and Writing.",
       "fieldConfig": {
         "defaults": {
@@ -1370,7 +1436,10 @@
       "type": "bargauge"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "The current number of connections from clients that are in the Idle / Waiting state.",
       "fieldConfig": {
         "defaults": {
@@ -1433,7 +1502,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "The total number of handled connections from clients since the nginx master process started. This will be lower than accepted only in cases where a connection is dropped before it is handled.",
       "fieldConfig": {
         "defaults": {
@@ -1549,7 +1621,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "decimals": null,
       "description": "The total number of client requests since the nginx master process started. A request is an application-level (HTTP, etc.) event. It occurs when a client requests a resource via the application protocol. A single connection can (and often does) make many requests. So most of the time, there are more requests than accepted/handled connections.",
       "fieldConfig": {
@@ -1662,7 +1737,10 @@
       }
     },
     {
-      "datasource": "${DS_PROMETHEUS.INTERNAL-ODMONT.COM}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "description": "The current number of (accepted) connections from clients where nginx is reading the request. Measured at the time the status module was queried.",
       "fieldConfig": {
         "defaults": {
@@ -1718,7 +1796,10 @@
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1948,27 +2029,12 @@
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "prometheus.internal-odmont.com",
-          "value": "prometheus.internal-odmont.com"
-        },
-        "hide": 1,
-        "includeAll": false,
-        "label": "Datasource",
-        "multi": false,
-        "name": "datasource",
-        "options": [],
-        "query": "prometheus",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "type": "datasource"
-      },
-      {
         "allValue": null,
         "current": {},
-        "datasource": "$datasource",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
         "definition": "label_values(system_uptime, instance)",
         "hide": 0,
         "includeAll": false,
