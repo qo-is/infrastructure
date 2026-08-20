@@ -111,7 +111,7 @@ with lib;
       };
 
     services.grafana.provision.datasources.settings.datasources =
-      lib.optional config.services.prometheus.enable {
+      optional config.services.prometheus.enable {
         name = "Prometheus";
         type = "prometheus";
         uid = "PBFA97CFB590B2093";
@@ -119,7 +119,7 @@ with lib;
         isDefault = true;
         jsonData.timeInterval = "15s";
       }
-      ++ lib.optional config.services.loki.enable {
+      ++ optional config.services.loki.enable {
         name = "Loki";
         type = "loki";
         uid = "P8E80F9AEF21F6940";

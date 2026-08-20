@@ -4,15 +4,21 @@
   ...
 }:
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkDefault
+    optional
+    ;
   cfg = config.qois.prometheus;
 in
 {
   options.qois.prometheus = {
-    enable = lib.mkEnableOption "Enable prometheus";
+    enable = mkEnableOption "Enable prometheus";
   };
 
-  config = lib.mkIf cfg.enable {
-    qois.telegraf.monitoring.enable = lib.mkDefault true;
+  config = mkIf cfg.enable {
+    qois.telegraf.monitoring.enable = mkDefault true;
 
     services.prometheus = {
       enable = true;
@@ -40,7 +46,7 @@ in
           ];
         }
       ]
-      ++ lib.optional config.qois.loki.enable {
+      ++ optional config.qois.loki.enable {
         job_name = "loki";
         static_configs = [
           { targets = [ "localhost:${builtins.toString config.qois.loki.port}" ]; }
