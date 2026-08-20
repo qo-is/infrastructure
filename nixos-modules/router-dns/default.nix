@@ -68,5 +68,7 @@ in
           ];
         };
       };
+
+    systemd.services.unbound.serviceConfig.LimitNOFILE = 8192;
   };
 }
