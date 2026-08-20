@@ -3,7 +3,7 @@
 ## Commands
 
 ```bash
-nix develop                    # Enter dev shell (direnv auto-activates via .envrc)
+nix develop                    # Enter dev shell (direnv auto-activates via .envrc); required before first commit, generates .pre-commit-config.yaml
 nix fmt                        # Auto-format all files (treefmt: nixfmt, deadnix, jsonfmt, yamlfmt, mdformat, ruff, shfmt)
 nix flake check                # Run all checks: build configs, build packages, run module tests, check deploy, check formatting
 
