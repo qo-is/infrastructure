@@ -53,6 +53,7 @@ with lib;
           admin_user = "$__file{${config.sops.secrets."grafana/admin/user".path}}";
           admin_password = "$__file{${config.sops.secrets."grafana/admin/password".path}}";
           secret_key = "$__file{${config.sops.secrets."grafana/secret_key".path}}";
+          disable_gravatar = true;
         };
 
         database = {
@@ -65,6 +66,8 @@ with lib;
         analytics = {
           reporting_enabled = false;
           feedback_links_enabled = false;
+          check_for_updates = false;
+          check_for_plugin_updates = false;
         };
       };
 
