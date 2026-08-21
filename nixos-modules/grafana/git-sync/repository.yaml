@@ -1,0 +1,22 @@
+apiVersion: provisioning.grafana.app/v0alpha1
+kind: Repository
+metadata:
+  name: qois-dashboards
+spec:
+  title: qo.is Dashboards
+  type: git
+  git:
+    url: https://git.qo.is/qo.is/dashboards.git
+    branch: main
+    path: ""
+    tokenUser: grafana-bot
+  sync:
+    enabled: true
+    intervalSeconds: 60
+    target: folder
+  workflows:
+    - write
+    - branch
+secure:
+  token:
+    create: GIT_PAT

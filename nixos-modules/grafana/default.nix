@@ -69,6 +69,11 @@ with lib;
           check_for_updates = false;
           check_for_plugin_updates = false;
         };
+
+        provisioning = {
+          repository_types = "git|github|bitbucket|gitlab|local";
+          allowed_git_urls = "git.qo.is";
+        };
       };
 
       provision.dashboards.settings = {
