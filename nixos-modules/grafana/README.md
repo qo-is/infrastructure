@@ -39,7 +39,3 @@ gcx login --server https://monitoring.qo.is --token <grafana service account tok
 export GIT_PAT=<grafana-bot Forgejo PAT>
 gcx resources push -p nixos-modules/grafana/git-sync
 ```
-
-- idempotent — safe to re-run after manifest changes
-- requires a Grafana service account token (Administration → Service accounts) for `gcx login`
-- token never lives in the manifest — `gcx` reads it from `GIT_PAT` at push time

@@ -16,7 +16,6 @@ spec:
     target: folder
   workflows:
     - write
-    - branch
 secure:
   token:
     create: GIT_PAT

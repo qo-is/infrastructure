@@ -71,7 +71,7 @@ with lib;
         };
 
         provisioning = {
-          repository_types = "git|github|bitbucket|gitlab|local";
+          repository_types = "git|local";
           allowed_git_urls = "git.qo.is";
         };
       };
