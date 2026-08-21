@@ -39,10 +39,7 @@ let
         driver.find_element(By.NAME, "user").send_keys("testadmin")
         driver.find_element(By.NAME, "password").send_keys("snakeoilpwd")
         driver.find_element(By.CSS_SELECTOR, "button[type='submit']").click()
-
-        # Navigate to the Overview dashboard
-        driver.get(f"{base_url}/d/overview")
-        WebDriverWait(driver, 30).until(EC.title_contains("Overview"))
+        WebDriverWait(driver, 30).until(lambda d: "/login" not in d.current_url)
 
         driver.quit()
       '';

@@ -75,17 +75,6 @@ with lib;
           allowed_git_urls = "git.qo.is";
         };
       };
-
-      provision.dashboards.settings = {
-        apiVersion = 1;
-        providers = [
-          {
-            name = "default";
-            type = "file";
-            options.path = "/etc/grafana/dashboards";
-          }
-        ];
-      };
     };
 
     sops.secrets =
@@ -133,8 +122,6 @@ with lib;
         uid = "P8E80F9AEF21F6940";
         url = "http://localhost:${toString config.qois.loki.port}";
       };
-
-    environment.etc."grafana/dashboards".source = ./dashboards;
 
     services.telegraf.extraConfig.inputs.x509_cert = [
       { sources = [ "https://${cfg.domain}:443" ]; }

@@ -71,15 +71,5 @@ def test(server, client, serverDomain, subtest):
             f"expected datasource name 'Loki' but was '{loki_ds[0].get('name')}'"
         )
 
-    with subtest("dashboard-provisioned"):
-        result = client.succeed(
-            f"curl --basic --user testadmin:snakeoilpwd 'https://{serverDomain}/api/search?type=dash-db'"
-        )
-        dashboards = json.loads(result)
-        overview = [d for d in dashboards if d.get("title") == "Overview"]
-        assert len(overview) == 1, (
-            f"expected exactly 1 dashboard titled 'Overview' but found {len(overview)}"
-        )
-
-    with subtest("e2e-login-and-dashboard"):
+    with subtest("e2e-login"):
         client.succeed(f"grafana-selenium-test {serverDomain}")
