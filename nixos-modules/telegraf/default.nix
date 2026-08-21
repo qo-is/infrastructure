@@ -35,6 +35,7 @@ in
               "http://localhost:${toString config.services.nginx.defaultHTTPListenPort}/nginx_status"
             ]
           );
+          systemd_units.details = true;
         };
       };
     };
