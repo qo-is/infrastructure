@@ -30,7 +30,7 @@ in
         transforms.with_unit_label = {
           type = "remap";
           inputs = [ "journald" ];
-          source = ''.unit = to_string(._SYSTEMD_UNIT) ?? "none"'';
+          source = ''.unit = to_string(._SYSTEMD_UNIT) ?? to_string(._SYSLOG_IDENTIFIER) ?? "none"'';
         };
 
         sinks.loki = {

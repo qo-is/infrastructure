@@ -9,6 +9,7 @@ let
     mkEnableOption
     mkIf
     optionals
+    optionalString
     concatMapStringsSep
     ;
   inherit (config.qois.meta.network.virtual) backplane;
@@ -49,9 +50,11 @@ in
       ]
     );
 
-    appendHttpConfig = mkIf cfg.behindLoadbalancer (
-      concatMapStringsSep "\n" (ip: "set_real_ip_from ${ip};") trustedProxyIps
-      + "\nreal_ip_header proxy_protocol;\n"
-    );
+    appendHttpConfig =
+      "access_log syslog:server=unix:/dev/log,tag=nginx_access combined;\n"
+      + optionalString cfg.behindLoadbalancer (
+        concatMapStringsSep "\n" (ip: "set_real_ip_from ${ip};") trustedProxyIps
+        + "\nreal_ip_header proxy_protocol;\n"
+      );
   };
 }
