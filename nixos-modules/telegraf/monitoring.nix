@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -67,40 +66,54 @@ in
   };
 
   config = mkIf cfg.enable {
-    services.telegraf.extraConfig.inputs = {
-      inherit (cfg) http_response;
+    services.telegraf.extraConfig = {
+      inputs = {
+        inherit (cfg) http_response;
 
-      ping = map (host: {
-        interval = cfg.pingInterval;
-        count = 1;
-        method = "native";
-        urls = [ host ];
-      }) cfg.ping;
+        ping = map (host: {
+          interval = cfg.pingInterval;
+          count = 1;
+          method = "native";
+          urls = [ host ];
+        }) cfg.ping;
 
-      exec = map (b: {
-        commands = [
-          "${pkgs.writeShellScript "forgejo-build-status-${b.repo}-${b.branch}" ''
-            set -uo pipefail
-            response=$(${pkgs.curl}/bin/curl -sf "https://git.qo.is/api/v1/repos/${b.owner}/${b.repo}/commits/${b.branch}/status")
-            if [ $? -ne 0 ] || [ -z "$response" ]; then
-              echo 'forgejo_build_status,owner=${b.owner},repo=${b.repo},branch=${b.branch},state=unreachable value=1i'
-              exit 0
-            fi
-            state=$(echo "$response" | ${pkgs.jq}/bin/jq -r '.state // "unknown"')
-            case "$state" in
-              success) code=0 ;;
-              pending) code=1 ;;
-              warning) code=2 ;;
-              failure|error) code=3 ;;
-              *) code=4 ;;
-            esac
-            echo "forgejo_build_status,owner=${b.owner},repo=${b.repo},branch=${b.branch},state=$state value=''${code}i"
-          ''}"
-        ];
-        timeout = "10s";
-        interval = "5m";
-        data_format = "influx";
-      }) cfg.buildStatus;
+        http = map (b: {
+          urls = [ "https://git.qo.is/api/v1/repos/${b.owner}/${b.repo}/commits/${b.branch}/status" ];
+          tags = {
+            inherit (b) owner repo branch;
+          };
+          data_format = "json_v2";
+          timeout = "10s";
+          interval = "5m";
+          json_v2 = [
+            {
+              measurement_name = "forgejo_build_status";
+              field = [ { path = "state"; } ];
+              tag = [ { path = "state"; } ];
+            }
+          ];
+        }) cfg.buildStatus;
+      };
+
+      processors.enum = [
+        {
+          namepass = [ "forgejo_build_status" ];
+          mapping = [
+            {
+              fields = [ "state" ];
+              dest = "value";
+              default = 4;
+              value_mappings = {
+                success = 0;
+                pending = 1;
+                warning = 2;
+                failure = 3;
+                error = 3;
+              };
+            }
+          ];
+        }
+      ];
     };
   };
 }
