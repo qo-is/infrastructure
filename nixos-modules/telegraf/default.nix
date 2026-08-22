@@ -21,6 +21,7 @@ in
     services.telegraf = {
       enable = true;
       extraConfig = {
+        outputs.prometheus_client.expiration_interval = "10m";
         inputs = {
           cpu = [
             {
