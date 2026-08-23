@@ -94,6 +94,7 @@ in
   programs.autojump.enable = true;
 
   services.fstrim.enable = true;
+  services.btrfs.autoScrub.enable = true;
 
   qois.outgoing-server-mail.enable = true;
   qois.backup-client.enable = true;

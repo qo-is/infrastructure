@@ -56,6 +56,7 @@ let
             qois.outgoing-server-mail.enable = mkForce false;
             qois.backup-client.enable = mkForce false;
             qois.vector.enable = false;
+            services.btrfs.autoScrub.enable = mkForce false;
             # Weaker than mkForce, so tests that need telegraf can still opt back in with
             # mkForce, but stronger than the plain `true` default in nixos-modules/system.
             qois.telegraf.enable = mkOverride 75 false;
