@@ -25,6 +25,7 @@ in
         sops-rekey
         auto-deploy
         diff-closures
+        qois-disk-unlock
       ])
       ++ (with pkgs; [
         attic-client
