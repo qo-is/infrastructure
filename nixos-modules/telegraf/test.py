@@ -29,3 +29,16 @@ def test(server, subtest):
         server.wait_until_succeeds(
             "curl -s http://localhost:9273/metrics | grep -c ping_average_response_ms"
         )
+
+    with subtest("monitoring-build-status"):
+        server.wait_until_succeeds(
+            "curl -s http://localhost:9273/metrics | grep -c '^forgejo_build_status_value'"
+        )
+        server.succeed(
+            "test $(curl -s http://localhost:9273/metrics"
+            " | grep -c '^forgejo_build_status_value') -eq 1"
+        )
+        server.succeed(
+            "curl -s http://localhost:9273/metrics"
+            " | grep '^forgejo_build_status_value' | grep -cv 'state='"
+        )

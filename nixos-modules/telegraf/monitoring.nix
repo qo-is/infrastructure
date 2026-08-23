@@ -63,6 +63,15 @@ in
       ];
       description = "Forgejo repos/branches to report the latest combined commit status for.";
     };
+    buildStatusUrl = mkOption {
+      type = str;
+      default = "https://git.qo.is";
+      description = "Base URL of the Forgejo instance serving the commit status API.";
+    };
+    buildStatusInterval = mkOption {
+      type = str;
+      default = "5m";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -78,18 +87,25 @@ in
         }) cfg.ping;
 
         http = map (b: {
-          urls = [ "https://git.qo.is/api/v1/repos/${b.owner}/${b.repo}/commits/${b.branch}/status" ];
+          urls = [
+            "${cfg.buildStatusUrl}/api/v1/repos/${b.owner}/${b.repo}/commits/${b.branch}/status"
+          ];
           tags = {
             inherit (b) owner repo branch;
           };
           data_format = "json_v2";
           timeout = "10s";
-          interval = "5m";
+          interval = cfg.buildStatusInterval;
           json_v2 = [
             {
               measurement_name = "forgejo_build_status";
-              field = [ { path = "state"; } ];
-              tag = [ { path = "state"; } ];
+              field = [
+                {
+                  path = "state";
+                  rename = "value";
+                  type = "string";
+                }
+              ];
             }
           ];
         }) cfg.buildStatus;
@@ -100,8 +116,7 @@ in
           namepass = [ "forgejo_build_status" ];
           mapping = [
             {
-              fields = [ "state" ];
-              dest = "value";
+              fields = [ "value" ];
               default = 4;
               value_mappings = {
                 success = 0;
