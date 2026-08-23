@@ -10,7 +10,7 @@ in
 
     emailTo = mkOption {
       type = str;
-      default = "spam.qois-alerts@fh2.ch";
+      default = "sysadmin@qo.is";
       description = "Address alerts are sent to.";
     };
 
