@@ -18,5 +18,7 @@
         sops-nix.nixosModules.sops
         private.nixosModules.default
       ];
+
+      qois.sharedSecretsFile = "${private}/nixos-modules/shared-secrets/default.sops.yaml";
     };
 }
