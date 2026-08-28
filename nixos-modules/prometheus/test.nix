@@ -7,5 +7,8 @@
       qois.prometheus.enable = true;
       qois.telegraf.enable = lib.mkForce true;
       services.telegraf.extraConfig.agent.interval = lib.mkForce "50ms";
+      # Only the mem input is needed to prove the telegraf->prometheus scrape works
+      # (test.py checks for the mem_available metric).
+      services.telegraf.extraConfig.inputs = lib.mkForce { mem = { }; };
     };
 }
