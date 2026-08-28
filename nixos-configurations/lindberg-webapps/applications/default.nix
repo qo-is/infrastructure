@@ -6,6 +6,7 @@
   qois.nginx.behindLoadbalancer = true;
   qois.vault.enable = true;
   qois.git.enable = true;
+  qois.kanidm.enable = true;
   qois.static-page.enable = true;
   qois.postgresql.package = pkgs.postgresql_18;
   qois.postgresql.upgradeFrom = pkgs.postgresql_15;
