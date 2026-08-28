@@ -7,7 +7,6 @@
 let
   certs = import "${inputs.nixpkgs}/nixos/tests/common/acme/server/snakeoil-certs.nix";
   serverDomain = certs.domain;
-  kanidmDomain = "id.${serverDomain}";
 
   seleniumScript =
     pkgs.writers.writePython3Bin "grafana-selenium-test"
@@ -47,7 +46,7 @@ let
 in
 {
   args = {
-    inherit serverDomain kanidmDomain;
+    inherit serverDomain;
   };
   # Note: This extends the default configuration from ${self}/checks/nixos-modules
   nodes = {
@@ -77,31 +76,16 @@ in
         qois.grafana = {
           enable = true;
           domain = serverDomain;
+          # Single sign-on is covered by the kanidm-grafana module test.
+          sso.enable = false;
         };
 
         qois.prometheus.enable = true;
         qois.loki.enable = true;
 
-        qois.kanidm = {
-          enable = true;
-          domain = kanidmDomain;
-          adminPasswordFile = pkgs.writeText "kanidm-admin-password" "snakeoilAdminPassword";
-          idmAdminPasswordFile = pkgs.writeText "kanidm-idm-admin-password" "snakeoilIdmAdminPassword";
-          oauth2Clients.grafana.secretFile = pkgs.writeText "kanidm-oauth2-grafana" "snakeoilOauth2Secret";
-        };
-        services.kanidm.server.settings = {
-          tls_chain = lib.mkForce certs.${serverDomain}.cert;
-          tls_key = lib.mkForce certs.${serverDomain}.key;
-        };
-
         # Use snakeoil certs instead of ACME
         security.acme.certs = lib.mkForce { };
         services.nginx.virtualHosts."${serverDomain}" = {
-          enableACME = lib.mkForce false;
-          sslCertificate = certs.${serverDomain}.cert;
-          sslCertificateKey = certs.${serverDomain}.key;
-        };
-        services.nginx.virtualHosts.${kanidmDomain} = {
           enableACME = lib.mkForce false;
           sslCertificate = certs.${serverDomain}.cert;
           sslCertificateKey = certs.${serverDomain}.key;
@@ -122,11 +106,6 @@ in
                 password = "unused";
               };
               secret_key = "unused";
-            };
-            kanidm = {
-              admin-password = "unused";
-              idm-admin-password = "unused";
-              oauth2.grafana = "unused";
             };
           }
         );

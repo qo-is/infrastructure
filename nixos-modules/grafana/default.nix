@@ -6,22 +6,19 @@
 
 let
   cfg = config.qois.grafana;
-  kanidm = config.qois.kanidm;
 
-  # Group suffix in kanidm -> role value handed to grafana via the `groups` claim.
-  oauthRoles = {
-    editors = [ "Editor" ];
-    admins = [ "Admin" ];
-    server-admins = [ "GrafanaAdmin" ];
-  };
-  # JMESPath picking the most privileged role a person is entitled to.
-  oauthRolePrecedence = [
+  # Most privileged role first; a person gets the first one their claim carries.
+  ssoRolePrecedence = [
     "GrafanaAdmin"
     "Admin"
     "Editor"
   ];
-  oauthRoleAttributePath =
-    lib.concatMapStrings (role: "contains(groups[*], '${role}') && '${role}' || ") oauthRolePrecedence
+  ssoRoleValues = lib.concatLists (lib.attrValues cfg.sso.roles);
+  # JMESPath picking the most privileged role a person is entitled to.
+  ssoRoleAttributePath =
+    lib.concatMapStrings (role: "contains(groups[*], '${role}') && '${role}' || ") (
+      lib.filter (role: lib.elem role ssoRoleValues) ssoRolePrecedence
+    )
     + "'Viewer'";
 in
 with lib;
@@ -140,35 +137,24 @@ with lib;
         url = "http://localhost:${toString config.qois.loki.port}";
       };
 
-    # Single sign-on through kanidm. The local admin account stays available as a fallback.
-    qois.kanidm.oauth2Clients.grafana = mkIf kanidm.enable {
-      displayName = "Grafana";
-      originUrl = "https://${cfg.domain}/login/generic_oauth";
-      originLanding = "https://${cfg.domain}/";
-      roles = oauthRoles;
-      secretGroup = config.users.users.grafana.group;
-      restartUnits = [ "grafana.service" ];
-    };
-
-    services.grafana.settings."auth.generic_oauth" = mkIf kanidm.enable (
+    services.grafana.settings."auth.generic_oauth" = mkIf cfg.sso.enable (
       let
-        client = kanidm.oauth2Clients.grafana;
-        origin = "https://${kanidm.domain}";
+        origin = "https://${cfg.sso.domain}";
       in
       {
         enabled = true;
-        name = kanidm.domain;
-        client_id = "grafana";
-        client_secret = "$__file{${client.secretFile}}";
-        scopes = concatStringsSep " " client.scopes;
+        name = cfg.sso.domain;
+        client_id = cfg.sso.clientId;
+        client_secret = "$__file{${cfg.sso.secretFile}}";
+        scopes = concatStringsSep " " cfg.sso.scopes;
 
         auth_url = "${origin}/ui/oauth2";
         token_url = "${origin}/oauth2/token";
-        api_url = "${origin}/oauth2/openid/grafana/userinfo";
+        api_url = "${origin}/oauth2/openid/${cfg.sso.clientId}/userinfo";
         use_pkce = true;
 
         login_attribute_path = "preferred_username";
-        role_attribute_path = oauthRoleAttributePath;
+        role_attribute_path = ssoRoleAttributePath;
         role_attribute_strict = false;
         allow_assign_grafana_admin = true;
       }
