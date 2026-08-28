@@ -40,6 +40,10 @@ in
           response_string_match = "Grafana";
         }
         {
+          urls = [ "https://id.qo.is/status" ];
+          response_string_match = "true";
+        }
+        {
           urls = [ "https://attic.qo.is" ];
         }
       ];

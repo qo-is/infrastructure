@@ -18,6 +18,7 @@ ______________________________________________________________________
 - [E-mail](email.md)
 - [Git CI Runner](nixos-modules/git-ci-runner/README.md)
 - [Git Hosting](nixos-modules/git/README.md)
+- [Identity Management](nixos-modules/kanidm/README.md)
 - [Nextcloud](nixos-modules/cloud/README.md)
 - [Nix Caches](nixos-configurations/lindberg-build/applications/README.md)
 - [Static Pages](nixos-modules/static-page/README.md)

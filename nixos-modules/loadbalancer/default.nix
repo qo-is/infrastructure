@@ -27,6 +27,7 @@ let
 
     "vault.qo.is" = "lindberg-webapps";
     "git.qo.is" = "lindberg-webapps";
+    "id.qo.is" = "lindberg-webapps";
 
     "kokus.raphael.li" = "lindberg-rzimmermann";
     "auth.raphael.li" = "lindberg-rzimmermann";
