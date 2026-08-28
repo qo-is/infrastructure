@@ -6,6 +6,7 @@
 
   imports = [
     ./backup.nix
+    ./dns.nix
     ./vpn.nix
   ];
 

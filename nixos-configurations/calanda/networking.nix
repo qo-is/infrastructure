@@ -84,10 +84,19 @@ in
         }
       );
       cyprianspitzPort = proto: port: (cyprianspitzPortDst proto port port);
+      # The authoritative nameserver must only be reachable from the outside; internal
+      # clients keep using the recursive resolver on this host.
+      cyprianspitzExternalOnlyPort = proto: port: {
+        destination = "${plessur-lan-net.hosts.cyprianspitz.v4.ip}:${toString port}";
+        inherit proto;
+        sourcePort = port;
+      };
     in
     [
       (cyprianspitzPortDst "tcp" 8222 22)
       (cyprianspitzPortDst "tcp" 8223 2222)
+      (cyprianspitzExternalOnlyPort "tcp" 53)
+      (cyprianspitzExternalOnlyPort "udp" 53)
     ]
     ++ map (cyprianspitzPort "tcp") [
       80
