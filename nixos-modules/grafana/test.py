@@ -3,7 +3,7 @@ import json
 start_all()  # noqa: F821
 
 
-def test(server, client, serverDomain, kanidmDomain, subtest):
+def test(server, client, serverDomain, subtest):
     with subtest("grafana-ready"):
         server.wait_for_unit("grafana.service")
         server.wait_for_open_port(3000)
@@ -73,19 +73,3 @@ def test(server, client, serverDomain, kanidmDomain, subtest):
 
     with subtest("e2e-login"):
         client.succeed(f"grafana-selenium-test {serverDomain}")
-
-    with subtest("kanidm-oauth-login"):
-        server.wait_for_unit("kanidm.service")
-        redirect = client.succeed(
-            f"curl -s -o /dev/null -w '%{{redirect_url}}' "
-            f"https://{serverDomain}/login/generic_oauth"
-        )
-        assert redirect.startswith(f"https://{kanidmDomain}/ui/oauth2"), (
-            f"expected a redirect to the kanidm authorisation endpoint but got '{redirect}'"
-        )
-        assert "client_id=grafana" in redirect, (
-            f"expected client_id=grafana in '{redirect}'"
-        )
-        assert "code_challenge=" in redirect, (
-            f"expected a PKCE code_challenge in '{redirect}'"
-        )

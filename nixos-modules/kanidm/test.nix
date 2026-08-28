@@ -4,23 +4,35 @@
 }:
 let
   certs = import "${inputs.nixpkgs}/nixos/tests/common/acme/server/snakeoil-certs.nix";
-  serverDomain = certs.domain;
-  serverIp = "192.168.1.2";
+  caDomain = certs.domain;
+  serverDomain = "id.${caDomain}";
+  serverIp = "192.168.1.3";
   oauth2Secret = "snakeoilOauth2Secret";
 in
 {
   args = {
-    inherit serverDomain oauth2Secret;
+    inherit caDomain serverDomain oauth2Secret;
   };
 
   nodes = {
+    # Pebble, issuing the certificate kanidm serves. It resolves serverDomain to the
+    # server node by scanning every node's security.acme.certs.
+    acme =
+      { ... }:
+      {
+        imports = [ "${inputs.nixpkgs}/nixos/tests/common/acme/server" ];
+      };
+
     # Separate node to verify that the LDAPS port is not reachable over the network.
     client =
       { pkgs, ... }:
       {
         networking.extraHosts = "${serverIp} ${serverDomain}";
         security.pki.certificateFiles = [ certs.ca.cert ];
-        environment.systemPackages = [ pkgs.openldap ];
+        environment.systemPackages = [
+          pkgs.curl
+          pkgs.openldap
+        ];
       };
 
     server =
@@ -31,6 +43,7 @@ in
       in
       {
         security.pki.certificateFiles = [ certs.ca.cert ];
+        security.acme.defaults.server = "https://${caDomain}/dir";
 
         qois.kanidm = {
           enable = true;
@@ -42,25 +55,14 @@ in
             displayName = "Grafana";
             originUrl = "https://${serverDomain}/login/generic_oauth";
             originLanding = "https://${serverDomain}/";
-            roles.admins = [ "Admin" ];
-            secretGroup = "kanidm";
+            roles.sysadmin = [ "GrafanaAdmin" ];
             secretFile = writeText "kanidm-oauth2-grafana" oauth2Secret;
           };
         };
 
-        # TODO: Migrate this to the testing helper acme server
-        services.kanidm.server.settings = {
-          tls_chain = mkForce certs.${serverDomain}.cert;
-          tls_key = mkForce certs.${serverDomain}.key;
-        };
-        security.acme.certs = mkForce { };
-        services.nginx.virtualHosts.${serverDomain} = {
-          enableACME = mkForce false;
-          sslCertificate = certs.${serverDomain}.cert;
-          sslCertificateKey = certs.${serverDomain}.key;
-        };
-
         sops.secrets = mkForce { };
+        # Covered by the kanidm-grafana module test, and it would need a sops secret here.
+        qois.grafana.sso.enable = false;
 
         networking.firewall.allowedTCPPorts = [
           80
@@ -70,7 +72,10 @@ in
         qois.telegraf.enable = mkForce true;
         services.telegraf.extraConfig.agent.interval = mkForce "50ms";
 
-        environment.systemPackages = [ pkgs.openldap ];
+        environment.systemPackages = [
+          pkgs.curl
+          pkgs.openldap
+        ];
       };
   };
 }

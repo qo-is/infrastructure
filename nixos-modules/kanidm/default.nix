@@ -6,13 +6,13 @@
 }:
 let
   inherit (lib)
-    concatMapAttrs
+    attrNames
     mapAttrs
-    mapAttrs'
+    mapAttrsToList
     mkEnableOption
     mkIf
+    mkMerge
     mkOption
-    nameValuePair
     ;
   inherit (lib.types)
     attrs
@@ -29,7 +29,7 @@ let
 
   cfg = config.qois.kanidm;
 
-  stateDir = "/var/lib/kanidm";
+  stateDir = builtins.dirOf config.services.kanidm.server.settings.db_path;
   tlsChain = "${stateDir}/fullchain.pem";
   tlsKey = "${stateDir}/key.pem";
 
@@ -40,19 +40,14 @@ let
     overwriteMembers = false;
   };
 
-  roleGroupName = client: role: "${client}.${role}";
   accessGroupName = client: "${client}.access";
 
   clientGroups =
     client: clientCfg:
     {
-      ${accessGroupName client} = appendedGroup (
-        map (roleGroupName client) (builtins.attrNames clientCfg.roles)
-      );
+      ${accessGroupName client} = appendedGroup (attrNames clientCfg.roles);
     }
-    // mapAttrs' (
-      role: _values: nameValuePair (roleGroupName client role) (appendedGroup [ ])
-    ) clientCfg.roles;
+    // mapAttrs (_role: _values: appendedGroup [ ]) clientCfg.roles;
 
   clientOauth2 =
     client: clientCfg:
@@ -61,21 +56,13 @@ let
       basicSecretFile = clientCfg.secretFile;
       preferShortUsername = true;
       scopeMaps.${accessGroupName client} = clientCfg.scopes;
-      claimMaps.${clientCfg.roleClaim}.valuesByGroup = mapAttrs' (
-        role: values: nameValuePair (roleGroupName client role) values
-      ) clientCfg.roles;
+      claimMaps.${clientCfg.roleClaim}.valuesByGroup = clientCfg.roles;
     }
     // clientCfg.extraSettings;
 
-  # Read by kanidm as the owner and by the relying party as a group member.
-  clientSecret = clientCfg: {
-    owner = "kanidm";
-    group = clientCfg.secretGroup;
-    mode = "0440";
-    restartUnits = [ "kanidm.service" ] ++ clientCfg.restartUnits;
-  };
-
   installCert = pkgs.writeShellScript "kanidm-install-cert" ''
+    # Runs before kanidm's first start, so systemd has not created StateDirectory yet.
+    ${pkgs.coreutils}/bin/install -d -o kanidm -g kanidm -m 0700 ${stateDir}
     ${pkgs.coreutils}/bin/install -o kanidm -g kanidm -m 0400 fullchain.pem ${tlsChain}
     ${pkgs.coreutils}/bin/install -o kanidm -g kanidm -m 0400 key.pem ${tlsKey}
   '';
@@ -128,7 +115,7 @@ in
     groups = mkOption {
       type = attrsOf (listOf str);
       default = {
-        sysadmins = [ ];
+        sysadmin = [ ];
       };
       description = ''
         Groups to provision, mapping a group name to its declared members. Members are
@@ -139,85 +126,69 @@ in
     oauth2Clients = mkOption {
       default = { };
       description = ''
-        OAuth2 relying parties. For each client a `<name>.access` group and one
-        `<name>.<role>` group per declared role are provisioned, and the basic secret is
-        read from sops.
+        OAuth2 relying parties. For each client a `<name>.access` group is provisioned,
+        holding the groups its roles are mapped to.
       '';
-      type = attrsOf (
-        submodule (
-          { name, ... }:
-          {
-            options = {
-              displayName = mkOption {
-                type = str;
-                description = "Name of the application as shown in the kanidm apps listing.";
-              };
+      type = attrsOf (submodule {
+        options = {
+          displayName = mkOption {
+            type = str;
+            description = "Name of the application as shown in the kanidm apps listing.";
+          };
 
-              originUrl = mkOption {
-                type = either str (nonEmptyListOf str);
-                description = "Redirect URL(s) of the application. Must match exactly.";
-              };
+          originUrl = mkOption {
+            type = either str (nonEmptyListOf str);
+            description = "Redirect URL(s) of the application. Must match exactly.";
+          };
 
-              originLanding = mkOption {
-                type = str;
-                description = "Page to land on when opening the application from the apps listing.";
-              };
+          originLanding = mkOption {
+            type = str;
+            description = "Page to land on when opening the application from the apps listing.";
+          };
 
-              scopes = mkOption {
-                type = listOf str;
-                default = [
-                  "openid"
-                  "email"
-                  "profile"
-                ];
-                description = "Scopes granted to members of the `<name>.access` group.";
-              };
+          scopes = mkOption {
+            type = listOf str;
+            default = [
+              "openid"
+              "email"
+              "profile"
+            ];
+            description = "Scopes granted to members of the `<name>.access` group.";
+          };
 
-              roles = mkOption {
-                type = attrsOf (listOf str);
-                default = { };
-                example = {
-                  admins = [ "Admin" ];
-                };
-                description = ''
-                  Maps a group name suffix to the claim values its members receive. Each entry
-                  provisions a `<name>.<suffix>` group.
-                '';
-              };
-
-              roleClaim = mkOption {
-                type = str;
-                default = "groups";
-                description = "Name of the OIDC claim carrying the role values.";
-              };
-
-              secretFile = mkOption {
-                type = path;
-                default = config.sops.secrets."kanidm/oauth2/${name}".path;
-                defaultText = ''config.sops.secrets."kanidm/oauth2/<name>".path'';
-                description = "Path to a file holding the OAuth2 basic secret.";
-              };
-
-              secretGroup = mkOption {
-                type = str;
-                description = "Unix group of the relying party, granted read access to the secret.";
-              };
-
-              restartUnits = mkOption {
-                type = listOf str;
-                default = [ ];
-                description = "Units of the relying party to restart when the secret changes.";
-              };
-
-              extraSettings = mkOption {
-                type = attrs;
-                default = { };
-                description = "Additional `services.kanidm.provision.systems.oauth2.<name>` settings.";
-              };
+          roles = mkOption {
+            type = attrsOf (listOf str);
+            default = { };
+            example = {
+              sysadmin = [ "Admin" ];
             };
-          }
-        )
-      );
+            description = ''
+              Maps a group name to the claim values its members receive. The groups are
+              provisioned and granted access to the client.
+            '';
+          };
+
+          roleClaim = mkOption {
+            type = str;
+            default = "groups";
+            description = "Name of the OIDC claim carrying the role values.";
+          };
+
+          secretFile = mkOption {
+            type = path;
+            description = ''
+              Path to a file holding the OAuth2 basic secret, readable by kanidm. It is
+              declared by whoever declares the client.
+            '';
+          };
+
+          extraSettings = mkOption {
+            type = attrs;
+            default = { };
+            description = "Additional `services.kanidm.provision.systems.oauth2.<name>` settings.";
+          };
+        };
+      });
     };
   };
 
@@ -235,8 +206,8 @@ in
           tls_chain = tlsChain;
           tls_key = tlsKey;
           http_client_address_info.x-forward-for = [ "::1" ];
-          # Consistent database snapshots; copying the live sqlite file is not restore-safe.
-          online_backup.versions = 7;
+          # Restore-safe snapshots for borg to pick up; borg keeps the history.
+          online_backup.versions = 2;
         };
       };
 
@@ -249,8 +220,9 @@ in
         enable = true;
         inherit (cfg) adminPasswordFile idmAdminPasswordFile;
 
-        groups =
-          mapAttrs (_name: appendedGroup) cfg.groups // concatMapAttrs clientGroups cfg.oauth2Clients;
+        groups = mkMerge (
+          [ (mapAttrs (_name: appendedGroup) cfg.groups) ] ++ mapAttrsToList clientGroups cfg.oauth2Clients
+        );
 
         systems.oauth2 = mapAttrs clientOauth2 cfg.oauth2Clients;
       };
@@ -259,22 +231,12 @@ in
     sops.secrets = {
       "kanidm/admin-password".owner = "kanidm";
       "kanidm/idm-admin-password".owner = "kanidm";
-    }
-    // mapAttrs' (
-      client: clientCfg: nameValuePair "kanidm/oauth2/${client}" (clientSecret clientCfg)
-    ) cfg.oauth2Clients;
-
-    # The certificate only appears once ACME has issued it for the first time, so kanidm
-    # keeps retrying until nginx' certificate has been copied over.
-    systemd.services.kanidm.serviceConfig = {
-      Restart = "on-failure";
-      RestartSec = 60;
     };
 
-    systemd.tmpfiles.settings."10-qois-kanidm".${stateDir}.d = {
-      mode = "0700";
-      user = "kanidm";
-      group = "kanidm";
+    # postRun of this unit installs the certificate kanidm needs to start.
+    systemd.services.kanidm = {
+      after = [ "acme-order-renew-${cfg.domain}.service" ];
+      wants = [ "acme-order-renew-${cfg.domain}.service" ];
     };
 
     security.acme.certs.${cfg.domain} = {
