@@ -2,19 +2,10 @@
 
 [Knot DNS](https://www.knot-dns.cz/) serves our zones authoritatively and signs them with DNSSEC.
 
-Host records below `net.qo.is` are generated from [`defaults/meta`](../../defaults/meta/), everything
-else is declared in [`qo-is-zone.nix`](qo-is-zone.nix). Zone files are built into the nix store,
-so knot keeps all changes — signatures and serial included — in its journal under `/var/lib/knot`.
-**That directory holds the DNSSEC private keys** and is included in the host backup.
-
-## Zone Transfer Secret
-
-```bash
-sops set private/nixos-configurations/cyprianspitz/secrets.sops.yaml '["knot"]["xfr-secret"]' "\"`openssl rand -base64 32`\""
-```
-
-Then add `"knot/xfr-secret" = { };` to the host's `sops.secrets`. Secondaries are authorised by
-address alone as long as the secret is not declared.
+- Host records below `net.qo.is`: generated from [`defaults/meta`](../../defaults/meta/)
+- Everything else: declared in [`qo-is-zone.nix`](qo-is-zone.nix)
+- Zone files: built into the nix store, knot keeps signatures and serial in its journal
+- Zone transfers: authorised by source address, since metanet does not support TSIG
 
 ## Key Management
 

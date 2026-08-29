@@ -5,21 +5,9 @@ let
     concatMapStringsSep
     concatStringsSep
     optionalString
-    range
-    stringLength
     ;
-  inherit (builtins) substring;
 
-  txtChunkSize = 255;
-  splitTxt =
-    text:
-    concatMapStringsSep " " (chunk: ''"${chunk}"'') (
-      map (i: substring (i * txtChunkSize) txtChunkSize text) (
-        range 0 ((stringLength text - 1) / txtChunkSize)
-      )
-    );
-
-  renderData = record: if record.type == "TXT" then splitTxt record.data else record.data;
+  renderData = record: if record.type == "TXT" then ''"${record.data}"'' else record.data;
 
   renderRecord =
     record:

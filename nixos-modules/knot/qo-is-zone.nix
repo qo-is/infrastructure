@@ -17,13 +17,6 @@ let
   networks =
     attrValues config.qois.meta.network.physical ++ attrValues config.qois.meta.network.virtual;
 
-  # Only physical networks carry an fqdn option, virtual ones name their hosts implicitly.
-  hostFqdn =
-    network: name: host:
-    host.fqdn or "${config.qois.meta.hosts.${name}.hostName}.${network.domain}";
-
-  # Every host that has a name below qo.is in one of our networks gets its address
-  # published, so DNS cannot drift from defaults/meta.
   metaRecords = concatMap (
     network:
     concatMap
@@ -44,9 +37,9 @@ let
       )
       (
         filter (entry: hasSuffix ".${domain}" entry.fqdn) (
-          mapAttrsToList (name: host: {
+          mapAttrsToList (_name: host: {
             inherit host;
-            fqdn = hostFqdn network name host;
+            inherit (host) fqdn;
           }) network.hosts
         )
       )
@@ -60,16 +53,9 @@ let
         type = "A";
       })
       {
-        "fulberg.backplane.net.qo.is." = "10.250.0.1";
-        "tierberg.backplane.net.qo.is." = "10.250.0.4";
         "stompert.backplane.net.qo.is." = "10.250.0.5";
         "stompert.eem-ext.net.qo.is." = "81.204.174.111";
-        "tierberg.coredump-ext.net.qo.is." = "5.226.148.126";
-        "tierberg.coredump-lan.qo.is." = "10.0.0.60";
-        "tierberg.lattenbach-lan.net.qo.is." = "10.0.0.60";
         "router.lattenbach-ext.net.qo.is." = "5.226.148.126";
-        "lindberg-nextcloud.mgmt.net.qo.is." = "10.249.0.5";
-        "montalin.plessur-dmz.net.qo.is." = "10.1.2.2";
         "calanda.plessur.net.qo.is." = "85.195.200.253";
       };
 
@@ -84,9 +70,7 @@ let
         "attic"
         "cloud"
         "docs-ops"
-        "feedreader"
         "git"
-        "gitlab-runner"
         "id"
         "jellyfin.media"
         "media"
@@ -209,11 +193,6 @@ in
           name = "default._domainkey.${domain}.";
           type = "TXT";
           data = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvqdVBBTioPZafUcajXYogvOb76Dnnu7K3PQtjafKpM4Am40L17K5I1UjTnuxoaUTQYVQiAKWnI3LoaYPUTWBDxYITv2oiyr/RtBkmetMyGrk/Fvew9Ankp9T5H4gASZqUqg/AWKXTsrxL5AqfULAlfkdOidwxrxMoH7IOWmfkNCb/sPUbnEq3HqKoOpoBduVHLCO4sDj10zbYsK3X+2Ju+k1ANiMfrB6GWJ1zmVwEGE34q1ztbX9cWbkpu1JgvLXde9gFNW9b95egHPgaqwPYOwz8IjzhZCyK13PJIbOtePf8lJoCDYFJMZLE2iWrcfHKILPn9lipu9KKNL+M3yk6QIDAQAB;";
-        }
-        {
-          name = "_gitlab-pages-verification-code.docs-ops.${domain}.";
-          type = "TXT";
-          data = "gitlab-pages-verification-code=5bf606e2a5bd59640342c6f4b90dc18c";
         }
       ];
   };

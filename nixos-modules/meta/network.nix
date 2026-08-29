@@ -136,6 +136,7 @@ in
                           options.ip = mkStr "The V6 host IP address";
                         });
                       };
+                      fqdn = mkFqdn host cfg.virtual.${networkName}.domain;
 
                       # Taken from https://github.com/NixOS/nixpkgs/blob/nixos-21.11/nixos/modules/services/networking/wireguard.nix:
                       publicKey = mkOption {

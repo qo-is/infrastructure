@@ -32,8 +32,8 @@ def test(primary, secondary, primaryIp, secondaryIp, subtest):
         )
         assert "RRSIG" in kdig(secondary, "+dnssec qo.is. SOA")
 
-    with subtest("transfers are refused without the shared key"):
-        secondary.fail(f"kdig +tcp @{primaryIp} qo.is. AXFR | grep -c 'mx.qo.is'")
+    with subtest("transfers are refused from undeclared secondaries"):
+        primary.fail(f"kdig +tcp @{primaryIp} qo.is. AXFR | grep -c 'mx.qo.is'")
 
     with subtest("rate limiting drops floods from unlisted clients"):
         secondary.succeed(
