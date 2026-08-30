@@ -6,20 +6,6 @@
 
 let
   cfg = config.qois.grafana;
-
-  # Most privileged role first; a person gets the first one their claim carries.
-  ssoRolePrecedence = [
-    "GrafanaAdmin"
-    "Admin"
-    "Editor"
-  ];
-  ssoRoleValues = lib.concatLists (lib.attrValues cfg.sso.roles);
-  # JMESPath picking the most privileged role a person is entitled to.
-  ssoRoleAttributePath =
-    lib.concatMapStrings (role: "contains(groups[*], '${role}') && '${role}' || ") (
-      lib.filter (role: lib.elem role ssoRoleValues) ssoRolePrecedence
-    )
-    + "'Viewer'";
 in
 with lib;
 {
@@ -137,30 +123,7 @@ with lib;
         url = "http://localhost:${toString config.qois.loki.port}";
       };
 
-    services.grafana.settings."auth.generic_oauth" = mkIf cfg.sso.enable (
-      let
-        origin = "https://${cfg.sso.domain}";
-      in
-      {
-        enabled = true;
-        name = cfg.sso.domain;
-        client_id = cfg.sso.clientId;
-        client_secret = "$__file{${cfg.sso.secretFile}}";
-        scopes = concatStringsSep " " cfg.sso.scopes;
-
-        auth_url = "${origin}/ui/oauth2";
-        token_url = "${origin}/oauth2/token";
-        api_url = "${origin}/oauth2/openid/${cfg.sso.clientId}/userinfo";
-        use_pkce = true;
-
-        login_attribute_path = "preferred_username";
-        role_attribute_path = ssoRoleAttributePath;
-        role_attribute_strict = false;
-        allow_assign_grafana_admin = true;
-      }
-    );
-
-    services.telegraf.extraConfig.inputs.x509_cert = [
+    qois.telegraf.serviceInputs.x509_cert = [
       { sources = [ "https://${cfg.domain}:443" ]; }
     ];
 

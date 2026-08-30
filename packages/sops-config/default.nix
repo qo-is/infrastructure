@@ -57,6 +57,7 @@ let
     in
     mapHostToAgeKey (getHostsWithSshKeys metaHostConfigs.qois.meta.hosts);
   toCommaList = concatStringsSep ",";
+  kanidmHost = "lindberg-webapps";
 in
 writeText ".sops.yaml" (
   ''
@@ -79,6 +80,21 @@ writeText ".sops.yaml" (
         age = toCommaList (userAgeKeys ++ builtins.attrValues serverAgeKeys);
       }
     ]
+    ++
+
+      # Secrets kanidm shares with a relying party, readable by the relying party's host
+      # and by the host running kanidm.
+      (mapAttrsToList (serverName: serverKey: {
+        path_regex = "private/nixos-modules/kanidm/${serverName}\.sops\.(yaml|json|env|ini)$";
+        pgp = toCommaList userPgpKeys;
+        age = toCommaList (
+          userAgeKeys
+          ++ unique [
+            serverKey
+            serverAgeKeys.${kanidmHost}
+          ]
+        );
+      }) serverAgeKeys)
     ++
 
       # Server specific secrets

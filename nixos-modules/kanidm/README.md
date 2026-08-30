@@ -9,14 +9,16 @@ the consuming service.
 
 ## Secrets
 
-The account passwords are host secrets, OAuth2 client secrets are shared across hosts:
+The account passwords are host secrets. OAuth2 client secrets go into
+`private/nixos-modules/kanidm/<relying party host>.sops.yaml`, which is encrypted for that
+host and for the host running kanidm:
 
 ```bash
 sops set private/nixos-configurations/lindberg-webapps/secrets.sops.yaml \
   '["kanidm"]["admin-password"]' "\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 48)\""
 sops set private/nixos-configurations/lindberg-webapps/secrets.sops.yaml \
   '["kanidm"]["idm-admin-password"]' "\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 48)\""
-sops set private/nixos-modules/shared-secrets/default.sops.yaml \
+sops set private/nixos-modules/kanidm/lindberg-webapps.sops.yaml \
   '["kanidm"]["oauth2"]["grafana"]' "\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 48)\""
 ```
 

@@ -8,10 +8,16 @@ let
   serverDomain = "id.${caDomain}";
   serverIp = "192.168.1.3";
   oauth2Secret = "snakeoilOauth2Secret";
+  caFile = "/tmp/pebble-ca.crt";
 in
 {
   args = {
-    inherit caDomain serverDomain oauth2Secret;
+    inherit
+      caDomain
+      caFile
+      serverDomain
+      oauth2Secret
+      ;
   };
 
   nodes = {
@@ -36,7 +42,12 @@ in
       };
 
     server =
-      { pkgs, lib, ... }:
+      {
+        config,
+        pkgs,
+        lib,
+        ...
+      }:
       let
         inherit (lib) mkForce;
         inherit (pkgs) writeText;
@@ -61,8 +72,6 @@ in
         };
 
         sops.secrets = mkForce { };
-        # Covered by the kanidm-grafana module test, and it would need a sops secret here.
-        qois.grafana.sso.enable = false;
 
         networking.firewall.allowedTCPPorts = [
           80
@@ -71,6 +80,12 @@ in
 
         qois.telegraf.enable = mkForce true;
         services.telegraf.extraConfig.agent.interval = mkForce "50ms";
+        # Drop the host-level inputs of the telegraf module and srvos; only the inputs the
+        # modules under test contribute are relevant here.
+        services.telegraf.extraConfig.inputs = mkForce config.qois.telegraf.serviceInputs;
+        # Pebble generates its issuing CA at startup, so the system trust store cannot
+        # contain it. test.py downloads it here before restarting telegraf.
+        systemd.services.telegraf.environment.SSL_CERT_FILE = caFile;
 
         environment.systemPackages = [
           pkgs.curl

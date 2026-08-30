@@ -58,14 +58,7 @@ let
       scopeMaps.${accessGroupName client} = clientCfg.scopes;
       claimMaps.${clientCfg.roleClaim}.valuesByGroup = clientCfg.roles;
     }
-    // clientCfg.extraSettings;
-
-  installCert = pkgs.writeShellScript "kanidm-install-cert" ''
-    # Runs before kanidm's first start, so systemd has not created StateDirectory yet.
-    ${pkgs.coreutils}/bin/install -d -o kanidm -g kanidm -m 0700 ${stateDir}
-    ${pkgs.coreutils}/bin/install -o kanidm -g kanidm -m 0400 fullchain.pem ${tlsChain}
-    ${pkgs.coreutils}/bin/install -o kanidm -g kanidm -m 0400 key.pem ${tlsKey}
-  '';
+    // clientCfg.settings;
 in
 {
   options.qois.kanidm = {
@@ -92,9 +85,14 @@ in
     ldapPort = mkOption {
       type = port;
       default = 636;
+      description = "Port of the LDAPS interface.";
+    };
+
+    secretsFile = mkOption {
+      type = path;
       description = ''
-        Port of the LDAPS interface. No firewall port is opened for it, so it is only
-        reachable from the host itself.
+        sops file holding the secrets kanidm shares with its relying parties. It is
+        encrypted for the host it belongs to and for the host running kanidm.
       '';
     };
 
@@ -182,7 +180,7 @@ in
             '';
           };
 
-          extraSettings = mkOption {
+          settings = mkOption {
             type = attrs;
             default = { };
             description = "Additional `services.kanidm.provision.systems.oauth2.<name>` settings.";
@@ -240,15 +238,32 @@ in
     };
 
     security.acme.certs.${cfg.domain} = {
-      postRun = "${installCert}";
+      postRun =
+        let
+          inherit (config.systemd.services.kanidm.serviceConfig) User Group;
+        in
+        ''
+          # Runs before kanidm's first start, so systemd has not created StateDirectory yet.
+          install -d -o ${User} -g ${Group} -m 0700 ${stateDir}
+          install -o ${User} -g ${Group} -m 0400 fullchain.pem ${tlsChain}
+          install -o ${User} -g ${Group} -m 0400 key.pem ${tlsKey}
+        '';
       reloadServices = [ "kanidm.service" ];
     };
 
     qois.backup-client.includePaths = [ stateDir ];
 
-    services.telegraf.extraConfig.inputs.x509_cert = [
-      { sources = [ "https://${cfg.domain}:443" ]; }
-    ];
+    qois.telegraf.serviceInputs = {
+      http_response = [
+        {
+          urls = [ "https://${cfg.domain}/status" ];
+          response_string_match = "true";
+        }
+      ];
+      x509_cert = [
+        { sources = [ "https://${cfg.domain}:443" ]; }
+      ];
+    };
 
     networking.hosts."127.0.0.1" = [ cfg.domain ];
     services.nginx = {
