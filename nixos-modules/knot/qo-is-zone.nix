@@ -69,7 +69,6 @@ let
       (map (removeSuffix ".${domain}"))
     ]
     ++ [
-      "id"
       "media"
       "jellyfin.media"
     ];
