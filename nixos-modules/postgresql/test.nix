@@ -1,17 +1,17 @@
 { lib, ... }:
 {
   nodes.server =
-    { pkgs, ... }:
+    {
+      config,
+      pkgs,
+      ...
+    }:
     {
       qois.telegraf.enable = lib.mkForce true;
       services.telegraf.extraConfig.agent.interval = lib.mkForce "50ms";
-      # Only the postgresql input is needed for this test; keep in sync with
-      # nixos-modules/postgresql/default.nix's services.telegraf.extraConfig.inputs.postgresql.
-      services.telegraf.extraConfig.inputs = lib.mkForce {
-        postgresql = [
-          { address = "host=/run/postgresql user=telegraf dbname=postgres sslmode=disable"; }
-        ];
-      };
+      # Drop the host-level inputs of the telegraf module and srvos; only the inputs the
+      # modules under test contribute are relevant here.
+      services.telegraf.extraConfig.inputs = lib.mkForce config.qois.telegraf.serviceInputs;
 
       sops.secrets = lib.mkForce { };
 

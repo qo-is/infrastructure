@@ -94,7 +94,7 @@ in
       };
     };
 
-    services.telegraf.extraConfig.inputs.x509_cert = [
+    qois.telegraf.serviceInputs.x509_cert = [
       { sources = [ "https://${cfg.domain}:443" ]; }
     ];
   };

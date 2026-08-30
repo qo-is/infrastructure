@@ -11,7 +11,11 @@ in
   args = { inherit serverDomain; };
 
   nodes.server =
-    { pkgs, ... }:
+    {
+      config,
+      pkgs,
+      ...
+    }:
     {
       security.pki.certificateFiles = [ certs.ca.cert ];
       qois.git = {
@@ -25,17 +29,9 @@ in
       qois.postgresql.package = pkgs.postgresql;
       qois.telegraf.enable = lib.mkForce true;
       services.telegraf.extraConfig.agent.interval = lib.mkForce "50ms";
-      # Only the prometheus input (scraping forgejo's own /metrics) is needed for this
-      # test; keep in sync with nixos-modules/git/default.nix's
-      # services.telegraf.extraConfig.inputs.prometheus.
-      services.telegraf.extraConfig.inputs = lib.mkForce {
-        prometheus = [
-          {
-            urls = [ "https://${serverDomain}/metrics" ];
-            metric_version = 2;
-          }
-        ];
-      };
+      # Drop the host-level inputs of the telegraf module and srvos; only the inputs the
+      # modules under test contribute are relevant here.
+      services.telegraf.extraConfig.inputs = lib.mkForce config.qois.telegraf.serviceInputs;
 
       services.nginx.virtualHosts.${serverDomain} = {
         # TODO: Migrate this to testing helper acme server
