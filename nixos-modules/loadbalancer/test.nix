@@ -27,7 +27,7 @@
   nodes.client = { ... }: { };
 
   nodes.server =
-    { ... }:
+    { config, ... }:
     {
       qois.loadbalancer = {
         enable = true;
@@ -42,17 +42,8 @@
 
       qois.telegraf.enable = lib.mkForce true;
       services.telegraf.extraConfig.agent.interval = lib.mkForce "50ms";
-      # Only the prometheus input (scraping haproxy's stats page) is needed for this
-      # test; keep in sync with nixos-modules/loadbalancer/default.nix's
-      # services.telegraf.extraConfig.inputs.prometheus. statsIpPort there is an
-      # internal constant ("127.0.0.1:8404"), not an exposed option, hence hardcoded here.
-      services.telegraf.extraConfig.inputs = lib.mkForce {
-        prometheus = [
-          {
-            urls = [ "http://127.0.0.1:8404/metrics" ];
-            metric_version = 2;
-          }
-        ];
-      };
+      # Drop the host-level inputs of the telegraf module and srvos; only the inputs the
+      # modules under test contribute are relevant here.
+      services.telegraf.extraConfig.inputs = lib.mkForce config.qois.telegraf.serviceInputs;
     };
 }

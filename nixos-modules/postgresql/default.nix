@@ -103,7 +103,7 @@ in
       };
     };
 
-    services.telegraf.extraConfig.inputs.postgresql = [
+    qois.telegraf.serviceInputs.postgresql = [
       {
         address = "host=/run/postgresql user=telegraf dbname=postgres sslmode=disable";
       }

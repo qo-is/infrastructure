@@ -120,7 +120,7 @@ in
         443
       ];
 
-      services.telegraf.extraConfig.inputs.prometheus = [
+      qois.telegraf.serviceInputs.prometheus = [
         {
           urls = [ "http://${statsIpPort}/metrics" ];
           metric_version = 2;

@@ -108,7 +108,7 @@ with lib;
         ) pageConfigs);
       };
 
-      services.telegraf.extraConfig.inputs.x509_cert = [
+      qois.telegraf.serviceInputs.x509_cert = [
         {
           sources = pipe cfg.pages [
             attrValues
