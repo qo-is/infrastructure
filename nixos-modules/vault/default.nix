@@ -83,7 +83,7 @@ in
       enableACME = true;
     };
 
-    services.telegraf.extraConfig.inputs = {
+    qois.telegraf.serviceInputs = {
       x509_cert = [
         { sources = [ "https://${cfg.domain}:443" ]; }
       ];

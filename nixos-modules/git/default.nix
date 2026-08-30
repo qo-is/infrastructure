@@ -78,7 +78,7 @@ in
       cfg.msmtpPasswordFile
     ];
 
-    services.telegraf.extraConfig.inputs = {
+    qois.telegraf.serviceInputs = {
       prometheus = [
         {
           urls = [ "https://${cfg.domain}/metrics" ];
