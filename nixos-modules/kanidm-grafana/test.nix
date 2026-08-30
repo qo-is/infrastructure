@@ -4,87 +4,90 @@
 }:
 let
   certs = import "${inputs.nixpkgs}/nixos/tests/common/acme/server/snakeoil-certs.nix";
-  grafanaDomain = certs.domain;
-  kanidmDomain = "id.${grafanaDomain}";
+  caDomain = certs.domain;
+  grafanaDomain = "monitoring.${caDomain}";
+  kanidmDomain = "id.${caDomain}";
   oauth2Secret = "snakeoilOauth2Secret";
 in
 {
   args = {
-    inherit grafanaDomain kanidmDomain;
+    inherit caDomain grafanaDomain kanidmDomain;
   };
 
-  nodes.server =
-    {
-      config,
-      pkgs,
-      lib,
-      ...
-    }:
-    let
-      inherit (lib) genAttrs mkForce;
-      inherit (pkgs) writeText;
-      oauth2SecretFile = writeText "kanidm-oauth2-grafana" oauth2Secret;
-    in
-    {
-      qois.grafana = {
-        enable = true;
-        domain = grafanaDomain;
-        sso = {
-          domain = kanidmDomain;
-          secretFile = mkForce oauth2SecretFile;
+  nodes = {
+    # Pebble, issuing both certificates. It resolves the domains to the server node by
+    # scanning every node's security.acme.certs.
+    acme =
+      { ... }:
+      {
+        imports = [ "${inputs.nixpkgs}/nixos/tests/common/acme/server" ];
+      };
+
+    server =
+      {
+        config,
+        pkgs,
+        lib,
+        ...
+      }:
+      let
+        inherit (lib) mkForce;
+        inherit (pkgs) writeText;
+      in
+      {
+        security.pki.certificateFiles = [ certs.ca.cert ];
+        security.acme.defaults.server = "https://${caDomain}/dir";
+
+        qois.kanidm-grafana = {
+          enable = true;
+          secretFile = mkForce (writeText "kanidm-oauth2-grafana" oauth2Secret);
         };
-      };
 
-      qois.kanidm = {
-        enable = true;
-        domain = kanidmDomain;
-        adminPasswordFile = writeText "kanidm-admin-password" "snakeoilAdminPassword";
-        idmAdminPasswordFile = writeText "kanidm-idm-admin-password" "snakeoilIdmAdminPassword";
-        oauth2Clients.grafana.secretFile = mkForce oauth2SecretFile;
-      };
+        qois.grafana = {
+          enable = true;
+          domain = grafanaDomain;
+        };
 
-      # ACME issuance is covered by the kanidm module test; serve both vhosts and kanidm
-      # itself from the snakeoil certificate instead.
-      security.acme.certs = mkForce { };
-      services.kanidm.server.settings = {
-        tls_chain = mkForce certs.${grafanaDomain}.cert;
-        tls_key = mkForce certs.${grafanaDomain}.key;
-      };
-      services.nginx.virtualHosts = genAttrs [ grafanaDomain kanidmDomain ] (_domain: {
-        enableACME = mkForce false;
-        sslCertificate = certs.${grafanaDomain}.cert;
-        sslCertificateKey = certs.${grafanaDomain}.key;
-      });
+        qois.kanidm = {
+          enable = true;
+          domain = kanidmDomain;
+          adminPasswordFile = writeText "kanidm-admin-password" "snakeoilAdminPassword";
+          idmAdminPasswordFile = writeText "kanidm-idm-admin-password" "snakeoilIdmAdminPassword";
+          secretsFile = mkForce config.sops.defaultSopsFile;
+        };
 
-      security.pki.certificateFiles = [ certs.ca.cert ];
+        networking.firewall.allowedTCPPorts = [
+          80
+          443
+        ];
 
-      qois.postgresql.package = pkgs.postgresql;
+        qois.postgresql.package = pkgs.postgresql;
 
-      # Dummy sops file so secret paths resolve at eval time; nothing reads them at
-      # runtime, every consumer is pointed at a plain file above.
-      sops.defaultSopsFile = builtins.toFile "dummy-secrets" (
-        builtins.toJSON {
-          grafana = {
-            admin = {
-              user = "unused";
-              password = "unused";
+        sops.defaultSopsFile = builtins.toFile "dummy-secrets" (
+          builtins.toJSON {
+            grafana = {
+              admin = {
+                user = "unused";
+                password = "unused";
+              };
+              secret_key = "unused";
             };
-            secret_key = "unused";
-          };
-          kanidm = {
-            admin-password = "unused";
-            idm-admin-password = "unused";
-            oauth2.grafana = "unused";
-          };
-        }
-      );
-      qois.sharedSecretsFile = mkForce config.sops.defaultSopsFile;
+            kanidm = {
+              admin-password = "unused";
+              idm-admin-password = "unused";
+              oauth2.grafana = "unused";
+            };
+          }
+        );
 
-      services.grafana.settings.security = mkForce {
-        admin_user = "testadmin";
-        admin_password = "snakeoilpwd";
-        secret_key = "snakeoil-test-secret-key";
-        disable_gravatar = true;
+        services.grafana.settings.security = mkForce {
+          admin_user = "testadmin";
+          admin_password = "snakeoilpwd";
+          secret_key = "snakeoil-test-secret-key";
+          disable_gravatar = true;
+        };
+
+        environment.systemPackages = [ pkgs.curl ];
       };
-    };
+  };
 }
