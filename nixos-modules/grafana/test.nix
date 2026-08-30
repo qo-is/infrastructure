@@ -76,8 +76,6 @@ in
         qois.grafana = {
           enable = true;
           domain = serverDomain;
-          # Single sign-on is covered by the kanidm-grafana module test.
-          sso.enable = false;
         };
 
         qois.prometheus.enable = true;

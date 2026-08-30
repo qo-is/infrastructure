@@ -7,7 +7,7 @@
 }:
 {
   default =
-    { ... }:
+    { config, ... }:
     {
 
       imports = (self.lib.loadSubmodulesFrom ./.) ++ [
@@ -17,6 +17,6 @@
         private.nixosModules.default
       ];
 
-      qois.sharedSecretsFile = "${private}/nixos-modules/shared-secrets/default.sops.yaml";
+      qois.kanidm.secretsFile = "${private}/nixos-modules/kanidm/${config.networking.hostName}.sops.yaml";
     };
 }
