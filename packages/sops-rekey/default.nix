@@ -13,6 +13,7 @@ writeShellApplication {
     self.packages.${system}.sops
   ];
   text = ''
-    find . -regex '.*\.sops\..*$' -type f -exec sops updatekeys {} \;
+    find private -regex '.*\.sops\..*$' -type f -exec sops updatekeys {} \;
+    find private -regex '.*\.sops\..*$' -type f -exec sops rotate --in-place {} \;
   '';
 }
