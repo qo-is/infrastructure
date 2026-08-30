@@ -97,4 +97,16 @@ with lib;
       restartUnits = map (target: "borgbackup-job-system-${target}.service") cfg.targets;
     };
   };
+
+  config.srvos.prometheus.ruleGroups.checkQoisBackups.alertRules = mkIf cfg.enable {
+    BackupJobFailed = {
+      expr = ''systemd_units_status_errno{name=~"borgbackup-job.*"} != 0'';
+      annotations.description = "{{$labels.host}}: {{$labels.name}} failed: non-zero exit code";
+    };
+
+    BackupNotRun = {
+      expr = ''time() - (systemd_units_active_enter_timestamp_us{name=~"borgbackup-job.*"} / 1e6) > (24 + 6) * 60 * 60'';
+      annotations.description = "{{$labels.host}}: {{$labels.name}} was not run in the last 24h";
+    };
+  };
 }
