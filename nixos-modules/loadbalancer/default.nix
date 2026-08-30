@@ -22,8 +22,6 @@ let
 
     "monitoring.qo.is" = "lindberg-webapps";
 
-    "build.qo.is" = "lindberg-build";
-    "gitlab-runner.qo.is" = "lindberg-build";
     "nixpkgs-cache.qo.is" = "lindberg-build";
     "attic.qo.is" = "lindberg-build";
 

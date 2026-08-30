@@ -18,7 +18,7 @@ let
 
   cfg = config.qois.knot;
 
-  stateDir = "/var/lib/knot";
+  stateDir = "/var/lib/${config.systemd.services.knot.serviceConfig.StateDirectory}";
 in
 {
   imports = [
@@ -33,10 +33,7 @@ in
       type = listOf str;
       default = [ "0.0.0.0@53" ];
       example = [ "10.1.1.250@53" ];
-      description = ''
-        Addresses knot answers queries on. Hosts that already run another resolver on port 53
-        must list their addresses explicitly instead of using the wildcard.
-      '';
+      description = "Addresses knot answers queries on.";
     };
 
     rateLimit = {
@@ -82,10 +79,6 @@ in
           listen = cfg.listenAddresses;
           automatic-acl = true;
         };
-
-        log.syslog.any = "info";
-
-        database.storage = stateDir;
 
         mod-rrl.default = {
           rate-limit = cfg.rateLimit.responsesPerSecond;
