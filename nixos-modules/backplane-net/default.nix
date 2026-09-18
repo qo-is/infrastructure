@@ -51,6 +51,16 @@ in
 
     systemd.network.wait-online.ignoredInterfaces = [ interface ];
 
+    # nix-topology has no wireguard extractor, so the mesh interface is declared here.
+    # Peering is a full mesh, which the network centric view already conveys via the
+    # shared network, so no physical connections are drawn.
+    topology.self.interfaces.${interface} = {
+      addresses = [ hostNetConfig.v4.ip ];
+      network = cfg.netName;
+      type = "wireguard";
+      virtual = true;
+    };
+
     networking.firewall.allowedUDPPorts =
       if hostNetConfig.endpoint != null then [ hostNetConfig.endpoint.port ] else [ cfg.port ];
 

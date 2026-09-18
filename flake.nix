@@ -24,6 +24,10 @@
       url = "github:nix-community/srvos";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-topology = {
+      url = "github:oddlama/nix-topology";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     deploy-rs.url = "github:serokell/deploy-rs";
     disko = {
@@ -69,6 +73,7 @@
         inherit (inputs)
           deploy-rs
           disko
+          nix-topology
           nixpkgs
           sops-nix
           srvos
@@ -96,16 +101,20 @@
       };
       inputSubsetForChecks =
         (extendSelfOf inputSubsetForDeploy {
-          inherit (self) deploy;
+          inherit (self) deploy topology;
         })
         // {
           inherit inputSubsetForNixosConfigurations;
         }; # We have nixos tests that need to pass the relevant specialArgs.
     in
     {
-      ## Dependency graph: checks -> deploy -> nixosConfigurations -> (nixosModules, devShells) -> packages🔄 -> (lib, formatter)
+      ## Dependency graph: checks -> (deploy, topology) -> nixosConfigurations -> (nixosModules, devShells) -> packages🔄 -> (lib, formatter)
+      ## Exception: packages.docs embeds the rendered topology diagrams and therefore reaches
+      ## back to topology via flakeSelfSpecialUsage. Nothing below nixosConfigurations uses
+      ## packages.docs, so this back edge stays acyclic.
       checks = import ./checks/default.nix inputSubsetForChecks;
       deploy = import ./deploy/default.nix inputSubsetForDeploy;
+      topology = import ./topology/default.nix inputSubsetForDeploy;
       nixosConfigurations = import ./nixos-configurations/default.nix inputSubsetForNixosConfigurations;
       nixosModules = import ./nixos-modules/default.nix inputSubsetForNixosModules;
       devShells = import ./dev-shells/default.nix inputSubsetWithPackages;
