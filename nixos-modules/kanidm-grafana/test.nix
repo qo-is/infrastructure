@@ -40,7 +40,14 @@ in
 
         qois.kanidm-grafana = {
           enable = true;
-          secretFile = mkForce (writeText "kanidm-oauth2-grafana" oauth2Secret);
+          secretFiles =
+            let
+              secretFile = writeText "kanidm-oauth2-grafana" oauth2Secret;
+            in
+            {
+              kanidm = secretFile;
+              grafana = secretFile;
+            };
         };
 
         qois.grafana = {
