@@ -5,10 +5,12 @@
   plantuml,
   flakeSelfSpecialUsage,
   stdenv,
+  system,
   ...
 }:
 let
   version = flakeSelfSpecialUsage.rev or flakeSelfSpecialUsage.dirtyRev;
+  topologyDiagrams = flakeSelfSpecialUsage.topology.${system}.config.output;
 in
 stdenv.mkDerivation {
   inherit version;
@@ -20,5 +22,8 @@ stdenv.mkDerivation {
     plantuml
   ];
   src = flakeSelfSpecialUsage;
-  buildPhase = "mdbook build --dest-dir $out";
+  buildPhase = ''
+    cp ${topologyDiagrams}/main.svg ${topologyDiagrams}/network.svg defaults/meta/
+    mdbook build --dest-dir $out
+  '';
 }

@@ -20,6 +20,8 @@
 
     nixos-configurations = import ./nixos-configurations inputs;
 
+    topology = self.topology.${system}.config.output;
+
     # Import deploy-rs tests
   }
   // (deployPkgs.deploy-rs.lib.deployChecks self.deploy);

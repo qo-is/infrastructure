@@ -2,58 +2,21 @@
 
 This document provides an overview over the qo.is network structure.
 
-## Physical View
+## Diagrams
 
-```plantuml
-@startuml
-skinparam style strictuml
-left to right direction
+Both diagrams are generated from the nixos configurations with
+[nix-topology](https://github.com/oddlama/nix-topology) and therefore cannot go stale.
+Only the parts that are not managed by this repository (the uplinks, the passive media
+converter in Chur and the router in Riedbach) are declared by hand in
+[topology/nodes.nix](../../topology/nodes.nix).
 
-package "plessur.net.qo.is" {
+### Physical View
 
-  entity mediaconvchur [
-    Media
-    Converter
-    (Passive)
-  ]
+![Hosts, interfaces and services](main.svg)
 
-  node calanda 
-  node cyprianspitz
-  
-  cloud plessurnet [
-    <i>LAN Plessur
-  ]
-  
-  mediaconvchur - "enp4" calanda
-  calanda "br0 (enp2, wlp1, wlp5)" --- plessurnet
-  plessurnet -- cyprianspitz
-} 
+### Network View
 
-package "riedbach.net.qo.is" {
-  node riedbachrouter
-
-  node lindberg
-
-  riedbachrouter -- "enp5s0" lindberg
-}
-
-cloud internet[
-<b>@
-]
-
-package "coredump.net.qo.is" {
-  node coredumprouter
-
-  node tierberg
-
-  coredumprouter -- "enpXs0" tierberg
-}
-
-internet .. mediaconvchur: INIT7 Fiber (1G/1G)
-internet .. riedbachrouter: iway Fiber (1G/1G)
-internet .. coredumprouter: Openfactory DSL
-@enduml
-```
+![Networks and their members](network.svg)
 
 ## DNS
 

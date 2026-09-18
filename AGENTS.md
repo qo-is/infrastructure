@@ -10,6 +10,9 @@ nix flake check                # Run all checks: build configs, build packages, 
 # Build a single host
 nix build .#nixosConfigurations.<hostname>.config.system.build.toplevel
 
+# Render the network diagrams (main.svg, network.svg), embedded into the docs
+nix build .#topology.x86_64-linux.config.output
+
 # Module tests (require KVM)
 nix build .#checks.x86_64-linux.nixos-modules                                              # All tests
 nix build .#checks.x86_64-linux.nixos-modules.entries.vm-test-run-<testName>                # Single test
@@ -42,6 +45,7 @@ flake.nix
 ├── dev-shells/      → development shell with tools
 ├── nixos-configurations/  → per-host NixOS configs
 ├── nixos-modules/   → reusable NixOS modules (31 modules)
+├── topology/        → nix-topology network diagrams rendered into the docs
 ├── packages/        → custom packages (auto-deploy, docs, sops wrapper)
 ├── lib/             → shared utilities
 ├── defaults/        → hardware profiles + network/host metadata
