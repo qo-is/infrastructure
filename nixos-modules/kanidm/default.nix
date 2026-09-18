@@ -61,6 +61,8 @@ let
     // clientCfg.settings;
 in
 {
+  imports = [ ./secrets.nix ];
+
   options.qois.kanidm = {
     enable = mkEnableOption "Enable qois identity management service";
 
@@ -231,7 +233,6 @@ in
       "kanidm/idm-admin-password".owner = "kanidm";
     };
 
-    # postRun of this unit installs the certificate kanidm needs to start.
     systemd.services.kanidm = {
       after = [ "acme-order-renew-${cfg.domain}.service" ];
       wants = [ "acme-order-renew-${cfg.domain}.service" ];
