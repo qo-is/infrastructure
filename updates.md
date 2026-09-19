@@ -56,5 +56,5 @@ This includes the modules for:
 - `nextcloud`
   - Check [admin panel](https://cloud.qo.is/settings/admin/overview) for warnings after upgrading
 - `postgresql`, [→ Nixpkgs manual page](https://nixos.org/manual/nixos/stable/#module-services-postgres-upgrading)
-- `kanidm`, pinned to `kanidmWithSecretProvisioning_1_11`
+- `kanidm`, pinned via `qois.kanidm.package` in the host configuration
   - Minor versions must be upgraded one at a time, skipping one is not supported

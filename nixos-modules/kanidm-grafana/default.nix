@@ -5,15 +5,7 @@
 }:
 let
   inherit (lib)
-    attrValues
-    concatLists
-    concatMapStrings
-    concatStringsSep
-    elem
-    filter
     mkEnableOption
-    mkIf
-    mkMerge
     mkOption
     ;
   inherit (lib.types)
@@ -24,30 +16,13 @@ let
     ;
 
   cfg = config.qois.kanidm-grafana;
-  kanidm = config.qois.kanidm;
-  grafana = config.qois.grafana;
-
-  secretKey = "kanidm/oauth2/${cfg.clientId}";
-  clientSecret = {
-    key = secretKey;
-    sopsFile = kanidm.secretsFile;
-  };
-
-  # Most privileged role first; a person gets the first one their claim carries.
-  rolePrecedence = [
-    "GrafanaAdmin"
-    "Admin"
-    "Editor"
-  ];
-  roleValues = concatLists (attrValues cfg.roles);
-  # JMESPath picking the most privileged role a person is entitled to.
-  roleAttributePath =
-    concatMapStrings (role: "contains(groups[*], '${role}') && '${role}' || ") (
-      filter (role: elem role roleValues) rolePrecedence
-    )
-    + "'Viewer'";
 in
 {
+  imports = [
+    ./kanidm.nix
+    ./grafana.nix
+  ];
+
   options.qois.kanidm-grafana = {
     enable = mkEnableOption "grafana single sign-on through kanidm";
 
@@ -55,6 +30,14 @@ in
       type = str;
       default = "grafana";
       description = "OAuth2 client identifier registered with kanidm.";
+    };
+
+    secretKey = mkOption {
+      type = str;
+      internal = true;
+      readOnly = true;
+      default = "kanidm/oauth2/${cfg.clientId}";
+      description = "Key of the OAuth2 client secret in the shared sops file.";
     };
 
     scopes = mkOption {
@@ -81,8 +64,8 @@ in
     secretFiles = mkOption {
       type = attrsOf path;
       default = {
-        kanidm = config.sops.secrets."${secretKey}/kanidm".path;
-        grafana = config.sops.secrets."${secretKey}/grafana".path;
+        kanidm = config.sops.secrets."${cfg.secretKey}/kanidm".path;
+        grafana = config.sops.secrets."${cfg.secretKey}/grafana".path;
       };
       defaultText = ''paths of the "kanidm/oauth2/<clientId>" sops secrets'';
       description = ''
@@ -91,57 +74,4 @@ in
       '';
     };
   };
-
-  config = mkIf cfg.enable (mkMerge [
-    (mkIf kanidm.enable {
-      sops.secrets."${secretKey}/kanidm" = clientSecret // {
-        owner = config.systemd.services.kanidm.serviceConfig.User;
-        restartUnits = [ "kanidm.service" ];
-      };
-
-      qois.kanidm.oauth2Clients.${cfg.clientId} = {
-        displayName = "Grafana";
-        originUrl = "https://${grafana.domain}/login/generic_oauth";
-        originLanding = "https://${grafana.domain}/";
-        inherit (cfg) roles scopes;
-        secretFile = cfg.secretFiles.kanidm;
-      };
-    })
-
-    (mkIf grafana.enable {
-      sops.secrets."${secretKey}/grafana" =
-        let
-          user = config.users.users.grafana;
-        in
-        clientSecret
-        // {
-          owner = user.name;
-          inherit (user) group;
-          restartUnits = [ "grafana.service" ];
-        };
-
-      services.grafana.settings."auth.generic_oauth" =
-        let
-          origin = "https://${kanidm.domain}";
-        in
-        {
-          enabled = true;
-          name = kanidm.domain;
-          client_id = cfg.clientId;
-          client_secret = "$__file{${cfg.secretFiles.grafana}}";
-          scopes = concatStringsSep " " cfg.scopes;
-
-          auth_url = "${origin}/ui/oauth2";
-          token_url = "${origin}/oauth2/token";
-          api_url = "${origin}/oauth2/openid/${cfg.clientId}/userinfo";
-          use_pkce = true;
-
-          login_attribute_path = "preferred_username";
-          role_attribute_path = roleAttributePath;
-          # The local admin account stays available as a fallback.
-          role_attribute_strict = false;
-          allow_assign_grafana_admin = true;
-        };
-    })
-  ]);
 }
