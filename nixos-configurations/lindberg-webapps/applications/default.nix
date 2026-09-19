@@ -7,6 +7,7 @@
   qois.vault.enable = true;
   qois.git.enable = true;
   qois.kanidm.enable = true;
+  qois.kanidm.package = pkgs.kanidmWithSecretProvisioning_1_11;
   qois.kanidm-grafana.enable = true;
   qois.static-page.enable = true;
   qois.postgresql.package = pkgs.postgresql_18;

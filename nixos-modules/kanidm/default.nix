@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   lib,
   ...
 }:
@@ -74,7 +73,6 @@ in
 
     package = mkOption {
       type = package;
-      default = pkgs.kanidmWithSecretProvisioning_1_11;
       description = "Kanidm package to use. Must support secret provisioning.";
     };
 
