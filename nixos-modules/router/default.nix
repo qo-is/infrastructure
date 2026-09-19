@@ -98,5 +98,9 @@ in
       };
       firewall.trustedInterfaces = [ cfg.internalBridgeInterfaceName ];
     };
+
+    # Only the icon: setting deviceType = "router" would render the host as a bare
+    # image instead of a card, dropping its service list from the diagram.
+    topology.self.deviceIcon = "devices.router";
   };
 }

@@ -15,6 +15,8 @@
 
   qois.system.physical.enable = true;
 
+  topology.self.hardware.info = "AsRock X570";
+
   # No serial console (IPMI/SOL) wired up on this board; srvos defaults to
   # requesting one on ttyS0, which crash-loops serial-getty@ttyS0.service.
   srvos.boot.consoles = lib.mkForce [ "tty0" ];

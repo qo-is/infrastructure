@@ -10,6 +10,8 @@
 
   qois.system.physical.enable = true;
 
+  topology.self.hardware.info = "PC Engines APU";
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like fi:le locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

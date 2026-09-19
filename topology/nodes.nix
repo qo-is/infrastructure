@@ -52,7 +52,10 @@ in
     calanda.interfaces = {
       # Configured via DHCP, but Init7 always hands out the same address, which is
       # the one the rest of the world resolves calanda to.
-      enp4s0.addresses = mkForce [ physical.plessur-ext.hosts.calanda.v4.ip ];
+      enp4s0 = {
+        addresses = mkForce [ physical.plessur-ext.hosts.calanda.v4.ip ];
+        network = "plessur-ext";
+      };
       enp3s0.network = "plessur-dmz";
       lan.network = "plessur-lan";
     };
@@ -62,7 +65,10 @@ in
       vms-nat.network = "cyprianspitz-vms-nat";
     };
 
-    lindberg.interfaces.vms-nat.network = "lindberg-vms-nat";
+    lindberg.interfaces = {
+      enp5s0.network = "riedbach-ext";
+      vms-nat.network = "lindberg-vms-nat";
+    };
 
     lindberg-nextcloud = mkVirtualMachine "lindberg" // {
       interfaces.enp2s0.physicalConnections = [ (mkConnection "lindberg" "vms-nat") ];

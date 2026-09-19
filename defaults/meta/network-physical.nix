@@ -5,7 +5,7 @@
   qois.meta.network.physical = {
     plessur-ext = {
       v4 = {
-        id = "85.195.200.253";
+        id = "85.195.200.0";
         prefixLength = 24;
       };
       v6 = {
