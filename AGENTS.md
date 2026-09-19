@@ -58,7 +58,7 @@ flake.nix
 
 ### Hosts
 
-Physical: `calanda` (APU router), `cyprianspitz` (APU1), `lindberg` (Asrock X570 main server)
+Physical: `calanda` (APU router), `cyprianspitz` (Asrock Z790M), `lindberg` (Asrock X570 main server)
 VMs on lindberg: `lindberg-nextcloud`, `lindberg-build`, `lindberg-webapps`
 
 Each host config in `nixos-configurations/<hostname>/` follows this structure:

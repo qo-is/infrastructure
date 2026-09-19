@@ -24,6 +24,14 @@ in
 
     sops.secrets."tailscale/key".restartUnits = [ "tailscaled.service" ];
 
+    # The address is handed out by headscale at runtime, so only the network membership
+    # is known statically.
+    topology.self.interfaces.tailscale0 = {
+      network = "vpn";
+      type = "tun";
+      virtual = true;
+    };
+
     services.tailscale = {
       enable = true;
       openFirewall = true;

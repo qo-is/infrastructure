@@ -10,13 +10,18 @@ Only the parts that are not managed by this repository (the uplinks, the passive
 converter in Chur and the router in Riedbach) are declared by hand in
 [topology/nodes.nix](../../topology/nodes.nix).
 
-### Physical View
+Both are scaled down to fit the page, click them to open the full resolution version.
 
-![Hosts, interfaces and services](main.svg)
+### Hosts and Services
 
-### Network View
+[![Hosts, interfaces and services](main.svg)](main.svg)
 
-![Networks and their members](network.svg)
+### Networks
+
+Solid edges are physical network segments, dashed ones are virtual networks: the WireGuard
+backplane mesh, the Tailscale VPN and the host local VM NAT bridges.
+
+[![Networks and their members](network.svg)](network.svg)
 
 ## DNS
 
