@@ -22,7 +22,7 @@ with lib;
 
     nixInstances = mkOption {
       type = types.numbers.positive;
-      default = 10;
+      default = 2;
       description = "How many nix runner instances to start";
     };
 
