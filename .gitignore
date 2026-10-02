@@ -8,3 +8,4 @@ result*
 /.nixos-test-history
 /.pre-commit-config.yaml
 *.local.json
+/.claude/worktrees
