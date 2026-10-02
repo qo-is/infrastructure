@@ -8,6 +8,7 @@ let
   serverDomain = "id.${caDomain}";
   serverIp = "192.168.1.3";
   oauth2Secret = "snakeoilOauth2Secret";
+  idmAdminPassword = "snakeoilIdmAdminPassword";
   caFile = "/tmp/pebble-ca.crt";
 in
 {
@@ -17,6 +18,7 @@ in
       caFile
       serverDomain
       oauth2Secret
+      idmAdminPassword
       ;
   };
 
@@ -61,7 +63,7 @@ in
           package = pkgs.kanidmWithSecretProvisioning_1_11;
           domain = serverDomain;
           adminPasswordFile = writeText "kanidm-admin-password" "snakeoilAdminPassword";
-          idmAdminPasswordFile = writeText "kanidm-idm-admin-password" "snakeoilIdmAdminPassword";
+          idmAdminPasswordFile = writeText "kanidm-idm-admin-password" idmAdminPassword;
 
           oauth2Clients.grafana = {
             displayName = "Grafana";

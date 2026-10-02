@@ -60,7 +60,10 @@ let
     // clientCfg.settings;
 in
 {
-  imports = [ ./secrets.nix ];
+  imports = [
+    ./entry-managers.nix
+    ./secrets.nix
+  ];
 
   options.qois.kanidm = {
     enable = mkEnableOption "Enable qois identity management service";

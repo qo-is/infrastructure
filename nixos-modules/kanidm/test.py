@@ -21,7 +21,24 @@ def token_status(domain, caFile, secret):
     )
 
 
-def test(acme, server, client, caDomain, caFile, serverDomain, oauth2Secret, subtest):
+def kanidm_cli(command):
+    return (
+        "KANIDM_URL=https://localhost:8443 KANIDM_ACCEPT_INVALID_CERTS=true "
+        f"kanidm {command}"
+    )
+
+
+def test(
+    acme,
+    server,
+    client,
+    caDomain,
+    caFile,
+    serverDomain,
+    oauth2Secret,
+    idmAdminPassword,
+    subtest,
+):
     acme.wait_for_unit("pebble.service")
     server.wait_for_unit("kanidm.service")
     server.wait_for_unit("nginx.service")
@@ -73,6 +90,29 @@ def test(acme, server, client, caDomain, caFile, serverDomain, oauth2Secret, sub
             token_status(serverDomain, caFile, "wrongSecret")
         ).strip()
         assert rejected == "401", f"expected 401 for a wrong secret, got {rejected}"
+
+    with subtest("sysadmin-entry-manager"):
+        server.succeed(
+            f"KANIDM_PASSWORD={idmAdminPassword} "
+            + kanidm_cli("login --name idm_admin")
+        )
+        server.succeed(kanidm_cli("person create alice Alice --name idm_admin"))
+        server.succeed(kanidm_cli("group add-members sysadmin alice --name idm_admin"))
+        assert "alice" in server.succeed(
+            kanidm_cli("group list-members sysadmin --name idm_admin")
+        )
+        assert "sysadmin" in server.succeed(
+            kanidm_cli("group list-members idm_admins --name idm_admin")
+        )
+
+    with subtest("entry-manager-idempotent"):
+        server.succeed("systemctl restart kanidm.service")
+        server.wait_for_unit("kanidm.service")
+        managed = server.succeed(
+            "journalctl -u kanidm.service"
+            " | grep -c 'kanidm entry managers: managing sysadmin'"
+        ).strip()
+        assert managed == "1", f"expected a single entry manager change, got {managed}"
 
     with subtest("ldaps-localhost"):
         server.succeed(ldapsearch(serverDomain, caFile))
