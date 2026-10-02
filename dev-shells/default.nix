@@ -41,6 +41,7 @@ in
         pssh
         ssh-to-age
         yq
+        kanidm_1_11
       ]);
     LANG = "C.UTF-8";
     LC_ALL = "C.UTF-8";
@@ -58,6 +59,8 @@ in
 
       FLAKE_ROOT="$(git rev-parse --show-toplevel)"
       nix build --out-link "$FLAKE_ROOT/.sops.yaml" "$FLAKE_ROOT#sops-config"
+
+      export KANIDM_URL=https://id.qo.is
 
       ${pre-commit-check.shellHook}
     '';

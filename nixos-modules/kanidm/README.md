@@ -7,7 +7,27 @@ Persons are **not** provisioned from this repository — create them in the web 
 and OAuth2 clients are declared in `nixos-modules/kanidm/default.nix` and in the module of
 the consuming service.
 
-## Secrets
+## User Setup
+
+```
+nix develop
+kanidm login -D your.username
+
+export UNAME=firstname.lastname
+kanidm person create $UNAME "Firstname Lastname"
+kanidm person update $UNAME --mail "$UNAME@qo.is"
+
+# As applicable:
+kanidm group add-members sysadmin $UNAME
+
+# Send password reset:
+kanidm person credential send-reset-token $UNAME
+
+# Log out locally
+kanidm logout
+```
+
+## Setup
 
 The account passwords are host secrets. OAuth2 client secrets go into
 `private/nixos-modules/kanidm/<relying party host>.sops.yaml`, which is encrypted for that
