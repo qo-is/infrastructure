@@ -114,6 +114,7 @@ in
       type = attrsOf (listOf str);
       default = {
         sysadmin = [ ];
+        idm_admins = [ "sysadmin" ];
       };
       description = ''
         Groups to provision, mapping a group name to its declared members. Members are
