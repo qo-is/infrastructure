@@ -22,8 +22,12 @@ nix build .#topology.x86_64-linux.config.output
 
 ## Secrets
 
-- Never read, decrypt, edit or commit anything in the `private/` submodule. Initializing it (see above) is the only exception; evaluating and building the flake is fine.
-- If a change needs new or modified secrets, prompt the user with the exact commands to run (`sops <file>` with the keys to add, `sops-rekey` if needed, then the submodule commit and lock update from the README) and document the expected keys, e.g. in the PR description or the module README.
+- Never read, decrypt, edit or commit in `private/`. Only exception: initializing it. Evaluating and building the flake is fine.
+- For new or changed secrets, give the user the commands and document them in the module/host README (see `nixos-modules/grafana/README.md`):
+  - add/change: `sops set <file> '["a"]["b"]' "\"$(openssl rand -hex 32)\""`
+  - remove: `sops unset <file> '["a"]["b"]'`
+  - new host or key: `sops-rekey` (runs `sops updatekeys` on all files)
+  - then the submodule commit and lock update from the README
 
 ## Architecture
 
