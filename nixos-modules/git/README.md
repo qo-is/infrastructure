@@ -20,20 +20,11 @@ programs.git.extraConfig.credential.helper = [ "libsecret" "cache --timeout 2160
 programs.git-credential-oauth.enable = true;
 ```
 
-## Administration
+## Single Sign-On
 
-### Create Accounts
-
-Accounts can be created by an admin in the [administrator area](https://git.qo.is/admin).
-
-- use their full `firstname.lastname@qo.is` email so users may be connected to a LDAP database in the future
-- Username should be in form of "firstnamelastname" (Forgejo doesn't support usernames with dots)
-
-To create a new admin user from the commandline, run:
-
-```bash
-sudo -u forgejo 'nix run nixpkgs#forgejo -- admin user create --config ~custom/conf/app.ini --admin --email "xy.z@qo.is" --username firstnamelastname --password Chur7000'
-```
+Log in with "kanidm" on the login page. Members of the [kanidm](../kanidm/README.md) group
+`forgejo-users` may log in, members of `sysadmin` are site administrators. Existing accounts
+are linked by email, so keep `idm_people_self_mail_write` in kanidm empty.
 
 ## Backup / Restore
 

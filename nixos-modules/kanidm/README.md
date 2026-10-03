@@ -40,7 +40,12 @@ sops set private/nixos-configurations/lindberg-webapps/secrets.sops.yaml \
   '["kanidm"]["idm-admin-password"]' "\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 48)\""
 sops set private/nixos-modules/kanidm/lindberg-webapps.sops.yaml \
   '["kanidm"]["oauth2"]["grafana"]' "\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 48)\""
+sops set private/nixos-modules/kanidm/lindberg-webapps.sops.yaml \
+  '["kanidm"]["oauth2"]["forgejo"]' "\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 48)\""
 ```
+
+Relying parties are declared with `qois.kanidm-relying-party.<name>` (see
+`nixos-modules/kanidm-relying-party`), which provisions the client and both secret copies.
 
 ## Administration
 
