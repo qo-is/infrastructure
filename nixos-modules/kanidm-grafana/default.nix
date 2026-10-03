@@ -4,74 +4,33 @@
   ...
 }:
 let
-  inherit (lib)
-    mkEnableOption
-    mkOption
-    ;
-  inherit (lib.types)
-    attrsOf
-    listOf
-    path
-    str
-    ;
+  inherit (lib) mkEnableOption mkIf;
 
   cfg = config.qois.kanidm-grafana;
+  grafana = config.qois.grafana;
 in
 {
-  imports = [
-    ./kanidm.nix
-    ./grafana.nix
-  ];
+  imports = [ ./grafana.nix ];
 
-  options.qois.kanidm-grafana = {
-    enable = mkEnableOption "grafana single sign-on through kanidm";
+  options.qois.kanidm-grafana.enable = mkEnableOption "grafana single sign-on through kanidm";
 
-    clientId = mkOption {
-      type = str;
-      default = "grafana";
-      description = "OAuth2 client identifier registered with kanidm.";
-    };
-
-    secretKey = mkOption {
-      type = str;
-      internal = true;
-      readOnly = true;
-      default = "kanidm/oauth2/${cfg.clientId}";
-      description = "Key of the OAuth2 client secret in the shared sops file.";
-    };
-
-    scopes = mkOption {
-      type = listOf str;
-      default = [
-        "openid"
-        "email"
-        "profile"
-      ];
-      description = "Scopes grafana requests from kanidm.";
-    };
-
-    roles = mkOption {
-      type = attrsOf (listOf str);
-      default = {
-        sysadmin = [ "GrafanaAdmin" ];
-      };
-      description = ''
-        Maps a kanidm group name to the grafana role values its members receive through
-        the `groups` claim.
-      '';
-    };
-
-    secretFiles = mkOption {
-      type = attrsOf path;
-      default = {
-        kanidm = config.sops.secrets."${cfg.secretKey}/kanidm".path;
-        grafana = config.sops.secrets."${cfg.secretKey}/grafana".path;
-      };
-      defaultText = ''paths of the "kanidm/oauth2/<clientId>" sops secrets'';
-      description = ''
-        Path to the OAuth2 client secret per consumer. Both entries decrypt the same key,
-        so an override has to set both.
-      '';
+  config = mkIf cfg.enable {
+    qois.kanidm-relying-party.grafana = {
+      enable = true;
+      displayName = "Grafana";
+      originUrl = "https://${grafana.domain}/login/generic_oauth";
+      originLanding = "https://${grafana.domain}/";
+      roles.sysadmin = [ "GrafanaAdmin" ];
+      consumer =
+        let
+          user = config.users.users.grafana;
+        in
+        {
+          inherit (grafana) enable;
+          unit = "grafana";
+          user = user.name;
+          inherit (user) group;
+        };
     };
   };
 }

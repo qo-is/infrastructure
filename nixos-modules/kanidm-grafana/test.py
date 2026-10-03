@@ -1,30 +1,23 @@
-CA_FILE = "/tmp/pebble-ca.crt"
+import json
 
 
-def download_ca(node, caDomain):
-    # Pebble generates its issuing CA at startup, so it can only be trusted at runtime.
-    node.wait_until_succeeds(f"curl -sf https://{caDomain}:15000/roots/0 > {CA_FILE}")
-    node.succeed(f"curl -sf https://{caDomain}:15000/intermediate-keys/0 >> {CA_FILE}")
-
-
-def test(acme, server, caDomain, grafanaDomain, kanidmDomain, subtest):
+def test(acme, server, caFile, grafanaDomain, kanidmDomain, subtest, **_):
     acme.wait_for_unit("pebble.service")
+    server.wait_for_unit("pebble-ca.service")
     server.wait_for_unit("kanidm.service")
     server.wait_for_unit("grafana.service")
     server.wait_for_unit("nginx.service")
     server.wait_for_open_port(3000)
 
-    download_ca(server, caDomain)
-
     with subtest("oauth2-client-provisioned"):
         server.wait_until_succeeds(
-            f"curl -sf --cacert {CA_FILE} https://{kanidmDomain}"
+            f"curl -sf --cacert {caFile} https://{kanidmDomain}"
             "/oauth2/openid/grafana/.well-known/openid-configuration"
         )
 
     with subtest("grafana-oauth-redirect"):
         redirect_url = (
-            f"curl -s --cacert {CA_FILE} -o /dev/null -w '%{{redirect_url}}' "
+            f"curl -s --cacert {caFile} -o /dev/null -w '%{{redirect_url}}' "
             f"https://{grafanaDomain}/login/generic_oauth"
         )
         server.wait_until_succeeds(f"{redirect_url} | grep -c oauth2")
@@ -38,3 +31,22 @@ def test(acme, server, caDomain, grafanaDomain, kanidmDomain, subtest):
         assert "code_challenge=" in redirect, (
             f"expected a PKCE code_challenge in '{redirect}'"
         )
+
+    with subtest("login"):
+        server.succeed("kanidm-test-person alice snakeoilAlicePassword sysadmin")
+        landed = server.succeed(
+            f"kanidm-oidc-login https://{grafanaDomain}/login/generic_oauth "
+            "alice snakeoilAlicePassword /tmp/alice.cookies"
+        ).strip()
+        assert landed.startswith(f"https://{grafanaDomain}/"), (
+            f"expected to land on grafana but got '{landed}'"
+        )
+        assert "/login" not in landed, f"expected to be logged in but got '{landed}'"
+
+        user = json.loads(
+            server.succeed(
+                f"curl -sf --cacert {caFile} --user testadmin:snakeoilpwd "
+                f"'https://{grafanaDomain}/api/users/lookup?loginOrEmail=alice'"
+            )
+        )
+        assert user["isGrafanaAdmin"], f"expected alice to be a grafana admin: {user}"
