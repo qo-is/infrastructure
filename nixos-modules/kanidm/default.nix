@@ -115,13 +115,11 @@ in
 
     groups = mkOption {
       type = attrsOf (listOf str);
-      default = {
-        sysadmin = [ ];
-        idm_admins = [ "sysadmin" ];
-      };
+      default = { };
       description = ''
         Groups to provision, mapping a group name to its declared members. Members are
-        appended, so additional members may be managed in the web UI.
+        appended, so additional members may be managed in the web UI. `sysadmin` and
+        `idm_admins` are always provisioned.
       '';
     };
 
@@ -195,6 +193,11 @@ in
   };
 
   config = mkIf cfg.enable {
+    qois.kanidm.groups = {
+      sysadmin = [ ];
+      idm_admins = [ "sysadmin" ];
+    };
+
     services.kanidm = {
       inherit (cfg) package;
 
