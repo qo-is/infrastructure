@@ -8,37 +8,26 @@
 
 ## Commands
 
+Commands not covered by the docs above:
+
 ```bash
 nix develop                    # Enter dev shell (direnv auto-activates via .envrc); required before first commit, generates .pre-commit-config.yaml (important to run this in worktrees)
-nix fmt                        # Auto-format all files (treefmt: nixfmt, deadnix, jsonfmt, yamlfmt, mdformat, ruff, shfmt)
-nix flake check                # Run all checks: build configs, build packages, run module tests, check deploy, check formatting
 
-# Build a single host
-nix build .#nixosConfigurations.<hostname>.config.system.build.toplevel
+# In a fresh worktree: initialize the private submodule offline (a network clone hangs on askpass)
+git submodule update --init --reference <main-checkout>/private
 
 # Render the network diagrams (main.svg, network.svg), embedded into the docs
 nix build .#topology.x86_64-linux.config.output
-
-# Module tests (require KVM)
-nix build .#checks.x86_64-linux.nixos-modules                                              # All tests
-nix build .#checks.x86_64-linux.nixos-modules.entries.vm-test-run-<testName>                # Single test
-nix run .#checks.x86_64-linux.nixos-modules.entries.vm-test-run-<testName>.driverInteractive # Interactive
-
-# Secrets (SOPS-nix, requires access to private submodule)
-sops <file>                    # Edit encrypted secrets file
-sops-rekey                     # Rekey all secrets after key changes
-
-# After changing secrets in private/:
-pushd private && git commit && git push && nix flake prefetch . && popd
-git add private && nix flake lock --update-input private
-
-# Deployment (deploy-rs, requires VPN connection to backplane network)
-auto-deploy <profile>          # Deploy a profile: system-vm, system-physical, system-ci
 ```
+
+## Secrets
+
+- Never read, decrypt, edit or commit anything in the `private/` submodule. Initializing it (see above) is the only exception; evaluating and building the flake is fine.
+- If a change needs new or modified secrets, prompt the user with the exact commands to run (`sops <file>` with the keys to add, `sops-rekey` if needed, then the submodule commit and lock update from the README) and document the expected keys, e.g. in the PR description or the module README.
 
 ## Architecture
 
-NixOS infrastructure-as-code repository (Nix Flakes, x86_64-linux, nixpkgs nixos). All services are defined declaratively as NixOS modules — no Docker, Terraform, or Pulumi.
+NixOS infrastructure-as-code repository (Nix Flakes). All services are defined declaratively as NixOS modules — no Docker, Terraform, or Pulumi.
 
 ### Flake Structure
 
@@ -47,10 +36,10 @@ NixOS infrastructure-as-code repository (Nix Flakes, x86_64-linux, nixpkgs nixos
 ```
 flake.nix
 ├── checks/          → flake checks (builds, tests, formatting)
-├── deploy/          → deploy-rs profiles (system-vm, system-physical, system-ci)
+├── deploy/          → deploy-rs profiles
 ├── dev-shells/      → development shell with tools
 ├── nixos-configurations/  → per-host NixOS configs
-├── nixos-modules/   → reusable NixOS modules (31 modules)
+├── nixos-modules/   → reusable NixOS modules
 ├── topology/        → nix-topology network diagrams rendered into the docs
 ├── packages/        → custom packages (auto-deploy, docs, sops wrapper)
 ├── lib/             → shared utilities
@@ -79,17 +68,9 @@ options.qois.<service>.enable = mkEnableOption "description";
 config = mkIf cfg.enable { /* ... */ };
 ```
 
-### Secrets
+### Monitoring
 
-Three tiers of SOPS-encrypted secrets in `private/`:
-
-- `private/passwords.sops.yaml` — sysadmin passwords
-- `private/nixos-modules/shared-secrets/default.sops.yaml` — shared across hosts
-- `private/nixos-configurations/<hostname>/secrets.sops.yaml` — host-specific
-
-### Deployment
-
-CI auto-deploys on `main` branch. Binary cache at `https://attic.qo.is/`.
+Telegraf's SMART, mdstat, ZFS and disk inputs (and their default alert rules) come from the `inputs.srvos` `mixins-telegraf` module, not from `nixos-modules/telegraf`. Inspect them in the srvos source.
 
 ### Network Topology
 
