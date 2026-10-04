@@ -28,6 +28,22 @@ in
         buildStatusInterval = "100ms";
       };
 
+      qois.telegraf.periodicJobs = [
+        "demo-job.service"
+        "failing-job.service"
+      ];
+      systemd.services.demo-job = {
+        serviceConfig.Type = "oneshot";
+        script = "true";
+        # Like real backups: the timer keeps the unit loaded, so systemd retains its exit state.
+        startAt = "2099-01-01";
+      };
+      systemd.services.failing-job = {
+        serviceConfig.Type = "oneshot";
+        script = "false";
+        startAt = "2099-01-01";
+      };
+
       services.nginx.enable = true;
       services.nginx.virtualHosts.localhost.locations = {
         "/".return = "200 'H1ll0 W0rld!'";

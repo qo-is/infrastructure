@@ -42,6 +42,11 @@ in
 
     services.postgresqlBackup.enable = true;
     qois.backup-client.includePaths = [ config.services.postgresqlBackup.location ];
+    qois.telegraf.periodicJobs =
+      if config.services.postgresqlBackup.backupAll then
+        [ "postgresqlBackup.service" ]
+      else
+        map (db: "postgresqlBackup-${db}.service") config.services.postgresqlBackup.databases;
 
     systemd.services.postgresql-upgrade = mkIf (cfg.upgradeFrom != null) {
       description = "Upgrade PostgreSQL data from ${cfg.upgradeFrom.psqlSchema} to ${cfg.package.psqlSchema}";

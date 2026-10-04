@@ -42,3 +42,21 @@ def test(server, subtest):
             "curl -s http://localhost:9273/metrics"
             " | grep '^forgejo_build_status_value' | grep -cv 'state='"
         )
+
+    with subtest("periodic-jobs"):
+        metric = "curl -s http://localhost:9273/metrics | grep -c "
+        server.wait_until_succeeds(
+            metric + "'^systemd_job_success{.*name=\"demo-job.service\"} 0'"
+        )
+        server.succeed("systemctl start demo-job.service")
+        server.fail("systemctl start failing-job.service")
+        server.wait_until_succeeds(
+            metric + "'^systemd_job_success{.*name=\"demo-job.service\"} 1'"
+        )
+        server.succeed(
+            metric
+            + "'^systemd_job_last_success_timestamp{.*name=\"demo-job.service\"}'"
+        )
+        server.succeed(
+            metric + "'^systemd_job_success{.*name=\"failing-job.service\"} 0'"
+        )

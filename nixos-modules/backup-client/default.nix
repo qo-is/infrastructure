@@ -92,6 +92,10 @@ with lib;
     )
   );
 
+  config.qois.telegraf.periodicJobs = mapAttrsToList (
+    name: _: "borgbackup-job-${name}.service"
+  ) config.services.borgbackup.jobs;
+
   config.sops.secrets = mkIf (cfg.enable && cfg.passwordFile == null) {
     ${defaultSopsPasswordFile} = {
       restartUnits = map (target: "borgbackup-job-system-${target}.service") cfg.targets;
