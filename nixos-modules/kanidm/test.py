@@ -37,9 +37,11 @@ def test(
     serverDomain,
     oauth2Secret,
     idmAdminPassword,
+    mailRecipient,
     subtest,
 ):
     acme.wait_for_unit("pebble.service")
+    acme.wait_for_unit("mailpit-relay.service")
     server.wait_for_unit("kanidm.service")
     server.wait_for_unit("nginx.service")
     server.wait_for_unit("telegraf.service")
@@ -113,6 +115,54 @@ def test(
             " | grep -c 'kanidm entry managers: managing sysadmin'"
         ).strip()
         assert managed == "1", f"expected a single entry manager change, got {managed}"
+
+    with subtest("mail-sender-account"):
+        server.wait_for_unit("kanidm-mail-sender.service")
+        server.succeed(
+            f"KANIDM_PASSWORD={idmAdminPassword} "
+            + kanidm_cli("login --name idm_admin")
+        )
+        senders = server.succeed(
+            kanidm_cli("group list-members idm_message_senders --name idm_admin")
+        )
+        assert "mail-sender@" in senders, (
+            f"mail-sender is not a message sender:\n{senders}"
+        )
+        assert (
+            server.succeed(
+                "stat -c '%U:%G %a' /var/lib/kanidm/mail-sender-token"
+            ).strip()
+            == "kanidm:kanidm 600"
+        )
+
+    with subtest("mail-sender-token-idempotent"):
+        token = server.succeed("sha256sum /var/lib/kanidm/mail-sender-token")
+        server.succeed("systemctl restart kanidm-mail-sender-token.service")
+        assert token == server.succeed("sha256sum /var/lib/kanidm/mail-sender-token")
+        generated = server.succeed(
+            "journalctl -u kanidm-mail-sender-token.service"
+            " | grep -c 'kanidm mail sender: generating token'"
+        ).strip()
+        assert generated == "1", f"expected a single token generation, got {generated}"
+        added = server.succeed(
+            "journalctl -u kanidm-mail-sender-token.service"
+            " | grep -c 'kanidm mail sender: adding mail-sender'"
+        ).strip()
+        assert added == "1", f"expected a single membership change, got {added}"
+        server.wait_for_unit("kanidm-mail-sender.service")
+
+    with subtest("mail-sender-delivers-reset-token"):
+        server.succeed(
+            kanidm_cli("person credential send-reset-token bob --name idm_admin")
+        )
+        acme.wait_until_succeeds(
+            "curl -sf http://localhost:8025/api/v1/messages"
+            f" | grep -c '{mailRecipient}'"
+        )
+        server.wait_until_succeeds(
+            kanidm_cli("system message-queue list --name idm_admin")
+            + " | grep -c 'sent_at: *[0-9]'"
+        )
 
     with subtest("ldaps-localhost"):
         server.succeed(ldapsearch(serverDomain, caFile))

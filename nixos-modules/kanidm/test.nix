@@ -10,6 +10,8 @@ let
   oauth2Secret = "snakeoilOauth2Secret";
   idmAdminPassword = "snakeoilIdmAdminPassword";
   caFile = "/tmp/pebble-ca.crt";
+  mailRecipient = "bob@example.test";
+  smtpsPort = 1465;
 in
 {
   args = {
@@ -19,16 +21,28 @@ in
       serverDomain
       oauth2Secret
       idmAdminPassword
+      mailRecipient
       ;
   };
 
   nodes = {
     # Pebble, issuing the certificate kanidm serves. It resolves serverDomain to the
     # server node by scanning every node's security.acme.certs.
+    # Mailpit is the SMTP relay the mail sender delivers to.
     acme =
-      { ... }:
+      { pkgs, ... }:
       {
         imports = [ "${inputs.nixpkgs}/nixos/tests/common/acme/server" ];
+
+        services.mailpit.instances.relay = {
+          smtp = "[::]:${toString smtpsPort}";
+          smtp-tls-cert = "${certs.${caDomain}.cert}";
+          smtp-tls-key = "${certs.${caDomain}.key}";
+          smtp-require-tls = true;
+          smtp-auth-accept-any = true;
+        };
+        networking.firewall.allowedTCPPorts = [ smtpsPort ];
+        environment.systemPackages = [ pkgs.curl ];
       };
 
     # Separate node to verify that the LDAPS port is not reachable over the network.
@@ -72,6 +86,19 @@ in
             roles.sysadmin = [ "GrafanaAdmin" ];
             secretFile = writeText "kanidm-oauth2-grafana" oauth2Secret;
           };
+
+          mailSender = {
+            enable = true;
+            relay = "smtps://${caDomain}:${toString smtpsPort}";
+            username = "kanidm";
+            passwordFile = writeText "kanidm-mail-password" "snakeoilMailPassword";
+            fromAddress = "kanidm@${caDomain}";
+          };
+        };
+
+        services.kanidm.provision.persons.bob = {
+          displayName = "Bob";
+          mailAddresses = [ mailRecipient ];
         };
 
         sops.secrets = mkForce { };

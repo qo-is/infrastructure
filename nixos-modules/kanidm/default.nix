@@ -62,6 +62,7 @@ in
 {
   imports = [
     ./entry-managers.nix
+    ./mail-sender.nix
     ./secrets.nix
   ];
 
