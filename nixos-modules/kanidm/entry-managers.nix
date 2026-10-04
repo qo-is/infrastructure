@@ -38,7 +38,7 @@ let
       curl
       jq
     ];
-    text = builtins.readFile ./entry-managers.sh;
+    text = builtins.readFile ./kanidm-api.sh + builtins.readFile ./entry-managers.sh;
   };
 in
 {
