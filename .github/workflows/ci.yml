@@ -24,7 +24,7 @@ jobs:
           attic login "$CACHE_NAME" "$SERVER" "$ATTIC_AUTH_TOKEN"
           attic use "$CACHE_REPOSITORY"
       - name: Run Builds and Checks
-        run: nix-fast-build --no-nom --max-jobs 6 --skip-cached --attic-cache "$CACHE_REPOSITORY"
+        run: nix-fast-build --no-nom --max-jobs 2 --skip-cached --attic-cache "$CACHE_REPOSITORY"
   deploy:
     needs: build
     if: success() && github.ref == 'refs/heads/main'
