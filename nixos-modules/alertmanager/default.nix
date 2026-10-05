@@ -62,5 +62,12 @@ in
         ];
       }
     ];
+
+    # systemd forgets exit timestamps on reboot, max_over_time keeps the last success visible.
+    srvos.prometheus.ruleGroups.qoisPeriodicJobs.alertRules.PeriodicJobNotSucceeded = {
+      expr = "systemd_job_success unless on(host, name) (time() - max_over_time(systemd_job_last_success_timestamp[30h]) < 30 * 3600)";
+      for = "1h";
+      annotations.description = "{{$labels.host}}: {{$labels.name}} has not exited successfully in the last 30h";
+    };
   };
 }
