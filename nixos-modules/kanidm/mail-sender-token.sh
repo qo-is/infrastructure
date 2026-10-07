@@ -22,8 +22,9 @@ ensure_service_account() {
 }
 
 revoke_labelled_tokens() {
-  local token_id
-  for token_id in $(account_api GET /_api_token | jq -r --arg label "$token_label" '.[] | select(.label == $label) | .token_id'); do
+  local token_ids token_id
+  token_ids=$(account_api GET /_api_token | jq -r --arg label "$token_label" '.[] | select(.label == $label) | .token_id')
+  for token_id in $token_ids; do
     echo "kanidm mail sender: revoking token $token_id"
     account_api DELETE "/_api_token/$token_id" >/dev/null
   done
