@@ -30,6 +30,26 @@ revoke_labelled_tokens() {
   done
 }
 
+token_rejected() {
+  local status
+  status=$(
+    curl --silent --show-error "${curl_tls[@]}" \
+      --header @<(headers "Authorization: Bearer $(<"$token_file")") \
+      --output /dev/null --write-out '%{http_code}' "$url/v1/auth/valid"
+  ) || true
+  case $status in
+  200) return 1 ;;
+  401)
+    echo "kanidm mail sender: stored token rejected"
+    return 0
+    ;;
+  *)
+    echo "kanidm mail sender: validating stored token failed with status $status" >&2
+    exit 1
+    ;;
+  esac
+}
+
 generate_token() {
   echo "kanidm mail sender: generating token for $account"
   revoke_labelled_tokens
@@ -37,7 +57,7 @@ generate_token() {
   trap 'rm -f "$pending_token"' EXIT
   jq --null-input --arg label "$token_label" '{label: $label, expiry: null, read_write: true}' |
     account_api POST /_api_token --json @- |
-    jq --raw-output . >"$pending_token"
+    jq --exit-status --raw-output strings >"$pending_token"
   mv "$pending_token" "$token_file"
 }
 
@@ -50,7 +70,7 @@ ensure_sender_membership() {
 
 authenticate
 ensure_service_account
-if [[ ! -s $token_file ]]; then
+if [[ ! -s $token_file ]] || token_rejected; then
   generate_token
 fi
 ensure_sender_membership
