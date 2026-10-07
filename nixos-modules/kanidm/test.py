@@ -21,6 +21,12 @@ def token_status(domain, caFile, secret):
     )
 
 
+def mail_sender_invocation(node):
+    return node.succeed(
+        "systemctl show -P InvocationID kanidm-mail-sender.service"
+    ).strip()
+
+
 def kanidm_cli(command):
     return (
         "KANIDM_URL=https://localhost:8443 KANIDM_ACCEPT_INVALID_CERTS=true "
@@ -136,9 +142,14 @@ def test(
         )
 
     with subtest("mail-sender-token-idempotent"):
+        server.succeed("systemctl is-active kanidm-mail-sender-token.timer")
         token = server.succeed("sha256sum /var/lib/kanidm/mail-sender-token")
-        server.succeed("systemctl restart kanidm-mail-sender-token.service")
+        invocation = mail_sender_invocation(server)
+        server.succeed("systemctl start kanidm-mail-sender-token.service")
         assert token == server.succeed("sha256sum /var/lib/kanidm/mail-sender-token")
+        assert invocation == mail_sender_invocation(server), (
+            "the mail sender was restarted although its token did not change"
+        )
         generated = server.succeed(
             "journalctl -u kanidm-mail-sender-token.service"
             " | grep -c 'kanidm mail sender: generating token'"
@@ -152,17 +163,21 @@ def test(
         server.wait_for_unit("kanidm-mail-sender.service")
 
     with subtest("mail-sender-token-rejected"):
+        invocation = mail_sender_invocation(server)
         server.succeed(
             "echo invalid > /var/lib/kanidm/mail-sender-token",
             "install -o kanidm -g kanidm -m 0600 /dev/null /var/lib/kanidm/mail-sender-token.abc123",
         )
-        server.succeed("systemctl restart kanidm-mail-sender-token.service")
+        server.succeed("systemctl start kanidm-mail-sender-token.service")
         server.succeed(
             "journalctl -u kanidm-mail-sender-token.service"
             " | grep -c 'kanidm mail sender: stored token rejected'"
         )
         server.fail("grep -qx invalid /var/lib/kanidm/mail-sender-token")
         server.fail("test -e /var/lib/kanidm/mail-sender-token.abc123")
+        server.wait_until_succeeds(
+            f'test "$(systemctl show -P InvocationID kanidm-mail-sender.service)" != {invocation}'
+        )
         server.wait_for_unit("kanidm-mail-sender.service")
 
     with subtest("mail-sender-delivers-reset-token"):

@@ -16,6 +16,7 @@ let
     coreutils
     curl
     jq
+    systemd
     writeShellApplication
     ;
 
@@ -125,9 +126,9 @@ in
       description = "Provision the kanidm mail sender service account and token";
       after = [ "kanidm.service" ];
       requires = [ "kanidm.service" ];
+      startAt = "*:0/15";
       serviceConfig = {
         Type = "oneshot";
-        RemainAfterExit = true;
         User = "kanidm";
         Group = "kanidm";
         ExecStart = "${getExe' provisionToken "kanidm-mail-sender-token"} ${provisioningSettings} ${cfg.idmAdminPasswordFile} ${tokenFile}";
@@ -135,6 +136,19 @@ in
         ReadWritePaths = [ stateDir ];
         PrivateTmp = true;
         NoNewPrivileges = true;
+      };
+    };
+
+    systemd.paths.kanidm-mail-sender-token-changed = {
+      wantedBy = [ "multi-user.target" ];
+      pathConfig.PathChanged = tokenFile;
+    };
+
+    systemd.services.kanidm-mail-sender-token-changed = {
+      description = "Restart the kanidm mail sender with its new token";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${getExe' systemd "systemctl"} try-restart kanidm-mail-sender.service";
       };
     };
 
