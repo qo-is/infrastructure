@@ -51,9 +51,7 @@ let
   };
 
   clientConfig = toml.generate "kanidm-mail-sender-client.toml" {
-    uri = provision.instanceUrl;
-    verify_ca = !provision.acceptInvalidCerts;
-    verify_hostnames = !provision.acceptInvalidCerts;
+    uri = "https://${cfg.domain}";
   };
 
   staticConfig = toml.generate "kanidm-mail-sender-static.toml" {
@@ -146,8 +144,12 @@ in
       after = [
         "kanidm.service"
         "kanidm-mail-sender-token.service"
+        "nginx.service"
       ];
-      wants = [ "kanidm.service" ];
+      wants = [
+        "kanidm.service"
+        "nginx.service"
+      ];
       requires = [ "kanidm-mail-sender-token.service" ];
       serviceConfig = {
         DynamicUser = true;
