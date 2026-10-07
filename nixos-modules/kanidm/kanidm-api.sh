@@ -7,6 +7,10 @@ if [[ $(jq -r .acceptInvalidCerts "$settings") == true ]]; then
   curl_tls=(--insecure)
 fi
 
+headers() {
+  printf '%s\n' "$@"
+}
+
 request() {
   curl --silent --show-error --fail-with-body "${curl_tls[@]}" "$@"
 }
@@ -20,13 +24,13 @@ authenticate() {
   )
   session_header="X-KANIDM-AUTH-SESSION-ID: $session_id"
 
-  request --header "$session_header" \
+  request --header @<(headers "$session_header") \
     --json '{"step":{"begin":"password"}}' "$url/v1/auth" >/dev/null
 
   token=$(
     jq --null-input --rawfile password "$password_file" \
       '{step: {cred: {password: ($password | rtrimstr("\n"))}}}' |
-      request --header "$session_header" --json @- "$url/v1/auth" |
+      request --header @<(headers "$session_header") --json @- "$url/v1/auth" |
       jq --raw-output .state.success
   )
 }
@@ -35,7 +39,6 @@ api() {
   local method=$1 path=$2
   shift 2
   request --request "$method" \
-    --header "$session_header" \
-    --header "Authorization: Bearer $token" \
+    --header @<(headers "$session_header" "Authorization: Bearer $token") \
     "$@" "$url/v1/$path"
 }
