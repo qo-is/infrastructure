@@ -39,3 +39,12 @@ gcx login --server https://monitoring.qo.is --token <grafana service account tok
 export GIT_PAT=<grafana-bot Forgejo PAT>
 gcx resources push -p nixos-modules/grafana/git-sync
 ```
+
+## MCP
+
+The repository's `.mcp.json` starts `grafana-mcp` (from the dev shell), which reads a
+service account token from your keyring. Store the token once with:
+
+```bash
+grafana-mcp login
+```

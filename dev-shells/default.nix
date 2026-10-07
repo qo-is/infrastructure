@@ -26,13 +26,13 @@ in
         auto-deploy
         diff-closures
         qois-disk-unlock
+        grafana-mcp
       ])
       ++ (with pkgs; [
         attic-client
         deploy-rs
         dix
         jq
-        mcp-grafana
         nix-diff
         nix-fast-build
         nixVersions.latest

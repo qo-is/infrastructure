@@ -1,12 +1,8 @@
 {
   "mcpServers": {
     "grafana": {
-      "command": "mcp-grafana",
-      "args": [],
-      "env": {
-        "GRAFANA_URL": "https://monitoring.qo.is",
-        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "${GRAFANA_SERVICE_ACCOUNT_TOKEN}"
-      }
+      "command": "grafana-mcp",
+      "args": []
     }
   }
 }
