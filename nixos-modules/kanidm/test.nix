@@ -10,6 +10,7 @@ let
   oauth2Secret = "snakeoilOauth2Secret";
   idmAdminPassword = "snakeoilIdmAdminPassword";
   caFile = "/tmp/pebble-ca.crt";
+  caBundle = "/run/pebble-ca-bundle.crt";
   mailRecipient = "bob@example.test";
   smtpsPort = 1465;
 in
@@ -116,6 +117,30 @@ in
         # Pebble generates its issuing CA at startup, so the system trust store cannot
         # contain it. test.py downloads it here before restarting telegraf.
         systemd.services.telegraf.environment.SSL_CERT_FILE = caFile;
+
+        # The mail sender reaches kanidm through nginx and the relay through snakeoil
+        # certificates, so it needs pebble's CA next to the system trust store.
+        systemd.services.pebble-ca-bundle = {
+          wants = [ "network-online.target" ];
+          after = [ "network-online.target" ];
+          path = [ pkgs.curl ];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+          };
+          script = ''
+            until curl -sf https://${caDomain}:15000/roots/0 > ${caBundle}.tmp; do
+              sleep 1
+            done
+            cat /etc/ssl/certs/ca-certificates.crt >> ${caBundle}.tmp
+            mv ${caBundle}.tmp ${caBundle}
+          '';
+        };
+        systemd.services.kanidm-mail-sender = {
+          after = [ "pebble-ca-bundle.service" ];
+          requires = [ "pebble-ca-bundle.service" ];
+          environment.SSL_CERT_FILE = caBundle;
+        };
 
         environment.systemPackages = [
           pkgs.curl

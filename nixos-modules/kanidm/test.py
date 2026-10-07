@@ -151,6 +151,20 @@ def test(
         assert added == "1", f"expected a single membership change, got {added}"
         server.wait_for_unit("kanidm-mail-sender.service")
 
+    with subtest("mail-sender-token-rejected"):
+        server.succeed(
+            "echo invalid > /var/lib/kanidm/mail-sender-token",
+            "install -o kanidm -g kanidm -m 0600 /dev/null /var/lib/kanidm/mail-sender-token.abc123",
+        )
+        server.succeed("systemctl restart kanidm-mail-sender-token.service")
+        server.succeed(
+            "journalctl -u kanidm-mail-sender-token.service"
+            " | grep -c 'kanidm mail sender: stored token rejected'"
+        )
+        server.fail("grep -qx invalid /var/lib/kanidm/mail-sender-token")
+        server.fail("test -e /var/lib/kanidm/mail-sender-token.abc123")
+        server.wait_for_unit("kanidm-mail-sender.service")
+
     with subtest("mail-sender-delivers-reset-token"):
         server.succeed(
             kanidm_cli("person credential send-reset-token bob --name idm_admin")
@@ -162,6 +176,9 @@ def test(
         server.wait_until_succeeds(
             kanidm_cli("system message-queue list --name idm_admin")
             + " | grep -c 'sent_at: *[0-9]'"
+        )
+        server.fail(
+            "journalctl -u kanidm-mail-sender.service | grep -q 'may not be secure'"
         )
 
     with subtest("ldaps-localhost"):
