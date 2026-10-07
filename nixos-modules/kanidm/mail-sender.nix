@@ -164,11 +164,15 @@ in
         RestartSec = 10;
 
         CapabilityBoundingSet = "";
+        DeviceAllow = "";
         LockPersonality = true;
         MemoryDenyWriteExecute = true;
         PrivateDevices = true;
+        PrivateUsers = true;
+        ProcSubset = "pid";
         ProtectClock = true;
         ProtectControlGroups = true;
+        ProtectHome = true;
         ProtectHostname = true;
         ProtectKernelLogs = true;
         ProtectKernelModules = true;
@@ -182,7 +186,11 @@ in
         RestrictNamespaces = true;
         RestrictRealtime = true;
         SystemCallArchitectures = "native";
-        SystemCallFilter = [ "@system-service" ];
+        SystemCallFilter = [
+          "@system-service"
+          "~@privileged @resources"
+        ];
+        UMask = "0077";
       };
     };
   };
