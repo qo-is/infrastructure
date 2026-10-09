@@ -23,6 +23,11 @@ in
             repo = "infrastructure";
             branch = "main";
           }
+          {
+            owner = "qo.is";
+            repo = "infrastructure";
+            branch = "green";
+          }
         ];
         buildStatusUrl = "http://localhost";
         buildStatusInterval = "100ms";
@@ -49,6 +54,8 @@ in
         "/".return = "200 'H1ll0 W0rld!'";
         "/api/v1/repos/qo.is/infrastructure/commits/main/status".return =
           ''200 '{"state":"pending","sha":"c0ffee","total_count":1}' '';
+        "/api/v1/repos/qo.is/infrastructure/commits/green/status".return =
+          ''200 '{"state":"success","sha":"beef","total_count":2,"statuses":[{"updated_at":"2026-10-08T18:11:20Z"},{"updated_at":"2026-10-08T18:17:53Z"}]}' '';
       };
 
       services.telegraf.extraConfig.agent.interval = mkForce "50ms";

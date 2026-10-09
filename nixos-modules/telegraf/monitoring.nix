@@ -1,21 +1,35 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
   inherit (lib)
+    escapeShellArgs
+    getExe
     mkEnableOption
     mkIf
     mapAttrsToList
     mkOption
+    readFile
     ;
   inherit (lib.types) listOf str anything;
+  inherit (pkgs) curl jq writeShellApplication;
   cfg = config.qois.telegraf.monitoring;
   backplaneNet = config.qois.meta.network.virtual.backplane;
   backplaneHostnames = mapAttrsToList (
     name: _host: "${name}.${backplaneNet.domain}"
   ) backplaneNet.hosts;
+
+  forgejoBuildStatus = writeShellApplication {
+    name = "forgejo-build-status";
+    runtimeInputs = [
+      curl
+      jq
+    ];
+    text = readFile ./forgejo-build-status.sh;
+  };
 in
 {
   options.qois.telegraf.monitoring = {
@@ -86,49 +100,21 @@ in
           urls = [ host ];
         }) cfg.ping;
 
-        http = map (b: {
-          urls = [
-            "${cfg.buildStatusUrl}/api/v1/repos/${b.owner}/${b.repo}/commits/${b.branch}/status"
+        exec = map (b: {
+          commands = [
+            (escapeShellArgs [
+              (getExe forgejoBuildStatus)
+              cfg.buildStatusUrl
+              b.owner
+              b.repo
+              b.branch
+            ])
           ];
-          tags = {
-            inherit (b) owner repo branch;
-          };
-          data_format = "json_v2";
-          timeout = "10s";
+          data_format = "influx";
           interval = cfg.buildStatusInterval;
-          json_v2 = [
-            {
-              measurement_name = "forgejo_build_status";
-              field = [
-                {
-                  path = "state";
-                  rename = "value";
-                  type = "string";
-                }
-              ];
-            }
-          ];
+          timeout = "15s";
         }) cfg.buildStatus;
       };
-
-      processors.enum = [
-        {
-          namepass = [ "forgejo_build_status" ];
-          mapping = [
-            {
-              fields = [ "value" ];
-              default = 4;
-              value_mappings = {
-                success = 0;
-                pending = 1;
-                warning = 2;
-                failure = 3;
-                error = 3;
-              };
-            }
-          ];
-        }
-      ];
     };
   };
 }

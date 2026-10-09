@@ -31,12 +31,19 @@ def test(server, subtest):
         )
 
     with subtest("monitoring-build-status"):
+        metric = "curl -s http://localhost:9273/metrics | grep -c "
         server.wait_until_succeeds(
-            "curl -s http://localhost:9273/metrics | grep -c '^forgejo_build_status_value'"
+            metric + "'^forgejo_build_status_value{.*branch=\"main\".*} 1$'"
+        )
+        server.wait_until_succeeds(
+            metric + "'^forgejo_build_status_value{.*branch=\"green\".*} 0$'"
         )
         server.succeed(
-            "test $(curl -s http://localhost:9273/metrics"
-            " | grep -c '^forgejo_build_status_value') -eq 1"
+            metric
+            + "'^forgejo_build_status_last_success_timestamp{.*branch=\"green\".*} 1.791483473e+09$'"
+        )
+        server.fail(
+            metric + "'^forgejo_build_status_last_success_timestamp{.*branch=\"main\"'"
         )
         server.succeed(
             "curl -s http://localhost:9273/metrics"
