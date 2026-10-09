@@ -9,6 +9,15 @@ def test(server, subtest):
             timeout=120,
         )
 
+    with subtest("alertmanager-served-under-route-prefix"):
+        server.succeed("curl -sf http://localhost:9093/alertmanager/-/ready")
+        alertmanagers = server.succeed(
+            "curl -sf http://localhost:9090/api/v1/alertmanagers"
+        )
+        assert "localhost:9093/alertmanager/api/v2/alerts" in alertmanagers, (
+            f"expected prometheus to target the alertmanager route prefix but got '{alertmanagers}'"
+        )
+
     with subtest("rules-loaded"):
         rules = server.succeed("curl -s http://localhost:9090/api/v1/rules")
         assert "SystemdServiceFailed" in rules, (

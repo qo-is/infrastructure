@@ -3,6 +3,7 @@ let
   inherit (lib) mkEnableOption mkIf mkOption;
   inherit (lib.types) path str;
   cfg = config.qois.alertmanager;
+  routePrefix = "/alertmanager";
 in
 {
   options.qois.alertmanager = {
@@ -25,6 +26,7 @@ in
     services.prometheus.alertmanager = {
       enable = true;
       listenAddress = "127.0.0.1";
+      webExternalUrl = "https://${config.qois.prometheus.domain}${routePrefix}/";
       configuration = {
         global = {
           smtp_smarthost = "mail.cyon.ch:587";
@@ -57,6 +59,7 @@ in
 
     services.prometheus.alertmanagers = [
       {
+        path_prefix = routePrefix;
         static_configs = [
           { targets = [ "localhost:${toString config.services.prometheus.alertmanager.port}" ]; }
         ];

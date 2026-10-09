@@ -9,8 +9,10 @@ let
     mkEnableOption
     mkIf
     mkDefault
+    mkOption
     optional
     ;
+  inherit (lib.types) str;
   cfg = config.qois.prometheus;
 in
 {
@@ -18,6 +20,12 @@ in
 
   options.qois.prometheus = {
     enable = mkEnableOption "Enable prometheus";
+
+    domain = mkOption {
+      type = str;
+      default = "prometheus.qo.is";
+      description = "Domain, under which the web UI is served.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -27,6 +35,7 @@ in
       enable = true;
       checkConfig = true;
       extraFlags = [ "--log.level=warn" ];
+      webExternalUrl = "https://${cfg.domain}/";
       scrapeConfigs = [
         {
           job_name = "prometheus";
