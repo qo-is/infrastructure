@@ -11,6 +11,7 @@
 
   qois.nginx.behindLoadbalancer = true;
   qois.git-ci-runner.enable = true;
+  qois.git-ci-runner.nixInstances = 3;
   qois.attic.enable = true;
   qois.postgresql.package = pkgs.postgresql_18;
   qois.postgresql.upgradeFrom = pkgs.postgresql_15;
