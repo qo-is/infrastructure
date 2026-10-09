@@ -10,6 +10,7 @@
   qois.kanidm.package = pkgs.kanidmWithSecretProvisioning_1_11;
   qois.kanidm-grafana.enable = true;
   qois.kanidm-forgejo.enable = true;
+  qois.kanidm-prometheus.enable = true;
   qois.static-page.enable = true;
   qois.postgresql.package = pkgs.postgresql_18;
   qois.postgresql.upgradeFrom = pkgs.postgresql_15;

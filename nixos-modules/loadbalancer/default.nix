@@ -21,6 +21,7 @@ let
     "cloud.qo.is" = "lindberg-nextcloud";
 
     "monitoring.qo.is" = "lindberg-webapps";
+    "prometheus.qo.is" = "lindberg-webapps";
 
     "nixpkgs-cache.qo.is" = "lindberg-build";
     "attic.qo.is" = "lindberg-build";
