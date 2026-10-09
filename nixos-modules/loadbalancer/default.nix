@@ -75,6 +75,7 @@ let
 
       backend cyprianspitz-nginx-https
         mode tcp
+        timeout tunnel 1h
         server s1 ${getBackplaneIp "cyprianspitz"}:8443 send-proxy-v2
 
 
