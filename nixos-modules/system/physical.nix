@@ -40,6 +40,7 @@ with lib;
 
     # System Services
     services.fwupd.enable = true;
+    systemd.services.fwupd-refresh.serviceConfig.StandardError = mkForce "null";
 
     services.smartd = {
       enable = true;
