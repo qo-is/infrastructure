@@ -91,6 +91,11 @@ in
           request-protocol = true;
         };
 
+        log.syslog = {
+          any = "info";
+          control = "warning";
+        };
+
         template.default.global-module = [
           "mod-rrl/default"
           "mod-stats/default"
