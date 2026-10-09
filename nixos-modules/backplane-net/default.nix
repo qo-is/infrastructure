@@ -68,6 +68,7 @@ in
       enable = true;
       gossipSecretFile = config.sops.secrets."wgautomesh/gossip-secret".path;
       openFirewall = true;
+      logLevel = "warn";
       settings = {
         inherit interface;
         peers = pipe netConfig.hosts [
