@@ -35,5 +35,8 @@
   nix.settings.max-jobs = lib.mkDefault 4;
 
   # APU boards have no ESP/UEFI capsule support
-  services.fwupd.daemonSettings.DisabledPlugins = [ "uefi_capsule" ];
+  services.fwupd.daemonSettings.DisabledPlugins = [
+    "uefi_capsule"
+    "uefi_dbx"
+  ];
 }
