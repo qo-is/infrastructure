@@ -44,6 +44,7 @@ in
 
       config = {
         DATA_FOLDER = "/var/lib/vaultwarden";
+        LOG_LEVEL = "warn";
 
         USE_SENDMAIL = true;
         SENDMAIL_COMMAND = "${pkgs.msmtp}/bin/sendmail";
