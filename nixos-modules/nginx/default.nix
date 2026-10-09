@@ -9,7 +9,7 @@ let
     mkEnableOption
     mkIf
     optionals
-    concatMapStringsSep
+    concatStringsSep
     ;
   inherit (config.qois.meta.network.virtual) backplane;
   loadbalancerHosts = [
@@ -28,7 +28,7 @@ in
     recommendedProxySettings = true;
     recommendedGzipSettings = true;
     recommendedBrotliSettings = true;
-    logError = "stderr warn";
+    logError = "stderr error";
     proxyResolveWhileRunning = true;
     statusPage = config.services.nginx.enable;
 
@@ -49,9 +49,11 @@ in
       ]
     );
 
-    appendHttpConfig = mkIf cfg.behindLoadbalancer (
-      concatMapStringsSep "\n" (ip: "set_real_ip_from ${ip};") trustedProxyIps
-      + "\nreal_ip_header proxy_protocol;\n"
+    appendHttpConfig = concatStringsSep "\n" (
+      [ "log_not_found off;" ]
+      ++ optionals cfg.behindLoadbalancer (
+        map (ip: "set_real_ip_from ${ip};") trustedProxyIps ++ [ "real_ip_header proxy_protocol;" ]
+      )
     );
   };
 }
