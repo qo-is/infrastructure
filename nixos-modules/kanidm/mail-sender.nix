@@ -82,7 +82,8 @@ in
 
     instanceDisplayName = mkOption {
       type = str;
-      default = "qo.is ID";
+      default = cfg.displayName;
+      defaultText = "config.qois.kanidm.displayName";
       description = "Name of the instance, shown in the subject of sent messages.";
     };
 

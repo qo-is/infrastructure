@@ -122,6 +122,26 @@ def test(
         ).strip()
         assert managed == "1", f"expected a single entry manager change, got {managed}"
 
+    with subtest("domain-settings"):
+        login = server.succeed(
+            f"curl -sf --cacert {caFile} https://{serverDomain}/ui/login"
+        )
+        assert f"<h3>{serverDomain}</h3>" in login, "display name is not shown"
+        assert f"Kanidm {serverDomain}" not in login, "default display name is shown"
+        assert "Recover Account" in login, "account recovery is not offered"
+
+        recover = server.succeed(
+            f"curl -sf --cacert {caFile} https://{serverDomain}/ui/recover"
+        )
+        assert "Enter your email to recover your account" in recover
+        assert "Account recovery has been disabled" not in recover
+
+    with subtest("domain-settings-idempotent"):
+        changed = server.succeed(
+            "journalctl -u kanidm.service | grep -c 'kanidm domain settings: setting'"
+        ).strip()
+        assert changed == "2", f"expected two domain setting changes, got {changed}"
+
     with subtest("mail-sender-account"):
         server.wait_for_unit("kanidm-mail-sender.service")
         server.succeed(

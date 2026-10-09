@@ -61,6 +61,7 @@ let
 in
 {
   imports = [
+    ./domain-settings.nix
     ./entry-managers.nix
     ./mail-sender.nix
     ./secrets.nix
