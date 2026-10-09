@@ -77,6 +77,7 @@ with lib;
         autoPrune.enable = true;
         defaultNetwork.settings.dns_enabled = true;
       };
+      systemd.services.podman.environment.LOGGING = "--log-level=warn";
 
       services.gitea-actions-runner = {
         package = pkgs.forgejo-runner;
