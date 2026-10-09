@@ -47,6 +47,8 @@ with lib;
           enable_gzip = true;
         };
 
+        log.level = "warn";
+
         "auth.anonymous".enabled = false;
 
         security = {
