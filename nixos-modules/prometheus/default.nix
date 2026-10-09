@@ -26,6 +26,7 @@ in
     services.prometheus = {
       enable = true;
       checkConfig = true;
+      extraFlags = [ "--log.level=warn" ];
       scrapeConfigs = [
         {
           job_name = "prometheus";
