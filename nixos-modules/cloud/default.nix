@@ -126,6 +126,8 @@ with lib;
       { sources = [ "https://${cfg.domain}:443" ]; }
     ];
 
+    services.redis.servers.nextcloud.logLevel = "warning";
+
     systemd.services.nextcloud-cron = {
       path = [ pkgs.perl ];
     };
