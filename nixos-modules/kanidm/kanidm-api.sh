@@ -2,6 +2,7 @@ settings=$1
 password_file=$2
 
 url=$(jq -r .url "$settings")
+auth_account=$(jq -r '.authAccount // "idm_admin"' "$settings")
 curl_tls=()
 if [[ $(jq -r .acceptInvalidCerts "$settings") == true ]]; then
   curl_tls=(--insecure)
@@ -18,8 +19,8 @@ request() {
 authenticate() {
   local session_id
   session_id=$(
-    request --dump-header - --output /dev/null \
-      --json '{"step":{"init":"idm_admin"}}' "$url/v1/auth" |
+    jq --null-input --arg account "$auth_account" '{step: {init: $account}}' |
+      request --dump-header - --output /dev/null --json @- "$url/v1/auth" |
       sed -n 's/^x-kanidm-auth-session-id: *\([^[:space:]]*\).*/\1/Ip'
   )
   session_header="X-KANIDM-AUTH-SESSION-ID: $session_id"
