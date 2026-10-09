@@ -152,6 +152,12 @@ in
       };
     };
 
+    systemd.services.kanidm.serviceConfig.LogFilterPatterns = [
+      ''~^[0-9a-f-]{36} INFO +request \[ .* \] method: GET \| uri: /scim/v1/Message/_ready \| .* \| status_code: 200 \|''
+      ''~^[0-9a-f-]{36} INFO +┕━ scim_message_ready_search \[ .* \]$''
+      ''~^[0-9a-f-]{36} INFO +┕━ ｉ \[info\]: search \| event_tag_id: [0-9]+ \| initiator: User\( mail-sender@''
+    ];
+
     systemd.services.kanidm-mail-sender = {
       description = "Kanidm mail sender";
       wantedBy = [ "multi-user.target" ];
@@ -176,6 +182,10 @@ in
         ExecStart = "${getExe' cfg.package "kanidm-mail-sender"} --client-config ${clientConfig} --mail-sender-config %t/kanidm-mail-sender/${configFile}";
         Restart = "on-failure";
         RestartSec = 10;
+        LogFilterPatterns = [
+          "~kanidm_mail_sender.* checking for mail \\.\\.\\.$"
+          "~kanidm_mail_sender.* next mail check on [0-9-]+ [0-9:]+ UTC, wait_time = [0-9]+s$"
+        ];
 
         CapabilityBoundingSet = "";
         DeviceAllow = "";

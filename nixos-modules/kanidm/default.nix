@@ -242,6 +242,9 @@ in
     systemd.services.kanidm = {
       after = [ "acme-order-renew-${cfg.domain}.service" ];
       wants = [ "acme-order-renew-${cfg.domain}.service" ];
+      serviceConfig.LogFilterPatterns = [
+        ''~^[0-9a-f-]{36} INFO +┝━ ｉ \[info\]: A valid session value exists for this token \| event_tag_id: [0-9]+$''
+      ];
     };
 
     security.acme.certs.${cfg.domain} = {
