@@ -50,6 +50,22 @@ def test(server, subtest):
             " | grep '^forgejo_build_status_value' | grep -cv 'state='"
         )
 
+    with subtest("btrfs"):
+        server.succeed("mkfs.btrfs --label test-data /dev/vdb")
+        server.succeed("mkdir -p /mnt/btrfs && mount /dev/vdb /mnt/btrfs")
+        metric = "curl -s http://localhost:9273/metrics | grep -c "
+        server.wait_until_succeeds(
+            metric
+            + '\'^btrfs_device_errors_corruption_errs{.*devid="1".*label="test-data".*} 0$\''
+        )
+        server.succeed(
+            metric + "'^btrfs_space_unallocated{.*label=\"test-data\".*} [1-9]'"
+        )
+        server.succeed(
+            metric + "'^btrfs_allocation_bytes_used{.*type=\"metadata\".*} [0-9]'"
+        )
+        server.succeed(metric + "'^btrfs_commits_commits{.*label=\"test-data\".*}'")
+
     with subtest("periodic-jobs"):
         metric = "curl -s http://localhost:9273/metrics | grep -c "
         server.wait_until_succeeds(

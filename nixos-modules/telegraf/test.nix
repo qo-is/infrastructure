@@ -49,6 +49,9 @@ in
         startAt = "2099-01-01";
       };
 
+      boot.supportedFilesystems.btrfs = true;
+      virtualisation.emptyDiskImages = [ 512 ];
+
       services.nginx.enable = true;
       services.nginx.virtualHosts.localhost.locations = {
         "/".return = "200 'H1ll0 W0rld!'";

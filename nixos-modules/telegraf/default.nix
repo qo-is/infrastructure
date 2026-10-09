@@ -38,6 +38,7 @@ in
 {
   imports = [
     inputs.srvos.nixosModules.mixins-telegraf
+    ./btrfs.nix
     ./monitoring.nix
   ];
 
