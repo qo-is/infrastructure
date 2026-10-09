@@ -35,6 +35,7 @@ in
   config = mkIf config.services.postgresql.enable {
     services.postgresql = {
       package = cfg.package;
+      settings.log_checkpoints = false;
       ensureUsers = [
         { name = "telegraf"; }
       ];
