@@ -90,6 +90,10 @@ in
       services.telegraf = {
         enable = true;
         extraConfig = {
+          agent = {
+            quiet = true;
+            skip_processors_after_aggregators = true;
+          };
           outputs.prometheus_client.expiration_interval = "10m";
           inputs = {
             cpu = [
