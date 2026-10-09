@@ -45,6 +45,7 @@ in
         optimizeForDisabled = true;
       };
       schedule = "*:0/10";
+      environment.LOG_LEVEL = "warn";
     };
 
     systemd.services.renovate = {
