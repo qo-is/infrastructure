@@ -64,7 +64,6 @@ in
 
         # TODO: push notifications, see https://github.com/dani-garcia/vaultwarden/blob/1.36.0/.env.template#L112
 
-        EXPERIMENTAL_CLIENT_FEATURE_FLAGS = "fido2-vault-credentials";
         SHOW_PASSWORD_HINT = false;
         TRASH_AUTO_DELETE_DAYS = 30;
       };
