@@ -34,7 +34,10 @@ in
       configuration = {
         auth_enabled = false;
 
-        server.http_listen_port = cfg.port;
+        server = {
+          http_listen_port = cfg.port;
+          log_level = "warn";
+        };
 
         common = {
           replication_factor = 1;
