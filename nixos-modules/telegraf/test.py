@@ -66,6 +66,13 @@ def test(server, subtest):
         )
         server.succeed(metric + "'^btrfs_commits_commits{.*label=\"test-data\".*}'")
 
+    with subtest("fwupd"):
+        metric = "curl -s http://localhost:9273/metrics | grep -c "
+        server.wait_until_succeeds(metric + "'^fwupd_updates_devices{.*} 0$'")
+        server.succeed(
+            metric + "'^systemd_job_success{.*name=\"fwupd-refresh.service\"}'"
+        )
+
     with subtest("periodic-jobs"):
         metric = "curl -s http://localhost:9273/metrics | grep -c "
         server.wait_until_succeeds(

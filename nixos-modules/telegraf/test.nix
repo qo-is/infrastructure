@@ -49,6 +49,7 @@ in
         startAt = "2099-01-01";
       };
 
+      services.fwupd.enable = true;
       boot.supportedFilesystems.btrfs = true;
       virtualisation.emptyDiskImages = [ 512 ];
 
