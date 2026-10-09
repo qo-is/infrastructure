@@ -20,6 +20,16 @@ def test(server, subtest):
 
     with subtest("rules-loaded"):
         rules = server.succeed("curl -s http://localhost:9090/api/v1/rules")
-        assert "SystemdServiceFailed" in rules, (
-            f"expected SystemdServiceFailed rule in prometheus rules but was not found in '{rules}'"
-        )
+        for rule in [
+            "SystemdServiceFailed",
+            "PeriodicJobNotSucceeded",
+            "BuildNotSucceeded",
+            "BtrfsDeviceErrors",
+            "BtrfsUnallocatedLow",
+            "BtrfsMetadataNearlyFull",
+            "FilesystemReadOnly",
+            "FwupdUpdatesAvailable",
+        ]:
+            assert rule in rules, (
+                f"expected {rule} rule in prometheus rules but was not found in '{rules}'"
+            )
