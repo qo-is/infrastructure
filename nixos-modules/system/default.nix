@@ -101,6 +101,18 @@ in
 
   systemd.settings.Manager.DefaultLimitNOFILE = 4096;
 
+  systemd.services.sshd.serviceConfig.LogFilterPatterns = [
+    ''~^Connection (closed|reset) by ((authenticating|invalid) user .* )?\S+ port [0-9]+ \[preauth\]$''
+    ''~^Disconnected from (authenticating|invalid) user .* \S+ port [0-9]+ \[preauth\]$''
+    ''~^Received disconnect from \S+ port [0-9]+:11: .*\[preauth\]$''
+    ''~^Invalid user .* from \S+ port [0-9]+$''
+    ''~^Timeout before authentication for connection from \S+ to \S+, pid = [0-9]+$''
+  ];
+  systemd.services.nix-daemon.serviceConfig.LogFilterPatterns = [
+    ''~^accepted connection from pid [0-9]+, user \S+$''
+  ];
+  systemd.services.nix-gc.serviceConfig.LogFilterPatterns = [ "~^deleting '/nix/store/" ];
+
   # Monitoring
   qois.telegraf.enable = true;
   qois.vector.enable = lib.mkDefault true;
