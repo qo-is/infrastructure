@@ -106,7 +106,7 @@ in
             "/".extraConfig = proxyTo prometheus.port;
           }
           // optionalAttrs prometheus.alertmanager.enable {
-            "/alertmanager/".extraConfig = proxyTo prometheus.alertmanager.port;
+            "${config.qois.alertmanager.routePrefix}/".extraConfig = proxyTo prometheus.alertmanager.port;
           };
         };
       };

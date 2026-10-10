@@ -3,7 +3,7 @@ let
   inherit (lib) mkEnableOption mkIf mkOption;
   inherit (lib.types) path str;
   cfg = config.qois.alertmanager;
-  routePrefix = "/alertmanager";
+  inherit (cfg) routePrefix;
 in
 {
   imports = [ ./alert-rules.nix ];
@@ -15,6 +15,13 @@ in
       type = str;
       default = "sysadmin@qo.is";
       description = "Address alerts are sent to.";
+    };
+
+    routePrefix = mkOption {
+      type = str;
+      default = "/alertmanager";
+      readOnly = true;
+      description = "Path prefix under which alertmanager serves its web UI and API.";
     };
 
     msmtpPasswordFile = mkOption {

@@ -123,6 +123,16 @@ with lib;
         type = "loki";
         uid = "P8E80F9AEF21F6940";
         url = "http://localhost:${toString config.qois.loki.port}";
+      }
+      ++ optional config.services.prometheus.alertmanager.enable {
+        name = "Alertmanager";
+        type = "alertmanager";
+        uid = "P1D6A1A3E0C9B7F42";
+        url = "http://localhost:${toString config.services.prometheus.alertmanager.port}${config.qois.alertmanager.routePrefix}";
+        jsonData = {
+          implementation = "prometheus";
+          handleGrafanaManagedAlerts = false;
+        };
       };
 
     qois.telegraf.serviceInputs.x509_cert = [

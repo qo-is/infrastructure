@@ -80,6 +80,10 @@ in
 
         qois.prometheus.enable = true;
         qois.loki.enable = true;
+        qois.alertmanager = {
+          enable = true;
+          msmtpPasswordFile = pkgs.writeText "msmtp-test-password" "dummy";
+        };
 
         # Use snakeoil certs instead of ACME
         security.acme.certs = lib.mkForce { };

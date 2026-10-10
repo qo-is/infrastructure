@@ -71,5 +71,29 @@ def test(server, client, serverDomain, subtest):
             f"expected datasource name 'Loki' but was '{loki_ds[0].get('name')}'"
         )
 
+    with subtest("alertmanager-datasource-provisioned"):
+        result = client.succeed(
+            f"curl --basic --user testadmin:snakeoilpwd https://{serverDomain}/api/datasources"
+        )
+        datasources = json.loads(result)
+        alertmanager_ds = [ds for ds in datasources if ds.get("type") == "alertmanager"]
+        assert len(alertmanager_ds) == 1, (
+            f"expected exactly 1 alertmanager datasource but found {len(alertmanager_ds)}"
+        )
+        assert alertmanager_ds[0].get("name") == "Alertmanager", (
+            f"expected datasource name 'Alertmanager' but was '{alertmanager_ds[0].get('name')}'"
+        )
+
+    with subtest("alertmanager-datasource-reachable"):
+        server.wait_for_unit("alertmanager.service")
+        uid = alertmanager_ds[0]["uid"]
+        result = client.succeed(
+            f"curl --fail --basic --user testadmin:snakeoilpwd https://{serverDomain}/api/alertmanager/{uid}/api/v2/status"
+        )
+        status = json.loads(result)
+        assert status.get("cluster") is not None, (
+            f"expected alertmanager status with cluster info but got '{status}'"
+        )
+
     with subtest("e2e-login"):
         client.succeed(f"grafana-selenium-test {serverDomain}")
