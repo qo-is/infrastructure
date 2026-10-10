@@ -57,7 +57,12 @@ in
         receivers = [
           {
             name = "email";
-            email_configs = [ { to = cfg.emailTo; } ];
+            email_configs = [
+              {
+                to = cfg.emailTo;
+                send_resolved = true;
+              }
+            ];
           }
         ];
       };
