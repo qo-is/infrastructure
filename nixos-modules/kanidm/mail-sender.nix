@@ -127,7 +127,7 @@ in
       description = "Provision the kanidm mail sender service account and token";
       after = [ "kanidm.service" ];
       requires = [ "kanidm.service" ];
-      startAt = "*:0/15";
+      startAt = "hourly";
       serviceConfig = {
         Type = "oneshot";
         User = "kanidm";
