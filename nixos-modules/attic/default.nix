@@ -86,7 +86,6 @@ in
       enable = true;
       clientMaxBodySize = "10G";
       virtualHosts.${cfg.domain} = {
-        kTLS = true;
         forceSSL = true;
         enableACME = true;
 

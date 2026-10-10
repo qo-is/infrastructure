@@ -99,7 +99,6 @@ in
       services.nginx = {
         enable = true;
         virtualHosts.${domain} = {
-          kTLS = true;
           forceSSL = true;
           enableACME = true;
           locations = {

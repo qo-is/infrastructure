@@ -168,7 +168,6 @@ in
       defaultHTTPListenPort = 8080;
 
       virtualHosts.${cfg.domain} = {
-        kTLS = true;
         forceSSL = true;
         enableACME = true;
         locations."/" = {

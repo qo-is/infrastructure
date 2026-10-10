@@ -125,7 +125,6 @@ with lib;
             defaultVhostConfig = {
               enableACME = true;
               forceSSL = true;
-              kTLS = true;
             };
             mkVhost =
               { root, ... }:

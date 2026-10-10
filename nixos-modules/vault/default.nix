@@ -79,7 +79,6 @@ in
     networking.hosts."127.0.0.1" = [ cfg.domain ];
 
     services.nginx.virtualHosts.${cfg.domain} = {
-      kTLS = true;
       enableACME = true;
     };
 

@@ -37,7 +37,6 @@ with lib;
     services.nginx.virtualHosts."${cfg.domain}" = {
       forceSSL = true;
       enableACME = true;
-      kTLS = true;
     };
 
     sops.secrets."nextcloud/admin" = with config.users.users.nextcloud; {

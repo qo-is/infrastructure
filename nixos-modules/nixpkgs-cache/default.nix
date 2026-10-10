@@ -57,7 +57,6 @@ with lib;
       };
 
       virtualHosts.${cfg.hostname} = {
-        kTLS = true;
         forceSSL = true;
         enableACME = true;
 

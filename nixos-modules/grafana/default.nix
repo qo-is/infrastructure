@@ -144,7 +144,6 @@ with lib;
       enable = true;
 
       virtualHosts.${cfg.domain} = {
-        kTLS = true;
         forceSSL = true;
         enableACME = true;
 
