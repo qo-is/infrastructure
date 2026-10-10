@@ -69,9 +69,10 @@ ensure_sender_membership() {
 }
 
 rm -f "$token_file".??????
+if [[ -s $token_file ]] && ! token_rejected; then
+  exit 0
+fi
 authenticate
 ensure_service_account
-if [[ ! -s $token_file ]] || token_rejected; then
-  generate_token
-fi
+generate_token
 ensure_sender_membership
