@@ -92,8 +92,9 @@ in
         };
 
         log.syslog = {
-          any = "info";
-          control = "warning";
+          any = "warning";
+          server = "info";
+          zone = "info";
         };
 
         template.default.global-module = [
