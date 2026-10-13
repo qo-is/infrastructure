@@ -11,12 +11,14 @@ let
     optionals
     concatStringsSep
     ;
-  inherit (config.qois.meta.network.virtual) backplane;
+  inherit (config.qois.meta.network.virtual) backplane lindberg-containers-nat;
   loadbalancerHosts = [
     "lindberg"
     "cyprianspitz"
   ];
-  trustedProxyIps = map (name: backplane.hosts.${name}.v4.ip) loadbalancerHosts;
+  trustedProxyIps = map (name: backplane.hosts.${name}.v4.ip) loadbalancerHosts ++ [
+    lindberg-containers-nat.hosts.lindberg.v4.ip
+  ];
   cfg = config.qois.nginx;
 in
 {

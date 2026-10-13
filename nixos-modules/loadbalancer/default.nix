@@ -185,16 +185,14 @@ in
           (mapAttrsToList (genHttpBackend "send-proxy-v2"))
           concatLines
         ];
+        isContainerHost = cfg.containerHost == config.networking.hostName;
         containerBackendIp =
-          name:
-          if cfg.containerHost == config.networking.hostName then
-            getContainerIp name
-          else
-            getBackplaneIp cfg.containerHost;
+          name: if isContainerHost then getContainerIp name else getBackplaneIp cfg.containerHost;
+        containerServerOptions = if isContainerHost then "send-proxy-v2" else "";
         containerBackends = pipe cfg.containerDomains [
           (mapAttrsToList (_domain: name: name))
           unique
-          (map (name: genHttpBackend "" name (containerBackendIp name)))
+          (map (name: genHttpBackend containerServerOptions name (containerBackendIp name)))
           concatLines
         ];
       in

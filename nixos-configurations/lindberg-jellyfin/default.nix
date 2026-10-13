@@ -8,6 +8,7 @@
 
   qois.jellyfin.enable = true;
   qois.jellyfin.domain = "media.qo.is";
+  qois.nginx.behindLoadbalancer = true;
 
   # Disable host-level services that don't belong in this container;
   # backups, mail, and monitoring are handled by the lindberg host.
