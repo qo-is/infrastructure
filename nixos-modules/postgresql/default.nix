@@ -41,6 +41,10 @@ in
       ];
     };
 
+    systemd.tmpfiles.settings."10-postgresql-nocow" = mkIf (config.fileSystems."/".fsType == "btrfs") {
+      ${dirOf pgCfg.dataDir}.h.argument = "+C";
+    };
+
     services.postgresqlBackup.enable = true;
     qois.backup-client.includePaths = [ config.services.postgresqlBackup.location ];
     qois.telegraf.periodicJobs =
