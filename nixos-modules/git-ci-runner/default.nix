@@ -8,6 +8,7 @@
 let
   cfg = config.qois.git-ci-runner;
   defaultInstanceName = "default";
+  fetchInterval = "20s";
 in
 with lib;
 {
@@ -95,6 +96,7 @@ with lib;
             log.level = "warn";
             runner = {
               capacity = 30;
+              fetch_interval = fetchInterval;
             };
             cache.enable = true; # TODO: This should probably be a central cache server?
             container.network = "host";
@@ -300,6 +302,7 @@ with lib;
           tokenFile = config.sops.secrets."forgejo/runner-registration-token".path;
           labels = [ "nix:docker://gitea-runner-nix" ];
           settings = {
+            runner.fetch_interval = fetchInterval;
             container.options = "-e NIX_BUILD_SHELL=/bin/bash -e PAGER=cat -e PATH=/bin -e SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt --device /dev/kvm -v /nix:/nix -v ${storeDeps}/bin:/bin -v ${storeDeps}/etc/ssl:/etc/ssl --user nixuser --device=/dev/kvm";
             container.network = "host";
             container.valid_volumes = [
