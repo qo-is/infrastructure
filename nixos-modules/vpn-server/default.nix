@@ -84,6 +84,8 @@ in
         settings = {
           server_url = "https://${cfg.domain}:443";
 
+          log.level = "warn";
+
           dns = {
             base_domain = vpnNet.domain;
             magic_dns = true;
