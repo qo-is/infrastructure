@@ -1,11 +1,17 @@
 { config, lib, ... }:
 let
-  inherit (lib) mkIf;
+  inherit (lib) mkIf mkForce;
   unallocatedLow = "btrfs_space_unallocated < 3 * 1024 ^ 3";
+  maxUptimeDays = 60;
 in
 {
   config = mkIf config.qois.alertmanager.enable {
     srvos.prometheus.ruleGroups = {
+      srvosAlerts.alertRules.Uptime = {
+        expr = mkForce "system_uptime > ${toString maxUptimeDays} * 86400";
+        annotations.description = mkForce "{{$labels.host}} has been up for more than ${toString maxUptimeDays} days";
+      };
+
       # systemd forgets exit timestamps on reboot, max_over_time keeps the last success visible.
       qoisPeriodicJobs.alertRules.PeriodicJobNotSucceeded = {
         expr = "systemd_job_success unless on(host, name) (time() - max_over_time(systemd_job_last_success_timestamp[30h]) < 30 * 3600)";
