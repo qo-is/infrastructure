@@ -36,6 +36,7 @@ in
       qois.telegraf.periodicJobs = [
         "demo-job.service"
         "failing-job.service"
+        "scheduled-job.service"
       ];
       systemd.services.demo-job = {
         serviceConfig.Type = "oneshot";
@@ -48,6 +49,12 @@ in
         script = "false";
         startAt = "2099-01-01";
       };
+      systemd.services.scheduled-job = {
+        serviceConfig.Type = "oneshot";
+        script = "true";
+        startAt = "*:*:0/5";
+      };
+      systemd.timers.scheduled-job.timerConfig.AccuracySec = "1s";
 
       services.fwupd.enable = true;
       boot.supportedFilesystems.btrfs = true;

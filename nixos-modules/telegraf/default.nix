@@ -7,31 +7,37 @@
 }:
 let
   inherit (lib) concatMapStringsSep escapeShellArg;
-  inherit (pkgs) gawk systemd writeShellApplication;
+  inherit (pkgs) systemd writeShellApplication;
   cfg = config.qois.telegraf;
 
   systemdJobStatus = writeShellApplication {
     name = "systemd-job-status";
-    runtimeInputs = [
-      gawk
-      systemd
-    ];
+    runtimeInputs = [ systemd ];
     text = ''
-      systemctl show --timestamp=unix --property=Id,Result,ExecMainExitTimestamp "$@" | awk -F= '
-        function flush() {
-          if (id == "") return
-          if (result == "success" && ts != "")
-            printf "systemd_job,name=%s success=1i,last_success_timestamp=%si\n", id, ts
-          else
-            printf "systemd_job,name=%s success=0i\n", id
-          id = result = ts = ""
-        }
-        $0 == "" { flush(); next }
-        $1 == "Id" { id = $2 }
-        $1 == "Result" { result = $2 }
-        $1 == "ExecMainExitTimestamp" { ts = substr($2, 2) }
-        END { flush() }
-      '
+      property() {
+        systemctl show --timestamp=unix --property="$2" --value "$1"
+      }
+
+      nextExecutionGap() {
+        local timer nextElapse lastTrigger
+        read -r timer _ <<<"$(property "$1" TriggeredBy)"
+        [ -n "$timer" ] || return 0
+        nextElapse=$(property "$timer" NextElapseUSecRealtime)
+        lastTrigger=$(property "$timer" LastTriggerUSec)
+        if [ -n "$nextElapse" ] && [ -n "$lastTrigger" ]; then
+          printf ',next_execution_gap_seconds=%si' $((''${nextElapse#@} - ''${lastTrigger#@}))
+        fi
+      }
+
+      for unit in "$@"; do
+        exitTimestamp=$(property "$unit" ExecMainExitTimestamp)
+        if [ "$(property "$unit" Result)" = success ] && [ -n "$exitTimestamp" ]; then
+          fields="success=1i,last_success_timestamp=''${exitTimestamp#@}i"
+        else
+          fields="success=0i"
+        fi
+        printf 'systemd_job,name=%s %s%s\n' "$(property "$unit" Id)" "$fields" "$(nextExecutionGap "$unit")"
+      done
     '';
   };
 in
@@ -63,7 +69,9 @@ in
       example = [ "postgresqlBackup.service" ];
       description = ''
         Oneshot systemd services whose last successful exit is monitored.
-        Exported as `systemd_job_success` and `systemd_job_last_success_timestamp`.
+        Exported as `systemd_job_success` and `systemd_job_last_success_timestamp`, and for
+        jobs started by a timer that has fired, `systemd_job_next_execution_gap_seconds`:
+        the time between the timer's last and next trigger.
       '';
     };
   };
