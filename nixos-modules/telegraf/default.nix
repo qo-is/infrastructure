@@ -74,6 +74,12 @@ in
         the time between the timer's last and next trigger.
       '';
     };
+
+    periodicJobsInterval = lib.mkOption {
+      type = lib.types.str;
+      default = "1m";
+      description = "Interval at which the status of `periodicJobs` is collected.";
+    };
   };
 
   config = lib.mkMerge [
@@ -88,7 +94,7 @@ in
             }"
           ];
           data_format = "influx";
-          interval = "1m";
+          interval = cfg.periodicJobsInterval;
           timeout = "10s";
         }
       ];

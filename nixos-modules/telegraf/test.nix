@@ -38,6 +38,7 @@ in
         "failing-job.service"
         "scheduled-job.service"
       ];
+      qois.telegraf.periodicJobsInterval = "1s";
       systemd.services.demo-job = {
         serviceConfig.Type = "oneshot";
         script = "true";
