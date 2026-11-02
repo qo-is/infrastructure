@@ -90,3 +90,11 @@ def test(server, subtest):
         server.succeed(
             metric + "'^systemd_job_success{.*name=\"failing-job.service\"} 0'"
         )
+        server.fail(
+            metric
+            + "'^systemd_job_next_execution_gap_seconds{.*name=\"demo-job.service\"}'"
+        )
+        server.wait_until_succeeds(
+            metric
+            + "'^systemd_job_next_execution_gap_seconds{.*name=\"scheduled-job.service\"} [45]$'"
+        )

@@ -34,6 +34,7 @@ in
     services.prometheus = {
       enable = true;
       checkConfig = true;
+      retentionTime = "31d";
       extraFlags = [ "--log.level=warn" ];
       webExternalUrl = "https://${cfg.domain}/";
       scrapeConfigs = [
