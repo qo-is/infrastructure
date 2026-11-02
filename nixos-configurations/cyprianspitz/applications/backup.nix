@@ -1,12 +1,11 @@
 { config, ... }:
 
+let
+  dataVolume = config.disko.devices.lvm_vg.vg_data.lvs.lv_data.content;
+in
 {
   qois.backup-server = {
     enable = true;
-    backupStorageRoot =
-      let
-        dataDrive = config.disko.devices.lvm_vg.vg_data.lvs.lv_data.content.mountpoint;
-      in
-      dataDrive + "/backup";
+    backupStorageRoot = dataVolume.mountpoint + dataVolume.subvolumes."/backup".name;
   };
 }

@@ -98,14 +98,17 @@
           lv_data = {
             size = "14TB";
             content = {
-              type = "filesystem";
-              format = "btrfs";
+              type = "btrfs";
               mountpoint = "/mnt/data";
               mountOptions = [
                 "defaults"
                 "noatime"
                 "x-systemd.device-timeout=infinity"
               ];
+              subvolumes = {
+                "/backup" = { };
+                "/backup/.snapshots" = { };
+              };
             };
           };
         };
