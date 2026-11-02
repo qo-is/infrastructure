@@ -5,6 +5,20 @@
 }:
 
 let
+  inherit (lib)
+    attrNames
+    concatStringsSep
+    mapAttrsToList
+    mkEnableOption
+    mkIf
+    mkOption
+    ;
+  inherit (lib.types)
+    enum
+    listOf
+    nullOr
+    str
+    ;
   cfg = config.qois.backup-client;
   defaultIncludePaths = [
     "/etc"
@@ -17,17 +31,16 @@ let
   ];
   defaultSopsPasswordFile = "system/backup/password";
 in
-with lib;
 {
   options.qois.backup-client =
     let
-      pathsType = with types; listOf str;
+      pathsType = listOf str;
     in
     {
       enable = mkEnableOption "Enable this host to execute backups.";
 
       targets = mkOption {
-        type = with types; listOf (enum (attrNames config.qois.meta.hosts));
+        type = listOf (enum (attrNames config.qois.meta.hosts));
         default = [
           "cyprianspitz"
         ];
@@ -47,14 +60,14 @@ with lib;
       };
 
       passwordFile = mkOption {
-        type = with types; nullOr str;
+        type = nullOr str;
         default = null;
         example = "config.sops.secrets.${defaultSopsPasswordFile}.path";
         description = "Path to password file. Taken from sops host secret ${defaultSopsPasswordFile} by default, must be randomly generated per host.";
       };
 
       networkName = mkOption {
-        type = types.enum (attrNames config.qois.meta.network.virtual);
+        type = enum (attrNames config.qois.meta.network.virtual);
         default = "backplane";
         description = "Name of virtual network through which the backups should be done";
       };
@@ -87,6 +100,13 @@ with lib;
 
           startAt = "07:06";
           persistentTimer = true;
+
+          prune.keep = {
+            within = "14d";
+            weekly = 4;
+            monthly = 6;
+            yearly = -1;
+          };
         };
       }) cfg.targets
     )
