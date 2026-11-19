@@ -54,15 +54,15 @@ in
     reason = "NGINX2Root: CVE-2026-123007, CVE-2026-123634, CVE-2026-123633, CVE-2026-121810, CVE-2026-113425";
   };
 
-  # TODO: PHP security release. When the backport is merged, set rev, narHash, fixedIn, reason and enable.
-  # services.nextcloud.phpPackage = securityOverride {
-  #   stable = pkgs.php84;
-  #   override =
-  #     (nixpkgsAt {
-  #       rev = "<backport merge commit>";
-  #       narHash = "<nix flake prefetch github:NixOS/nixpkgs/<rev>>";
-  #     }).php84;
-  #   fixedIn = "<8.4.x>";
-  #   reason = "<CVE>";
-  # };
+  services.nextcloud.phpPackage = securityOverride {
+    stable = pkgs.php84;
+    override =
+      (nixpkgsAt {
+        rev = "69467f449339164b3f036b1dfa27b1b0c5e38925"; # merge of backport NixOS/nixpkgs#590478 to release-26.05
+        narHash = "sha256-zmAhBnYUn1isWKdRr5T+qnQNJ4iwRvpMtnsbQfSh3Pg=";
+      }).php84;
+    fixedIn = "8.4.28";
+    # https://www.php.net/ChangeLog-8.php#8.4.28
+    reason = "PHP 8.4.28 security release: CVE-2026-129496, CVE-2026-129289, CVE-2026-129292, CVE-2026-129291, CVE-2026-128090, CVE-2026-126714, CVE-2026-115560, CVE-2026-129481, CVE-2026-15353, CVE-2026-129506, CVE-2026-128064, CVE-2026-127960";
+  };
 }
