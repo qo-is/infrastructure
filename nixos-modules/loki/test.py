@@ -7,7 +7,7 @@ start_all()  # noqa: F821
 def test(server, subtest):
     with subtest("loki-ready"):
         server.wait_for_unit("loki.service")
-        server.wait_for_open_port(3100)
+        server.wait_until_succeeds("curl -sf http://localhost:3100/ready")
 
     with subtest("push-and-query"):
         payload = json.dumps(
