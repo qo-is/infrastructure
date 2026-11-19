@@ -35,6 +35,15 @@ in
       EmitDNS = "yes";
       DNS = netConfig.hosts.lindberg.v4.ip;
     };
+
+    dhcpServerStaticLeases = [
+      {
+        # lindberg-rzimmermann
+        MACAddress = "52:54:00:59:ff:37";
+        Address = "10.247.0.113";
+      }
+    ];
+
     extraConfig = ''
       [Network]
       Domains=${netConfig.domain}
