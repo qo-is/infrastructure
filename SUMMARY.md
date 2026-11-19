@@ -10,6 +10,7 @@ ______________________________________________________________________
 - [Hardware (generic)](defaults/hardware/README.md)
 - [Backups](backups.md)
 - [Updates](updates.md)
+- [Security Overrides](nixos-modules/security-overrides/README.md)
 - [New Host Setup](nixos-configurations/setup.md)
 
 # Services

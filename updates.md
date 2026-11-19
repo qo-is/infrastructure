@@ -58,3 +58,7 @@ This includes the modules for:
 - `postgresql`, [→ Nixpkgs manual page](https://nixos.org/manual/nixos/stable/#module-services-postgres-upgrading)
 - `kanidm`, pinned via `qois.kanidm.package` in the host configuration
   - Minor versions must be upgraded one at a time, skipping one is not supported
+
+## Security Fixes
+
+If a security fix is not yet in the stable channel, see [Security Overrides](nixos-modules/security-overrides/README.md).
