@@ -43,15 +43,14 @@ jobs:
           git fetch origin main
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           git merge-base --is-ancestor origin/main HEAD
-          unexpected=$(git diff --name-only origin/main HEAD | grep -vxE 'flake\.lock|private' || true)
+          changed=$(git diff --name-only --no-renames origin/main HEAD)
+          unexpected=$(grep -vxE 'flake\.lock|private' <<<"$changed" || true)
           if [ -n "$unexpected" ]; then
             echo "Unexpected changes: $unexpected"
             exit 1
           fi
-      - name: Fast-forward main and remove update branch
-        run: |
-          git push origin "HEAD:refs/heads/main"
-          git push origin --delete "$GITHUB_REF_NAME"
+      - name: Fast-forward main
+        run: git push origin "HEAD:refs/heads/main"
   deploy:
     needs: build
     if: success() && github.ref == 'refs/heads/main'
