@@ -61,7 +61,11 @@ with lib;
       database.createLocally = true;
 
       config = {
-        adminpassFile = config.sops.secrets."nextcloud/admin".path;
+        adminpassFile =
+          if config.sops.secrets ? "nextcloud/admin" then
+            config.sops.secrets."nextcloud/admin".path
+          else
+            null;
         adminuser = "root";
         dbtype = "pgsql";
       };
