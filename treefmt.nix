@@ -9,7 +9,11 @@
     mdformat.enable = true;
     ruff-check.enable = true;
     ruff-format.enable = true;
-    shfmt.enable = true;
+    shfmt = {
+      enable = true;
+      indent_size = 2;
+      simplify = true;
+    };
   };
   settings = {
     global.excludes = [
