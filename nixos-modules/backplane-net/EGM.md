@@ -13,6 +13,7 @@ WireGuard full-mesh overlay network (`backplane`) kept connected by `wgautomesh`
 
 ## Invariants
 
+- `netName` must exist in `qois.meta.network.virtual` and the host in its `hosts`; evaluation throws a named error otherwise [default.nix:netConfig, hostNetConfig]
 - Interface is named `wg-${netName}`; address is the host's `v4.ip` with the network's prefix length [default.nix:networking.wireguard.interfaces]
 - Listen port is the host's `endpoint.port` if it has an endpoint, otherwise `cfg.port`; the same port is opened in UDP firewall [default.nix:listenPort, networking.firewall.allowedUDPPorts]
 - Private key lives at `/secrets/wireguard/private/${netName}` and is generated if missing [default.nix:privateKeyFile, generatePrivateKeyFile]

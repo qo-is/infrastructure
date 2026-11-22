@@ -15,8 +15,12 @@ let
   inherit (lib.types) number str;
   cfg = config.qois.backplane-net;
   hostName = config.networking.hostName;
-  netConfig = config.qois.meta.network.virtual.${cfg.netName};
-  hostNetConfig = netConfig.hosts.${hostName};
+  netConfig =
+    config.qois.meta.network.virtual.${cfg.netName}
+      or (throw "qois.backplane-net: network ${cfg.netName} is not defined in qois.meta.network.virtual");
+  hostNetConfig =
+    netConfig.hosts.${hostName}
+      or (throw "qois.backplane-net: host ${hostName} is not in qois.meta.network.virtual.${cfg.netName}.hosts");
   interface = "wg-${cfg.netName}";
   wgService = [ "wireguard-${interface}.service" ];
 in
