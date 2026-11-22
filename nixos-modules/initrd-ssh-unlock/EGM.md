@@ -9,7 +9,7 @@ Remote LUKS unlock over SSH in the systemd initrd. Connect with `ssh -o RequestT
 - `qois.initrd-ssh-unlock.enable` (bool, default false) [default.nix:enable]
 - `qois.initrd-ssh-unlock.interface` (str, required) [default.nix:interface]
 - `qois.initrd-ssh-unlock.ip` (str, default `dhcp`; or CIDR) [default.nix:ip]
-- `qois.initrd-ssh-unlock.gateway` (nullOr str, default null) [default.nix:gateway]
+- `qois.initrd-ssh-unlock.gateway` (nullOr str, default null); without it a static `ip` is reachable on-link only [default.nix:gateway]
 - `qois.initrd-ssh-unlock.sshHostKey` (str or path, required) [default.nix:sshHostKey]
 - `qois.initrd-ssh-unlock.sshPort` (port, default 2222) [default.nix:sshPort]
 

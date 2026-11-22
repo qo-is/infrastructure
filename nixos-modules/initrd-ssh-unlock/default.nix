@@ -52,7 +52,8 @@ in
       default = null;
       example = "192.168.0.1";
       description = ''
-        IP of the gateway. Required when `ip` is set to a static address.
+        IP of the default gateway for a static `ip`. Without it, only hosts
+        on the directly connected subnet can reach the initrd SSH server.
       '';
     };
 
