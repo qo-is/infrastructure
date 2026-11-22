@@ -1,6 +1,12 @@
 # Updates
 
-To update the infrastructure, do the following steps:
+## Automatic Updates
+
+Flake inputs and `private` are updated and automerged by the [`Update flake.lock`](.github/workflows/update-flake-lock.yml) workflow.
+
+## Manual Updates
+
+To update the infrastructure manually, do the following steps:
 
 ```bash
 

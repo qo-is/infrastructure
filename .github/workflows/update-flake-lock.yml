@@ -1,0 +1,35 @@
+name: Update flake.lock
+on:
+  schedule:
+    - cron: "0 6,18 * * *"
+      timezone: Europe/Zurich
+  workflow_dispatch:
+defaults:
+  run:
+    shell: nix develop --command bash -euo pipefail {0}
+env:
+  UPDATE_BRANCH: update/flake-lock
+jobs:
+  update:
+    runs-on: nix
+    steps:
+      - name: Initialize CI
+        uses: https://git.qo.is/qo.is/actions-nix-init@main
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          lfs: false
+      - name: Update private submodule to its latest main
+        run: |
+          git submodule update --remote private
+          (cd private && nix flake prefetch)
+      - name: Update flake inputs
+        run: nix flake update
+      - name: Push update branch
+        run: |
+          git add flake.lock private
+          if git diff --cached --quiet; then
+            echo "Nothing to update"
+            exit 0
+          fi
+          git -c user.name="qo.is CI" -c user.email="sysadmin+ci@qo.is" commit -m "Lock file maintenance"
+          git push --force origin "HEAD:refs/heads/$UPDATE_BRANCH"

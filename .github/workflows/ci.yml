@@ -25,6 +25,33 @@ jobs:
           attic use "$CACHE_REPOSITORY"
       - name: Run Builds and Checks
         run: nix-fast-build --no-nom --max-jobs 2 --eval-workers 2 --eval-max-memory-size 4096 --skip-cached --attic-cache "$CACHE_REPOSITORY"
+  automerge-flake-lock:
+    needs: build
+    if: success() && github.ref == 'refs/heads/update/flake-lock'
+    runs-on: nix
+    defaults:
+      run:
+        shell: nix develop --command bash -euo pipefail {0}
+    steps:
+      - name: Initialize CI
+        uses: https://git.qo.is/qo.is/actions-nix-init@main
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          lfs: false
+      - name: Verify the built commit only updates flake.lock and private
+        run: |
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git merge-base --is-ancestor origin/main HEAD
+          unexpected=$(git diff --name-only origin/main HEAD | grep -vxE 'flake\.lock|private' || true)
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected changes: $unexpected"
+            exit 1
+          fi
+      - name: Fast-forward main and remove update branch
+        run: |
+          git push origin "HEAD:refs/heads/main"
+          git push origin --delete "$GITHUB_REF_NAME"
   deploy:
     needs: build
     if: success() && github.ref == 'refs/heads/main'

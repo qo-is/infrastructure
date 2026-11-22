@@ -4,12 +4,7 @@
     "config:recommended"
   ],
   "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true,
-    "automergeType": "branch",
-    "schedule": [
-      "* 18-19 * * *"
-    ]
+    "enabled": false
   },
   "cloneSubmodules": true,
   "nix": {
