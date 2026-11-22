@@ -7,7 +7,9 @@
 }:
 
 let
+  inherit (pkgs) fetchNextcloudApp;
   cfg = config.qois.cloud;
+  memoriesVersion = "11.1.4";
 in
 with lib;
 {
@@ -25,9 +27,10 @@ with lib;
       type = types.package;
       description = "Which package to use for the Nextcloud instance.";
       relatedPackages = [
-        "nextcloud28"
-        "nextcloud29"
-        "nextcloud30"
+        "nextcloud32"
+        "nextcloud33"
+        "nextcloud34"
+        "nextcloud35"
       ];
     };
   };
@@ -71,13 +74,19 @@ with lib;
           deck
           groupfolders
           # maps # Unsupported with nextcloud31, not widely used currently, so disable for now.
-          memories
           music
           news
           notes
           tasks
           twofactor_webauthn
           ;
+        memories = fetchNextcloudApp {
+          appName = "memories";
+          appVersion = memoriesVersion;
+          url = "https://github.com/pulsejet/memories/releases/download/v${memoriesVersion}/memories.tar.gz";
+          hash = "sha256-ObXsa/F1M0Qy6MQJoEhNqGb/+QPGNJQsyzxBgJ+QY1M=";
+          license = "agpl3Plus";
+        };
       };
 
       phpOptions = {
