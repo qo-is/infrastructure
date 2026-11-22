@@ -41,7 +41,7 @@ in
         pssh
         ssh-to-age
         yq
-        kanidm_1_11
+        kanidm_1_12
       ]);
     LANG = "C.UTF-8";
     LC_ALL = "C.UTF-8";

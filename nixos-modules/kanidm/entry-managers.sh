@@ -28,7 +28,7 @@ set_entry_manager() {
 ensure_entry_manager() {
   local group=$1 manager=$2 parents=$3 current expected
   current=$(first_value "$group" entry_managed_by)
-  expected=$(first_value "$manager" spn)
+  expected=$(first_value "$manager" uuid)
   if [[ $current != "$expected" ]]; then
     set_entry_manager "$group" "$manager" "$parents"
   fi

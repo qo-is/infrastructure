@@ -25,7 +25,7 @@ let
     age
     curl
     gnugrep
-    kanidmWithSecretProvisioning_1_11
+    kanidmWithSecretProvisioning_1_12
     runCommand
     sops
     util-linux
@@ -35,7 +35,7 @@ let
 
   cfg = config.kanidmFixture;
   certs = import "${pkgs.path}/nixos/tests/common/acme/server/snakeoil-certs.nix";
-  kanidmPackage = kanidmWithSecretProvisioning_1_11;
+  kanidmPackage = kanidmWithSecretProvisioning_1_12;
   ageKeyFile = "/var/lib/sops-nix/key.txt";
   idmAdminPassword = "snakeoilIdmAdminPassword";
 

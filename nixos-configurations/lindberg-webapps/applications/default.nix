@@ -7,7 +7,7 @@
   qois.vault.enable = true;
   qois.git.enable = true;
   qois.kanidm.enable = true;
-  qois.kanidm.package = pkgs.kanidmWithSecretProvisioning_1_11;
+  qois.kanidm.package = pkgs.kanidmWithSecretProvisioning_1_12;
   qois.kanidm-grafana.enable = true;
   qois.kanidm-forgejo.enable = true;
   qois.kanidm-prometheus.enable = true;

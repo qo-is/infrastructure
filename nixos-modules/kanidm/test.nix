@@ -75,7 +75,7 @@ in
 
         qois.kanidm = {
           enable = true;
-          package = pkgs.kanidmWithSecretProvisioning_1_11;
+          package = pkgs.kanidmWithSecretProvisioning_1_12;
           domain = serverDomain;
           adminPasswordFile = writeText "kanidm-admin-password" "snakeoilAdminPassword";
           idmAdminPasswordFile = writeText "kanidm-idm-admin-password" idmAdminPassword;
