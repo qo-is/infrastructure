@@ -35,7 +35,7 @@ NixOS infrastructure-as-code repository (Nix Flakes). All services are defined d
 
 ### Flake Structure
 
-`flake.nix` loads each output section from its subdirectory, passing a shared `importParams` record containing all flake inputs plus `pkgs`, `system`, and `deployPkgs`. Each subdirectory's `default.nix` receives these params.
+`flake.nix` loads each output section from its subdirectory and passes it a layered `inputSubset*` record: the external inputs plus `pkgs`, `system` and `deployPkgs`, and a `self` that holds only the flake outputs that section may depend on (e.g. `inputSubsetForNixosConfigurations` adds `nixosModules` and `devShells`). This keeps the outputs free of cycles; see the dependency graph comment in `flake.nix`. Direct access to the full flake goes through `flakeSelfSpecialUsage` and should be avoided.
 
 ```
 flake.nix
