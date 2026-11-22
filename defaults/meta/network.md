@@ -29,7 +29,7 @@ All Services are published under the *qo.is* domain name. Following services are
 
 `qo.is` Primery Domain - Redirect to docs.qo.is and some .well-known ressources
 
-{{#include ../backplane-net/README.md}}
+{{#include ../../nixos-modules/backplane-net/README.md}}
 
 ## Contacts
 

@@ -17,7 +17,7 @@ Static host and network metadata exposed as `qois.meta.*` options values, shared
 - `riedbach-ext` is dynamic and defines no `v4.id`; consumers must tolerate that [network-physical.nix:riedbach-ext, ../../topology/networks.nix:tryNetworkId].
 - Backplane endpoints reference `physical-network.plessur-ext.hosts.calanda.fqdn`, which is derived from host name and network domain by the option defaults in [nixos-modules/meta](../../nixos-modules/meta/EGM.md) [network-virtual.nix:endpoint] [nixos-modules/meta/network.nix:mkFqdn].
 - Adding a host requires entries in `hosts.json` and, for backplane membership, `network-virtual.nix` [hosts.nix, network-virtual.nix:backplane.hosts].
-- `network.md` has an mdbook include of `../backplane-net/README.md`, which does not exist in the repo tree checked [network.md].
+- `network.md` includes the [backplane-net](../../nixos-modules/backplane-net/README.md) README via mdbook [network.md].
 
 ## Side Effects
 
