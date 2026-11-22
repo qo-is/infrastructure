@@ -8,7 +8,7 @@ Typed host and network metadata (`qois.meta.*`) consumed by other modules and co
 
 - `qois.meta.hosts` (attrsOf submodule) with `hostName` (strMatching hostname regex, default attribute name) and `sshKey` (nullOr ed25519 public key, default null) [hosts.nix:options.qois.meta.hosts]
 - `qois.meta.network.physical` (attrsOf submodule, default `{ }`) with `v4` (id, prefixLength, gateway, nameservers), `v6` (nullOr, required without default), `domain`, `hosts.<name>.{v4.ip,v6.ip,fqdn}` [network.nix:options.qois.meta.network.physical]
-- `qois.meta.network.virtual` (attrsOf submodule, default `{ }`) with the same fields (but `v6` defaults to null) plus per host `publicKey`, `persistentKeepalive` and optional `endpoint.{fqdn,port}` for VPN servers [network.nix:options.qois.meta.network.virtual]
+- `qois.meta.network.virtual` (attrsOf submodule, default `{ }`) with the same fields (but `v6` defaults to null) plus per host `publicKey`, `persistentKeepalive` (null or 1..65535) and optional `endpoint.{fqdn,port}` for VPN servers [network.nix:options.qois.meta.network.virtual]
 - `default.nix` imports `hosts.nix` and `network.nix` [default.nix:imports]
 
 ## Invariants

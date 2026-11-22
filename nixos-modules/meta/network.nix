@@ -146,7 +146,7 @@ in
                       };
                       persistentKeepalive = mkOption {
                         default = null;
-                        type = nullOr int;
+                        type = nullOr (ints.between 1 65535);
                         example = 25;
                         description = ''
                           This is optional and is by default off, because most
