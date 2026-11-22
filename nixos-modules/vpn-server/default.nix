@@ -40,7 +40,6 @@ in
 
     environment.systemPackages = [ pkgs.headscale ];
 
-    # We bind to the backplane vpn IP, so wait for the wireguard net to be available
     systemd.services.headscale.after = [ "wireguard-wg-backplane.service" ];
 
     qois.backup-client.includePaths =
