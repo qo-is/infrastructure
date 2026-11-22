@@ -2,16 +2,15 @@
 
 ## Overview
 
-Check definition that builds all packages. Not currently wired into the checks output.
+Check that builds every package of the current system.
 
 ## Interface
 
-- Derivation `all` via `linkFarmFromDrvs` of `attrValues self.packages` [default.nix:linkFarmFromDrvs]
+- `checks.${system}.packages`: derivation `all-packages` via `linkFarmFromDrvs` of `attrValues self.packages.${system}` [default.nix:linkFarmFromDrvs]
 
 ## Invariants
 
-- `../default.nix` does not import this directory, so no `checks.${system}.packages` attribute exists [../default.nix]
-- `self.packages` is keyed by system, so `attrValues` yields per-system sets rather than derivations [default.nix:attrValues]
+- Imported by `../default.nix` [../default.nix:packages]
 
 ## Side Effects
 
@@ -19,4 +18,4 @@ Check definition that builds all packages. Not currently wired into the checks o
 
 ## Verification
 
-- Run: `nix build .#<pkg>` per package
+- Run: `nix build .#checks.x86_64-linux.packages`

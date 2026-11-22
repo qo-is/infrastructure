@@ -1,5 +1,11 @@
-{ self, pkgs, ... }:
+{
+  self,
+  pkgs,
+  system,
+  ...
+}:
 let
+  inherit (pkgs) linkFarmFromDrvs;
   inherit (pkgs.lib) attrValues;
 in
-pkgs.linkFarmFromDrvs "all" (attrValues self.packages)
+linkFarmFromDrvs "all-packages" (attrValues self.packages.${system})
