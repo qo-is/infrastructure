@@ -35,7 +35,6 @@ in
   qois.router = {
     enable = true;
     wanInterface = "enp4s0";
-    wirelessInterfaces = [ "wlp5s0" ];
     lanInterfaces = [ "enp2s0" ];
     internalRouterIP = getCalandaIp4 plessur-lan-net;
     dhcp = {

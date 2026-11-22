@@ -8,7 +8,6 @@ SOHO router role: NAT, bridge and basic firewalling. Sibling modules [router-dhc
 
 - `qois.router.enable` (bool) [default.nix:options.qois.router.enable]
 - `qois.router.wanInterface` (nullOr str, default null) [default.nix:options.qois.router.wanInterface]
-- `qois.router.wirelessInterfaces` (listOf str, default `[ ]`), declared but not read by the module [default.nix:options.qois.router.wirelessInterfaces]
 - `qois.router.lanInterfaces` (listOf str, default `[ ]`) [default.nix:options.qois.router.lanInterfaces]
 - `qois.router.internalRouterIP` (str, required) [default.nix:options.qois.router.internalRouterIP]
 - `qois.router.internalPrefixLength` (int 0..32, default 24) [default.nix:options.qois.router.internalPrefixLength]

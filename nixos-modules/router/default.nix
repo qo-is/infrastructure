@@ -22,18 +22,6 @@ in
       '';
     };
 
-    wirelessInterfaces = mkOption {
-      type = types.listOf types.str;
-      example = [
-        "wlp1"
-        "wlp2"
-      ];
-      default = [ ];
-      description = ''
-        Wireless interfaces names.
-      '';
-    };
-
     lanInterfaces = mkOption {
       type = types.listOf types.str;
       example = [
