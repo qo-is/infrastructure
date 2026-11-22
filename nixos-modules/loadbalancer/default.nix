@@ -37,7 +37,6 @@ let
     "www.raphael.li" = "lindberg-rzimmermann";
 
     "vpn.qo.is" = "cyprianspitz-nginx";
-    "www.resourcee.fh2.ch" = "workstations-9001";
   };
   getBackplaneIp = hostname: config.qois.meta.network.virtual.backplane.hosts.${hostname}.v4.ip;
   defaultHostmap =
@@ -78,15 +77,37 @@ let
         mode tcp
         timeout tunnel 1h
         server s1 ${getBackplaneIp "cyprianspitz"}:8443 send-proxy-v2
-
-
-      # Winder Study Project (tmp)
-      backend workstations-9001-http
-        mode http
-        server s1 10.247.0.156:9001
     '';
   statsIpPort = "127.0.0.1:8404";
   cfg = config.qois.loadbalancer;
+  extraConfigBackends = pipe cfg.extraConfig [
+    (extraConfig: if extraConfig == null then "" else extraConfig)
+    (splitString "\n")
+    (map (builtins.match "[[:space:]]*backend[[:space:]]+([^[:space:]]+).*"))
+    (filter (match: match != null))
+    (map head)
+  ];
+  hostmapBackends = concatMap (hostName: [
+    "${hostName}-http"
+    "${hostName}-https"
+  ]) (attrNames cfg.hostmap);
+  definedBackends = hostmapBackends ++ extraConfigBackends;
+  undefinedDomainBackends = pipe cfg.domains [
+    (mapAttrsToList (
+      domain: backend:
+      map
+        (protocol: {
+          inherit domain;
+          backend = "${backend}-${protocol}";
+        })
+        [
+          "http"
+          "https"
+        ]
+    ))
+    flatten
+    (filter ({ backend, ... }: !elem backend definedBackends))
+  ];
 in
 {
 
@@ -116,6 +137,15 @@ in
   config =
     with lib;
     mkIf cfg.enable {
+
+      assertions = [
+        {
+          assertion = undefinedDomainBackends == [ ];
+          message = "qois.loadbalancer.domains map to undefined haproxy backends: ${
+            concatMapStringsSep ", " ({ domain, backend }: "${domain} -> ${backend}") undefinedDomainBackends
+          }";
+        }
+      ];
 
       networking.firewall.allowedTCPPorts = [
         80
