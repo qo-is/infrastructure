@@ -19,7 +19,7 @@ Generic NixOS hardware modules imported by host configurations. Each imports `no
 
 ## Side Effects
 
-None beyond setting NixOS options (boot, microcode, fwupd plugin disabling on APU).
+None beyond setting NixOS options (boot, microcode, fwupd plugin disabling in `apu.nix` only).
 
 ## Verification
 

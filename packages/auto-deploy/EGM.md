@@ -21,7 +21,7 @@ Shell application that runs `deploy` (deploy-rs) with retries for every flake de
 ## Side Effects
 
 - Writes the SSH key to `/dev/shm/ssh_deploy_key.*` (mode 600), removed by traps on EXIT/SIGINT/SIGTERM/SIGQUIT [script.bash:TEMP_KEY_FILE]
-- Runs `nix eval` and `nix build` against the flake root [script.bash:HOSTS]
+- Runs `nix eval` against the flake root [script.bash:HOSTS]; the known-hosts `nix build .#nixosConfigurations.lindberg...` is relative to the current directory [script.bash]
 - Deploys over SSH to hosts [script.bash:deploy]
 
 ## Verification

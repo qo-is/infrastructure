@@ -16,7 +16,7 @@ Forgejo Actions runners on podman: a default Docker/Ubuntu runner and N hardened
 ## Invariants
 
 - Instance names: `default` and `nix<n>`; services `gitea-runner-<instance>.service` [default.nix:defaultInstanceName, genList]
-- Default runner capacity 30, fetch interval `20s`, container network `host` [default.nix:settings.runner]
+- The `default` runner has capacity 30; all runners use fetch interval `20s` and container network `host`; nix runners keep the upstream default capacity [default.nix:settings.runner]
 - Nix runners run containers as `nixuser`, mounting `/nix`, `/dev/kvm` and a `storeDeps` bin/etc-ssl closure; only these volumes are valid [default.nix:container.options, container.valid_volumes]
 - Nix runner units are hardened (`DynamicUser`, `NoNewPrivileges`, `ProtectSystem=strict`, restricted syscalls and address families) and require `gitea-runner-nix-image.service` [default.nix:systemd.services nix runners]
 - Podman storage driver is `btrfs` at `/var/lib/containers/storage` [default.nix:virtualisation.containers.storage.settings]

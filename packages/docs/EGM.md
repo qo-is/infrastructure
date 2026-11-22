@@ -9,7 +9,7 @@ Builds the mdBook documentation website, embedding the rendered network topology
 - Derivation `qois-docs-<version>` via `stdenv.mkDerivation`; version is the flake `rev` or `dirtyRev` [default.nix:version]
 - Build inputs: `mdbook`, `mdbook-cmdrun`, `mdbook-plantuml`, `plantuml` [default.nix:buildInputs]
 - Sources: the whole flake source [default.nix:src]
-- Consumed by [deploy-ops docs profile](../../deploy/docs-ops/EGM.md)
+- Consumed by [docs-ops deploy profile](../../deploy/docs-ops/EGM.md)
 
 ## Invariants
 

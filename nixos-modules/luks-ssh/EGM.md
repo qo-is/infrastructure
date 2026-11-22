@@ -17,7 +17,7 @@ Remote LUKS unlock: starts an SSH server and network in the initrd so the disk p
 ## Invariants
 
 - Authorized keys are the keys of all users in group `wheel` [default.nix:authorizedKeys]
-- With a static `ip`, `gateway` and `netmask` must be set; they are placed on the kernel `ip=` parameter. With `"dhcp"`, udhcpc is enabled instead [default.nix:boot.kernelParams] [default.nix:boot.initrd.network.udhcpc.enable]
+- With a static `ip`, `gateway` and `netmask` must be set (not asserted; evaluation fails on the null interpolation otherwise); they are placed on the kernel `ip=` parameter. With `"dhcp"`, udhcpc is enabled instead [default.nix:boot.kernelParams] [default.nix:boot.initrd.network.udhcpc.enable]
 - The initrd host key is stored unencrypted, so it must not be the normal host key [default.nix:options.qois.luks-ssh.sshHostKey]
 
 ## Side Effects

@@ -14,7 +14,7 @@ Nextcloud service behind nginx with ACME TLS, PostgreSQL, Redis caching, notify_
 
 - App store disabled; apps are declared via `extraApps`: calendar, contacts, deck, groupfolders, memories, music, news, notes, tasks, twofactor_webauthn [default.nix:appstoreEnable, extraApps]
 - Admin user `root`, DB type `pgsql` created locally, upload limit 10G, HTTPS and webfinger on [default.nix:services.nextcloud]
-- php-fpm pool dynamic with `pm.max_children = 480`; opcache/JIT settings as listed [default.nix:poolSettings, phpOptions]
+- php-fpm pool dynamic with `pm.max_children = 480`; opcache `memory_consumption = 512`, `interned_strings_buffer = 64`, `max_accelerated_files = 50000`, `jit = 1255`, `jit_buffer_size = 8M` [default.nix:poolSettings, phpOptions]
 - Mail via `sendmail`, mail domain `qo.is`, default phone region `CH`, logging to syslog tag `nextcloud` [default.nix:settings]
 
 ## Side Effects

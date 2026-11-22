@@ -20,7 +20,8 @@ Protects the Prometheus and Alertmanager web UIs with kanidm SSO through oauth2-
 ## Side Effects
 
 - sops secret `oauth2-proxy/cookie-secret` (restarts `oauth2-proxy.service`) [default.nix:sops.secrets]
-- Orders `oauth2-proxy.service` after `kanidm.service` and `nginx.service` when kanidm is local [default.nix]
+- When kanidm is local, orders `oauth2-proxy.service` after `kanidm.service` and `nginx.service` and wants only `kanidm.service` [default.nix:systemd.services.oauth2-proxy]
+- oauth2-proxy, its cookie secret, the nginx vhost and the telegraf input are additionally gated on `services.prometheus.enable` [default.nix:mkIf prometheus.enable]
 - nginx vhost for the prometheus domain with `forceSSL`, `enableACME`; `networking.hosts` loopback entry [default.nix:services.nginx, networking.hosts]
 - telegraf `x509_cert` input [default.nix:qois.telegraf.serviceInputs.x509_cert]
 

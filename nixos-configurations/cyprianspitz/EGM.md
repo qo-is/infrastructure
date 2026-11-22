@@ -21,7 +21,7 @@ Physical server (AsRock Z790M) on the plessur LAN: loadbalancer, VPN server and 
 
 ## Invariants
 
-- LUKS password file `/run/secrets/system/hdd.key` must exist at install and boot [disko-config.nix:passwordFile].
+- disko reads the LUKS password from `/run/secrets/system/hdd.key` when formatting; the declared sops secret `system/hdd` lands at `/run/secrets/system/hdd`, and at boot the passphrase is entered via initrd SSH unlock [disko-config.nix:passwordFile] [secrets.nix:system/hdd].
 - Second data disk is not present yet (`data-2` commented, `TODO`) so `raid_data` is RAID1 on one disk [disko-config.nix:data-2].
 - dnsmasq binds to `network-addresses-vms-nat.service` [networking.nix:systemd.services.dnsmasq.bindsTo].
 - Static LAN IP must match the lease on calanda [networking.nix:getNetV4Ip; ../calanda/networking.nix].

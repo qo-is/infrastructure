@@ -26,4 +26,4 @@ Flake package set. Every subdirectory containing a `default.nix` is auto-discove
 
 ## Verification
 
-- Run: `nix build .#<pkg>` for a single package, `nix flake check` for all
+- Run: `nix build .#<pkg>` for a single package, `nix flake check` only evaluates the `packages` output (packages are built only where a host or check depends on them)

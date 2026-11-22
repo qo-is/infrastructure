@@ -2,7 +2,7 @@
 
 ## Overview
 
-Defines the flake's default development shell for operating the infrastructure (deploys, secrets, caches). Loaded by `flake.nix` with the shared `importParams`.
+Defines the flake's default development shell for operating the infrastructure (deploys, secrets, caches). Loaded by `flake.nix` with `inputSubsetWithPackages` [flake.nix:devShells].
 
 ## Interface
 

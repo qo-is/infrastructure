@@ -67,7 +67,7 @@ Reusable NixOS modules, all under the `qois.*` option namespace. `default.nix` e
 ## Invariants
 
 - A module is loaded only if its directory contains `default.nix` [default.nix:imports] (see `foldersWithNix` in [lib](../lib/EGM.md))
-- Each module guards its config with its `qois.<name>.enable` option, except base modules that apply unconditionally (e.g. shared nginx defaults in [nginx](./nginx/EGM.md), `serviceInputs` merging in [telegraf](./telegraf/EGM.md))
+- Most modules guard their config with `qois.<name>.enable`; some apply parts unconditionally or are enabled by default, e.g. shared defaults in [nginx](./nginx/EGM.md), `serviceInputs` merging in [telegraf](./telegraf/EGM.md), telegraf `periodicJobs` in [backup-client](./backup-client/EGM.md), [backplane-net.hosts](./backplane-net.hosts/EGM.md) (enabled by default) and [kanidm-relying-party](./kanidm-relying-party/EGM.md) (per-party `enable`)
 - Telegraf SMART, mdstat, ZFS and disk inputs come from `srvos` `mixins-telegraf`, not from this directory
 
 ## Side Effects

@@ -28,7 +28,7 @@ Kanidm identity provider (`id.qo.is`): server, LDAPS, declarative group and OAut
 - Online backups keep 2 versions [default.nix:online_backup.versions]
 - TLS chain and key are copied from the ACME cert into the kanidm state dir (mode 0400) in `postRun` [default.nix:security.acme.certs.postRun]
 - Domain settings and entry managers are applied idempotently in `ExecStartPost` of `kanidm.service`; entry-manager updates detach the group from its parents while setting `entry_managed_by` [domain-settings.nix, entry-managers.sh:set_entry_manager]
-- Mail sender token is validated via `/v1/auth/valid`; regenerated (old labelled tokens revoked) only if rejected or missing, and the `mail-sender` account is added to `idm_message_senders` [mail-sender-token.sh]
+- Mail sender token is validated via `/v1/auth/valid`; the script exits early if the stored token is valid; only when it is rejected or missing does it create the `mail-sender` service account if needed, add it to `idm_message_senders`, revoke old labelled tokens and issue a new one [mail-sender-token.sh]
 - Mail sender service is sandboxed (`DynamicUser`, empty capability set, syscall filter) and receives token and mail password via `LoadCredential` [mail-sender.nix:systemd.services.kanidm-mail-sender]
 
 ## Side Effects

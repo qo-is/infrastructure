@@ -7,13 +7,13 @@ deploy-rs nodes for physical hosts.
 ## Interface
 
 - Profile `system-physical` on node `<host>`, hostname `<host>.backplane.net.qo.is` [default.nix:nodes, profiles.system-physical]
-- Selection: not \`services.qemuGuest.enable\` and not \`qois.git-ci-runner.enable\` [default.nix:filterAttrs]
+- Selection: not `services.qemuGuest.enable` and not `qois.git-ci-runner.enable` [default.nix:filterAttrs]
 - Settings: `sshUser = "root"`, `user = "root"`, `activationTimeout = 600`, `confirmTimeout = 120`, `remoteBuild = true` [default.nix:profiles.system-physical]
 - Payload: `activate.nixos` of the host configuration [default.nix:path]
 
 ## Invariants
 
-- Hosts running `qois.git-ci-runner` are never in this category unless it is `system-ci` [default.nix:filterAttrs]
+- Hosts with `qois.git-ci-runner.enable` are never in this category [default.nix:filterAttrs]
 
 ## Side Effects
 

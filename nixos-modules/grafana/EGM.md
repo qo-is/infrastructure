@@ -2,7 +2,7 @@
 
 ## Overview
 
-Grafana behind nginx with TLS, PostgreSQL storage, and provisioned Prometheus/Loki/Alertmanager datasources. Dashboards are git-synced (see `./git-sync/`, no code). See [legacy README](./README.md) for user setup, secrets and git-sync deployment. SSO is added by [kanidm-grafana](../kanidm-grafana/EGM.md).
+Grafana behind nginx with TLS, PostgreSQL storage, and provisioned Prometheus/Loki/Alertmanager datasources. Dashboards are git-synced (declarative Grafana provisioning repository in `./git-sync/repository.yaml`). See [legacy README](./README.md) for user setup, secrets and git-sync deployment. SSO is added by [kanidm-grafana](../kanidm-grafana/EGM.md).
 
 ## Interface
 

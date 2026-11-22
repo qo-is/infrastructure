@@ -11,8 +11,8 @@ Generates the `.sops.yaml` content (as JSON) with creation rules derived from ho
 - Creation rules \[default.nix:creation_rules\]:
   - `private/passwords.sops.*` for user PGP keys
   - `private/nixos-modules/shared-secrets/default.sops.*` for user PGP keys and all server age keys
-  - `private/nixos-modules/kanidm/<server>.sops.*` for the server key plus the key of `kanidmHost` (`lindberg-webapps`)
-  - `private/nixos-configurations/<server>/secrets.sops.*` for that server's key
+  - `private/nixos-modules/kanidm/<server>.sops.*` for the server key plus the key of `kanidmHost` (`lindberg-webapps`), plus the user PGP keys
+  - `private/nixos-configurations/<server>/secrets.sops.*` for that server's key plus the user PGP keys
 
 ## Invariants
 
