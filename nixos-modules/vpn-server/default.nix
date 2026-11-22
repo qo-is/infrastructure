@@ -106,9 +106,6 @@ in
             let
               # Note: headscale has limited acl support currently. This might change in the future.
               aclPolicy = {
-                hosts = {
-                  "clients" = vpnNetPrefix;
-                };
                 groups = {
                   "group:wheel" = cfg.wheelUsers;
                 };
