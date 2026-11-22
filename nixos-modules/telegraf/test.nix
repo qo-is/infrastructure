@@ -39,6 +39,8 @@ in
         "scheduled-job.service"
       ];
       qois.telegraf.periodicJobsInterval = "1s";
+      qois.telegraf.btrfsInterval = "1s";
+      qois.telegraf.fwupdInterval = "1s";
       systemd.services.demo-job = {
         serviceConfig.Type = "oneshot";
         script = "true";
