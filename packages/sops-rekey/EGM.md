@@ -16,7 +16,7 @@ Runs `sops updatekeys` on every sops file below the current directory.
 
 ## Side Effects
 
-- Re-encrypts every matching file in place via `sops updatekeys` [default.nix:text]
+- Re-encrypts every matching file in place via `sops updatekeys --yes`, without confirmation prompts [default.nix:text]
 
 ## Verification
 

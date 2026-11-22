@@ -13,6 +13,6 @@ writeShellApplication {
     self.packages.${system}.sops
   ];
   text = ''
-    find . -regex '.*\.sops\..*$' -type f -exec sops updatekeys {} \;
+    find . -regex '.*\.sops\..*$' -type f -exec sops updatekeys --yes {} \;
   '';
 }
