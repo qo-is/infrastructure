@@ -14,7 +14,7 @@ ______________________________________________________________________
 
 # Architecture Decisions
 
-- [0001 Static Backbone Network](adrs/0001-static-backbone-network.md)
+- [0001 Atlas Network](adrs/0001-atlas-network.md)
 - [0002 NixOS Containers](adrs/0002-nixos-containers.md)
 
 # Services
