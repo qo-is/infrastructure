@@ -33,7 +33,7 @@ once for all containers:
 ### Identity
 
 - A container is described once, in `qois.meta.network.virtual.containers.hosts.<name>`, with
-  its `host`, its IPv6 address (`v6.ip`) and, only with `internet`, an IPv4 address (`v4.ip`).
+  its IP (`v4.ip`) and its `host`.
   The container network has no WireGuard keys, so `publicKey` becomes optional.
   The name is host-agnostic, e.g. `jellyfin`, not `lindberg-jellyfin`.
 - It has a `hosts.json` entry without `sshKey`, so it is not a deploy or SSH target.
@@ -63,32 +63,27 @@ once for all containers:
 
 ### Networking
 
-- Internally, containers are IPv6 only.
-  All containers share the host-agnostic `containers` network (`fd3f:3a1f:a9a3:2::/64`).
+- All containers share the host-agnostic `containers` network (`10.246.0.0/24`).
   It is separate from atlas: containers are not atlas peers.
-- Each container has a `/128` with its default route via `fe80::1`, which every container host
-  sets on its `ve-*` side.
-  The container's configuration therefore does not depend on its host.
-- The host routes each local container's `/128` to its veth.
-  Between hosts, atlas carries the `/128`s.
-- DNS: `useHostResolvConf = false`, nameserver `fe80::1`.
+- Every container host uses the same gateway address `10.246.0.1` on its `ve-*` side.
+  Each container has a `/32` with its default route via `10.246.0.1`, so its configuration does
+  not depend on its host.
+- The host routes each local container's `/32` to its veth.
+  Between hosts, atlas carries the `/32`s.
+- DNS: `useHostResolvConf = false`, nameserver `10.246.0.1`.
   The host resolver answers on `ve-+` only.
 - Egress is off by default and opened per container:
-  - `internet = true` adds an IPv4 address (`10.246.0.0/24`, gateway `10.246.0.1` on every
-    host) and NAT to the internet.
-    This IPv4 address is only used for NAT on the container's host, and is never routed to
-    other hosts or reachable internally.
-    `internet` is required when `domains` is set, because ACME uses HTTP-01.
+  - `internet = true` enables NAT to the internet.
+    It is required when `domains` is set, because ACME uses HTTP-01.
   - `egress.containers = [ <name> ]` allows connections to other containers.
     The rule is derived from meta on whichever host the target runs.
   - `egress.hosts = [ "id.qo.is" ]` allows domains served by the loadbalancers.
-    The host resolver answers them with only the loadbalancers' atlas IPs (AAAA, no A).
-    These are reached on `443`, so traffic stays internal and needs no hairpin NAT.
+    The host resolver answers them with the loadbalancers' atlas IPs, which are reached on
+    `443`, so no hairpin NAT is needed.
 - Firewall rules on the container host are an allowlist, matching `ve-+` or the container IP:
   - established and related connections,
   - ingress: only `80`/`443` from the loadbalancers' atlas IPs,
-  - IPv6 egress: DNS on the host plus `egress.containers` and `egress.hosts`,
-  - IPv4 egress: only with `internet`, and only to the internet,
+  - egress: DNS on the host plus the options above,
   - everything else is dropped, i.e. all RFC1918, backplane and atlas ranges and the host's
     other ports.
 
@@ -102,9 +97,8 @@ once for all containers:
 
 ### Ingress
 
-- Both HAProxy loadbalancers forward directly to the container's IPv6 address, with their atlas
-  IP as source, also for local containers.
-  PROXY v2 still carries the client's IPv4 or IPv6 address.
+- Both HAProxy loadbalancers forward directly to the container IP, with their atlas IP as
+  source, also for local containers.
   The container therefore sees the same proxy IPs wherever it runs.
 - Each uses `send-proxy-v2` and `timeout tunnel` for long-lived connections.
 - There is one PROXY hop per request, so nginx in the container trusts exactly the
@@ -155,9 +149,7 @@ once for all containers:
   - credentials are loaded,
   - the client IP survives the loadbalancer,
   - state survives a container restart,
-  - without `internet`, the container has no IPv4 address and reaches neither the internet nor
-    the backplane,
-  - with `internet`, IPv4 reaches the internet but no internal range,
+  - without `internet`, the container reaches neither the internet nor the backplane,
   - `egress.containers` allows exactly the listed containers.
 - These tests need `virtualisation.useBootLoader = true`, because idmapped binds don't work on
   the default 9p/erofs store.
@@ -172,7 +164,7 @@ qois.containers.<name> = {
   domains = [ "service.qo.is" ];    # loadbalancer + DNS
   statePaths = [ "/var/lib/service" ];  # plus /var/lib/acme and /var/log/journal
   dataPaths = [ "/srv/media" ];     # host data, pins the container to its host
-  internet = true;                  # IPv4 NAT, required with domains
+  internet = true;                  # required with domains
   egress.containers = [ "other" ];
   egress.hosts = [ "id.qo.is" ];
   credentials.<id> = <path>;        # --load-credential, restarts the container
@@ -180,8 +172,7 @@ qois.containers.<name> = {
 };
 ```
 
-The module is imported by every host. Its `host` and IPs come from `qois.meta`.
-An assertion requires `v4.ip` exactly when `internet` is set.
+The module is imported by every host. Its `host` and IP come from `qois.meta`.
 The container's `config` is evaluated only on its host, while every other host gets the routes,
 domains, DNS records and firewall rules derived from it.
 
@@ -194,8 +185,6 @@ domains, DNS records and firewall rules derived from it.
 - It depends on the atlas network ([ADR 0001](0001-atlas-network.md)).
 - Moving a container still means moving its state by hand.
 - Containers share the host kernel, so their isolation is weaker than a VM's.
-- Services in containers must listen on IPv6.
-  Settings that classify clients by subnet must include the ULA ranges.
 - Follow-ups:
   - Once the hosts run systemd ≥ 261 (NixOS 26.11), forward the journal with
     `--forward-journal=<host dir>` (written by the host's `systemd-journal-remote`) and drop the
