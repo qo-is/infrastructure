@@ -3,10 +3,14 @@
   lib,
   ...
 }:
-
-with lib;
-
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
+
   routerCfg = config.qois.router;
   cfg = config.qois.router.dhcp;
 in

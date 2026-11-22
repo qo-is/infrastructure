@@ -4,11 +4,11 @@
   lib,
   ...
 }:
-
 let
+  inherit (lib) mkEnableOption mkIf;
+
   cfg = config.qois.outgoing-server-mail;
 in
-with lib;
 {
   options.qois.outgoing-server-mail = {
     enable = mkEnableOption "Enable outgoing emails for server.";

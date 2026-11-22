@@ -3,8 +3,18 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    attrNames
+    flip
+    genAttrs
+    mkIf
+    mkOption
+    pipe
+    types
+    ;
+  inherit (lib.types) listOf str;
+
   cfg = config.qois.backplane-net.hosts;
   defaultDomains = attrNames config.qois.loadbalancer.domains;
   defaultLoadbalancers = [ "lindberg" ];
@@ -20,12 +30,12 @@ in
 
     domains = mkOption {
       description = "Domains that are hosted by the backplane loadbalancer";
-      type = with types; listOf str;
+      type = listOf str;
       default = defaultDomains;
     };
     loadbalancers = mkOption {
       description = "List of Loadbalancer hostnames as listed in the backplane network";
-      type = with types; listOf str;
+      type = listOf str;
       default = defaultLoadbalancers;
     };
   };

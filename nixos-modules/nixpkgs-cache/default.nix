@@ -3,11 +3,16 @@
   lib,
   ...
 }:
-
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
+
   cfg = config.qois.nixpkgs-cache;
 in
-with lib;
 {
   options.qois.nixpkgs-cache = {
     enable = mkEnableOption "Enable nixpkgs cache server.";

@@ -3,10 +3,9 @@
   lib,
   ...
 }:
-
-with lib;
-
 let
+  inherit (lib) mkOption types;
+
   cfg = config.qois.meta.hosts;
 in
 {

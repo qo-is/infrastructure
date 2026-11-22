@@ -3,10 +3,18 @@
   lib,
   ...
 }:
-
-with lib;
-
 let
+  inherit (lib)
+    concatStringsSep
+    mkEnableOption
+    mkIf
+    mkOption
+    reverseList
+    splitString
+    take
+    types
+    ;
+
   routerCfg = config.qois.router;
   dhcpCfg = config.qois.router.dhcp;
   cfg = config.qois.router.recursiveDns;

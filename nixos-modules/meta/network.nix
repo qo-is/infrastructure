@@ -3,11 +3,17 @@
   lib,
   ...
 }:
-
-with lib;
-with types;
-
 let
+  inherit (lib) mapAttrs mkOption types;
+  inherit (lib.types)
+    attrsOf
+    ints
+    listOf
+    nullOr
+    str
+    submodule
+    ;
+
   cfg = config.qois.meta.network;
   mkStr =
     description:

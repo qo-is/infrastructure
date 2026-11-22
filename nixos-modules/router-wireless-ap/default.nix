@@ -3,10 +3,15 @@
   lib,
   ...
 }:
-
-with lib;
-
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
+  inherit (lib.types) nullOr str;
+
   cfg = config.qois.router.wireless;
 in
 {
@@ -14,7 +19,7 @@ in
     enable = mkEnableOption "router wireless service";
 
     wleInterface24Ghz = mkOption {
-      type = with types; nullOr str;
+      type = nullOr str;
       default = null;
       example = "wlp1";
       description = ''

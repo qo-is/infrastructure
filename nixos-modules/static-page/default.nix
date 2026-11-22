@@ -3,11 +3,25 @@
   lib,
   ...
 }:
-
 let
+  inherit (lib)
+    attrValues
+    concatMapAttrs
+    flatten
+    getAttr
+    head
+    mapAttrs
+    mapAttrsToList
+    mkEnableOption
+    mkIf
+    mkOption
+    pipe
+    tail
+    types
+    ;
+
   cfg = config.qois.static-page;
 in
-with lib;
 {
   imports = [ ./default-pages.nix ];
 

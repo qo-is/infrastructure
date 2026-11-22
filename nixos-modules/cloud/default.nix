@@ -5,11 +5,16 @@
   pkgs,
   ...
 }:
-
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
+
   cfg = config.qois.cloud;
 in
-with lib;
 {
 
   options.qois.cloud = {

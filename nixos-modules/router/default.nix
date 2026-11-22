@@ -3,10 +3,15 @@
   lib,
   ...
 }:
-
-with lib;
-
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
+  inherit (lib.types) nullOr str;
+
   cfg = config.qois.router;
 in
 {
@@ -14,7 +19,7 @@ in
     enable = mkEnableOption "router service";
 
     wanInterface = mkOption {
-      type = with types; nullOr str;
+      type = nullOr str;
       example = "enp0";
       default = null;
       description = ''

@@ -3,10 +3,17 @@
   lib,
   ...
 }:
-
-with lib;
-
 let
+  inherit (lib)
+    concatLists
+    elem
+    mapAttrsToList
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
+
   cfg = config.qois.luks-ssh;
 in
 {
@@ -78,13 +85,11 @@ in
       ssh = {
         enable = true;
         port = cfg.sshPort;
-        authorizedKeys =
-          with lib;
-          concatLists (
-            mapAttrsToList (
-              _name: user: if elem "wheel" user.extraGroups then user.openssh.authorizedKeys.keys else [ ]
-            ) config.users.users
-          );
+        authorizedKeys = concatLists (
+          mapAttrsToList (
+            _name: user: if elem "wheel" user.extraGroups then user.openssh.authorizedKeys.keys else [ ]
+          ) config.users.users
+        );
         hostKeys = [ cfg.sshHostKey ];
       };
       postCommands = ''

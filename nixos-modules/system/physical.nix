@@ -5,9 +5,10 @@
   ...
 }:
 let
+  inherit (lib) mkEnableOption mkForce;
+
   cfg = config.qois.system.physical;
 in
-with lib;
 {
   options.qois.system.physical.enable = mkEnableOption "Enable qois physical system configuration";
 

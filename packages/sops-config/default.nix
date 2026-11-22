@@ -8,8 +8,18 @@
   writeText,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    attrValues
+    concatStringsSep
+    filterAttrs
+    mapAttrs
+    mapAttrsToList
+    readFile
+    strings
+    unique
+    ;
+
   metaHostConfigs = import ../../defaults/meta/hosts.nix { };
   userPgpKeys =
     let

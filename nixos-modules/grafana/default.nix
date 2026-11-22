@@ -3,11 +3,17 @@
   lib,
   ...
 }:
-
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    optional
+    types
+    ;
+
   cfg = config.qois.grafana;
 in
-with lib;
 {
   options.qois.grafana = {
     enable = mkEnableOption "Enable grafana service";

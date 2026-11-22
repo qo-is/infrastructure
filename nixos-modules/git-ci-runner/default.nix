@@ -4,13 +4,21 @@
   lib,
   ...
 }:
-
 let
+  inherit (lib)
+    genAttrs
+    genList
+    mkEnableOption
+    mkIf
+    mkMerge
+    mkOption
+    types
+    ;
+
   cfg = config.qois.git-ci-runner;
   defaultInstanceName = "default";
   fetchInterval = "20s";
 in
-with lib;
 {
   options.qois.git-ci-runner = {
     enable = mkEnableOption "Enable qois git ci-runner service";

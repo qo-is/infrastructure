@@ -4,9 +4,27 @@
   lib,
   ...
 }:
-
-with lib;
 let
+  inherit (lib)
+    attrNames
+    concatLines
+    concatMap
+    concatMapStringsSep
+    elem
+    filter
+    flatten
+    head
+    listToAttrs
+    mapAttrsToList
+    mkEnableOption
+    mkIf
+    mkOption
+    pipe
+    splitString
+    types
+    ;
+  inherit (lib.types) attrsOf str;
+
   # We assume that all static pages are hosted on lindberg-webapps
   staticPages = pipe config.qois.static-page.pages [
     (mapAttrsToList (_name: { domain, domainAliases, ... }: [ domain ] ++ domainAliases))
@@ -116,13 +134,13 @@ in
 
     domains = mkOption {
       description = "Domain to hostname mappings";
-      type = with lib.types; attrsOf str;
+      type = attrsOf str;
       default = defaultDomains;
     };
 
     hostmap = mkOption {
       description = "Hostname to IP mappings for TLS-TCP and http forwarding";
-      type = with lib.types; attrsOf str;
+      type = attrsOf str;
       default = defaultHostmap;
     };
 
@@ -134,92 +152,90 @@ in
 
   };
 
-  config =
-    with lib;
-    mkIf cfg.enable {
+  config = mkIf cfg.enable {
 
-      assertions = [
-        {
-          assertion = undefinedDomainBackends == [ ];
-          message = "qois.loadbalancer.domains map to undefined haproxy backends: ${
-            concatMapStringsSep ", " ({ domain, backend }: "${domain} -> ${backend}") undefinedDomainBackends
-          }";
-        }
-      ];
+    assertions = [
+      {
+        assertion = undefinedDomainBackends == [ ];
+        message = "qois.loadbalancer.domains map to undefined haproxy backends: ${
+          concatMapStringsSep ", " ({ domain, backend }: "${domain} -> ${backend}") undefinedDomainBackends
+        }";
+      }
+    ];
 
-      networking.firewall.allowedTCPPorts = [
-        80
-        443
-      ];
+    networking.firewall.allowedTCPPorts = [
+      80
+      443
+    ];
 
-      qois.telegraf.serviceInputs.prometheus = [
-        {
-          urls = [ "http://${statsIpPort}/metrics" ];
-          metric_version = 2;
-        }
-      ];
+    qois.telegraf.serviceInputs.prometheus = [
+      {
+        urls = [ "http://${statsIpPort}/metrics" ];
+        metric_version = 2;
+      }
+    ];
 
-      services.haproxy =
-        let
-          domainMappingFile = pipe cfg.domains [
-            (mapAttrsToList (host: backend: "${host} ${backend}"))
-            concatLines
-            (pkgs.writeText "haproxy_backend_map")
-          ];
-          genHttpBackend = hostName: ip: ''
+    services.haproxy =
+      let
+        domainMappingFile = pipe cfg.domains [
+          (mapAttrsToList (host: backend: "${host} ${backend}"))
+          concatLines
+          (pkgs.writeText "haproxy_backend_map")
+        ];
+        genHttpBackend = hostName: ip: ''
 
-            # Mapping for ${hostName}
-            backend ${hostName}-https
-              mode tcp
-              server s1 ${ip}:443 send-proxy-v2
+          # Mapping for ${hostName}
+          backend ${hostName}-https
+            mode tcp
+            server s1 ${ip}:443 send-proxy-v2
 
-            backend ${hostName}-http
-              mode http
-              server s1 ${ip}:80 send-proxy-v2
-          '';
-          httpBackends = pipe cfg.hostmap [
-            (mapAttrsToList genHttpBackend)
-            concatLines
-          ];
-        in
-        {
-          enable = true;
-          config = ''
-            defaults
-              mode http
-              retries 3
-              maxconn 2000
-              timeout connect 5000
-              timeout client 50000
-              timeout server 50000
+          backend ${hostName}-http
+            mode http
+            server s1 ${ip}:80 send-proxy-v2
+        '';
+        httpBackends = pipe cfg.hostmap [
+          (mapAttrsToList genHttpBackend)
+          concatLines
+        ];
+      in
+      {
+        enable = true;
+        config = ''
+          defaults
+            mode http
+            retries 3
+            maxconn 2000
+            timeout connect 5000
+            timeout client 50000
+            timeout server 50000
 
-            listen stats
-              bind ${statsIpPort}
-              mode http
-              http-request use-service prometheus-exporter if { path /metrics }
-              stats enable
-              stats uri /stats
-              stats hide-version
+          listen stats
+            bind ${statsIpPort}
+            mode http
+            http-request use-service prometheus-exporter if { path /metrics }
+            stats enable
+            stats uri /stats
+            stats hide-version
 
-            frontend http
-              mode http
-              bind *:80
-              use_backend %[req.hdr(host),lower,map(${domainMappingFile})]-http
+          frontend http
+            mode http
+            bind *:80
+            use_backend %[req.hdr(host),lower,map(${domainMappingFile})]-http
 
-            frontend https
-              bind *:443
-              mode tcp
-              tcp-request inspect-delay 5s
-              tcp-request content accept if { req_ssl_hello_type 1 }
+          frontend https
+            bind *:443
+            mode tcp
+            tcp-request inspect-delay 5s
+            tcp-request content accept if { req_ssl_hello_type 1 }
 
-              use_backend %[req.ssl_sni,lower,map(${domainMappingFile})]-https
+            use_backend %[req.ssl_sni,lower,map(${domainMappingFile})]-https
 
-            ## Generated Backends:
-            ${httpBackends}
+          ## Generated Backends:
+          ${httpBackends}
 
-            ## extraConfig
-            ${cfg.extraConfig}
-          '';
-        };
-    };
+          ## extraConfig
+          ${cfg.extraConfig}
+        '';
+      };
+  };
 }

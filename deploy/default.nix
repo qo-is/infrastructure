@@ -3,7 +3,9 @@
   self,
   ...
 }@params:
-with pkgs.lib;
+let
+  inherit (pkgs.lib) foldl pipe recursiveUpdate;
+in
 pipe ./. [
   self.lib.loadSubmodulesFrom
   (map (f: (import f params)))

@@ -4,8 +4,18 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    attrsToList
+    mapAttrs
+    mkEnableOption
+    mkIf
+    mkOption
+    pipe
+    types
+    ;
+  inherit (lib.types) attrsOf listOf str;
+
   cfg = config.qois.vpn-server;
   cfgLoadbalancer = config.qois.loadbalancer;
   vnet = config.qois.meta.network.virtual;
@@ -26,12 +36,12 @@ in
     };
     dnsRecords = mkOption {
       description = "DNS records to add to Hosts";
-      type = with types; attrsOf str;
+      type = attrsOf str;
       default = defaultDnsRecords;
     };
     wheelUsers = mkOption {
       description = "Usernames that can change configurations";
-      type = with types; listOf str;
+      type = listOf str;
       default = [ ];
     };
   };

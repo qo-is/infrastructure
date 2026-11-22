@@ -4,9 +4,10 @@
   ...
 }:
 let
+  inherit (lib) mkEnableOption;
+
   cfg = config.qois.system.virtual-machine;
 in
-with lib;
 {
   options.qois.system.virtual-machine.enable =
     mkEnableOption "Enable qois system vm default configuration";

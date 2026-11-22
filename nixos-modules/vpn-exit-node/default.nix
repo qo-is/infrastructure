@@ -3,8 +3,14 @@
   lib,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
+
   cfg = config.qois.vpn-exit-node;
 in
 {

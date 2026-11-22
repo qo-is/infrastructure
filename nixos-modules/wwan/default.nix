@@ -6,10 +6,16 @@
   pkgs,
   ...
 }:
-
-with lib;
-
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    optionalString
+    readFile
+    types
+    ;
+
   cfg = config.qois.wwan;
 
   mbim-ip-configured = pkgs.writeScriptBin "mbim-ip-configured" (
@@ -69,7 +75,7 @@ in
       ];
       default = "";
       description = ''
-        APN authentication type, one of ${concatMapStringsSep ", " show values} (optional).
+        APN authentication type, one of "PAP", "CHAP", "MSCHAPV2" or "" for none (optional).
       '';
     };
 

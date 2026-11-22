@@ -5,8 +5,15 @@
   inputs,
   ...
 }:
-with lib;
 let
+  inherit (lib)
+    mkBefore
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
+
   cfg = config.qois.renovate;
 in
 {
