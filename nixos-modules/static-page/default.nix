@@ -23,7 +23,7 @@ with lib;
               description = ''
                 Primary domain, under which the site is served.
                 Only ASCII Domains are supported at this time.
-                Note that changing this changes the root folder of the vhost in /var/lib/nginx-$domain/root and the ssh user to "nginx-$domain".
+                Note that changing this changes the vhost root /var/lib/nginx-$domain/.local/state/nix/profiles/webroot and the ssh user to "nginx-$domain".
               '';
             };
 
