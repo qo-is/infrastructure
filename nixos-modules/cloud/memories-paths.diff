@@ -1,0 +1,47 @@
+--- a/lib/Service/BinExt.php
++++ b/lib/Service/BinExt.php
+@@ -141,13 +141,7 @@
+             putenv('LANG=C'); // set perl lang to suppress warning
+         }
+ 
+-        $path = realpath(__DIR__.'/../../bin-ext/exiftool/exiftool') ?: '';
+-
+-        if ($this->systemConfig->get('memories.exiftool_no_local')) {
+-            return ['perl', $path];
+-        }
+-
+-        return [$this->getEPerlBin(), $path];
++        return [$this->systemConfig->get('memories.exiftool')];
+     }
+ 
+     /**
+--- a/lib/Settings/SystemConfig.php
++++ b/lib/Settings/SystemConfig.php
+@@ -206,6 +206,15 @@
+      */
+     public function get(string $key, mixed $default = null): mixed
+     {
++        switch ($key) {
++            case 'memories.exiftool': return '@exiftool@';
++            case 'memories.exiftool_no_local': return false;
++            case 'memories.vod.ffmpeg': return '@ffmpeg@';
++            case 'memories.vod.ffprobe': return '@ffprobe@';
++            case 'memories.vod.path': return '@go-vod@';
++            case 'memories.vips.path': return '';
++        }
++
+         if (!\array_key_exists($key, self::DEFAULTS)) {
+             throw new \InvalidArgumentException("Invalid system config key: {$key}");
+         }
+@@ -240,6 +249,11 @@
+      */
+     public function set(string $key, mixed $value): void
+     {
++        // Ignore those paths and always use the nix paths.
++        if (\in_array($key, ['memories.exiftool', 'memories.exiftool_no_local', 'memories.vod.ffmpeg', 'memories.vod.ffprobe', 'memories.vod.path', 'memories.vips.path'], true)) {
++            throw new \InvalidArgumentException("Cannot set nix-managed key: {$key}");
++        }
++
+         // Check if the key is valid
+         if (!\array_key_exists($key, self::DEFAULTS)) {
+             throw new \InvalidArgumentException("Invalid system config key: {$key}");

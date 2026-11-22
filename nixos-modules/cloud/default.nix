@@ -7,9 +7,7 @@
 }:
 
 let
-  inherit (pkgs) fetchNextcloudApp;
   cfg = config.qois.cloud;
-  memoriesVersion = "11.1.4";
 in
 with lib;
 {
@@ -84,13 +82,7 @@ with lib;
           tasks
           twofactor_webauthn
           ;
-        memories = fetchNextcloudApp {
-          appName = "memories";
-          appVersion = memoriesVersion;
-          url = "https://github.com/pulsejet/memories/releases/download/v${memoriesVersion}/memories.tar.gz";
-          hash = "sha256-ObXsa/F1M0Qy6MQJoEhNqGb/+QPGNJQsyzxBgJ+QY1M=";
-          license = "agpl3Plus";
-        };
+        memories = pkgs.callPackage ./memories.nix { };
       };
 
       phpOptions = {
@@ -122,9 +114,6 @@ with lib;
       settings = {
         log_type = "syslog";
         syslog_tag = "nextcloud";
-        "memories.exiftool" = "${lib.getExe pkgs.exiftool}";
-        "memories.vod.ffmpeg" = "${lib.getExe pkgs.ffmpeg-headless}";
-        "memories.vod.ffprobe" = "${pkgs.ffmpeg-headless}/bin/ffprobe";
         preview_ffmpeg_path = "${lib.getExe pkgs.ffmpeg-headless}";
         mail_smtpmode = "sendmail";
         mail_domain = "qo.is";
